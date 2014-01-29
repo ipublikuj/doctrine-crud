@@ -1,0 +1,44 @@
+{
+	"name"				: "ipub/doctrine",
+	"type"				: "library",
+	"description"		: "Collection of classes for working with Doctrine2 on iPublikuj framework",
+	"keywords"			: ["doctrine2", "doctrine", "nette", "ipub", "framework", "tools"],
+	"homepage"			: "https://github.com/ipublikuj-eu/Doctrine",
+	"license"			: "BSD-2-Clause-FreeBSD",
+	"minimum-stability"	:"dev",
+
+	"authors": [
+		{
+			"name"		: "Adam Kadlec",
+			"homepage"	: "http://www.ipublikuj.eu/"
+		}
+	],
+
+	"support":{
+		"email"		:"support@ipublikuj.eu",
+		"issues"	:"https://github.com/ipublikuj-eu/Doctrine/issues"
+	},
+
+	"require": {
+		"php"			: ">=5.3.2",
+		"doctrine/orm"	: "2.3.*@stable",
+		"nette/nette"	: ">=2.0.1"
+	},
+
+	"require-dev": {
+		"ipub/framework"	: "@dev",
+		"nette/tester"		: "@dev",
+		"janmarek/mockista"	: "@dev"
+	},
+
+	"config": {
+		"vendor-dir"	: "libs"
+	},
+
+	"autoload": {
+		"psr-0": {"IPub": ""},
+		"classmap": [
+			"IPub/Doctrine/Exceptions.php"
+		]
+	}
+}
