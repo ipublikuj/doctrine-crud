@@ -14,61 +14,57 @@
 
 namespace IPub\Doctrine\Crud\Update;
 
-use IPub\Doctrine\Crud\CrudManager,
-	IPub\Doctrine\EntityDao,
-	IPub\Doctrine\Mapping\IEntityMapper,
-	IPub\Doctrine\Entity;
+use Nette;
+use Nette\Utils;
 
-use Nette\InvalidArgumentException;
+use IPub;
+use IPub\Doctrine;
+use IPub\Doctrine\Crud;
+use IPub\Doctrine\Mapping;
 
-class EntityUpdater extends CrudManager implements IEntityUpdater
+class EntityUpdater extends Crud\CrudManager implements IEntityUpdater
 {
 	/**
 	 * @var array
 	 */
-	public $beforeUpdate = array();
+	public $beforeUpdate = [];
 
 	/**
 	 * @var array
 	 */
-	public $afterUpdate = array();
+	public $afterUpdate = [];
 
 	/**
-	 * @var \IPub\Doctrine\Mapping\IEntityMapper
+	 * @var Mapping\IEntityMapper
 	 */
 	private $entityMapper;
 
 	/**
-	 * @var  EntityDao
+	 * @var Doctrine\EntityDao
 	 */
 	private $dao;
 
 	/**
-	 * @param EntityDao $dao
-	 * @param IEntityMapper $entityMapper
+	 * @param Doctrine\EntityDao $dao
+	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(EntityDao $dao, IEntityMapper $entityMapper)
+	function __construct(Doctrine\EntityDao $dao, Mapping\IEntityMapper $entityMapper)
 	{
 		$this->dao = $dao;
 		$this->entityMapper = $entityMapper;
 	}
 
 	/**
-	 * @param Entity|int $entity
-	 * @param $values
-	 *
-	 * @return Entity|object
-	 *
-	 * @throws \Nette\InvalidArgumentException
+	 * {@inheritdoc}
 	 */
-	public function update($entity, $values)
+	public function update(Utils\ArrayHash $values, $entity)
 	{
-		if (!$entity instanceof Entity) {
+		if (!$entity instanceof Doctrine\IEntity) {
 			$entity = $this->dao->find((int) $entity);
 		}
 
 		if (!$entity) {
-			throw new InvalidArgumentException('Entity not found.');
+			throw new Nette\InvalidArgumentException('Entity not found.');
 		}
 
 		$this->processHooks($this->beforeUpdate, array($entity, $values));

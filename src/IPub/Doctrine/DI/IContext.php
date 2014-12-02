@@ -14,14 +14,19 @@
 
 namespace IPub\Doctrine\DI;
 
-use IPub\Doctrine\IValidator;
+use Nette;
+
+use IPub;
+use IPub\Doctrine;
 
 interface IContext 
 {
 	/**
 	 * @param $class
 	 *
-	 * @return IValidator
+	 * @return Doctrine\IValidator
+	 *
+	 * @throws Nette\InvalidStateException
 	 */
 	public function getValidator($class);
 } 

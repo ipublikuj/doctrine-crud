@@ -14,89 +14,88 @@
 
 namespace IPub\Doctrine\Crud;
 
-use IPub\Doctrine\Crud\Create\EntityCreator,
-	IPub\Doctrine\Crud\Delete\EntityDeleter,
-	IPub\Doctrine\Crud\Update\EntityUpdater,
-	IPub\Doctrine\EntityDao,
-	IPub\Doctrine\Mapping\IEntityMapper;
+use Nette;
 
-use Nette\Object;
+use IPub;
+use IPub\Doctrine;
+use IPub\Doctrine\Crud;
+use IPub\Doctrine\Mapping;
 
-class EntityCrud extends Object implements IEntityCrud
+class EntityCrud extends Nette\Object implements IEntityCrud
 {
 	/**
-	 * @var \IPub\Doctrine\Mapping\IEntityMapper
+	 * @var Mapping\IEntityMapper
 	 */
 	private $entityMapper;
 
 	/**
-	 * @var \IPub\Doctrine\EntityDao
+	 * @var Doctrine\EntityDao
 	 */
 	private $reader;
 
 	/**
-	 * @var EntityDeleter
+	 * @var Crud\Delete\EntityDeleter
 	 */
 	private $deleter;
 
 	/**
-	 * @var EntityUpdater
+	 * @var Crud\Update\EntityUpdater
 	 */
 	private $updater;
 
 	/**
-	 * @var  EntityCreator
+	 * @var  Crud\Create\EntityCreator
 	 */
 	private $creator;
 
 	/**
-	 * @param EntityDao $dao
-	 * @param IEntityMapper $entityMapper
+	 * @param Doctrine\EntityDao $dao
+	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(EntityDao $dao, IEntityMapper $entityMapper)
+	function __construct(Doctrine\EntityDao $dao, Mapping\IEntityMapper $entityMapper)
 	{
 		$this->reader = $dao;
 		$this->entityMapper = $entityMapper;
 	}
 
 	/**
-	 * @return EntityCreator
+	 * {@inheritdoc}
 	 */
 	public function getEntityCreator()
 	{
 		if ($this->creator === NULL) {
-			$this->creator = new EntityCreator($this->getEntityReader(), $this->entityMapper);
+			$this->creator = new Crud\Create\EntityCreator($this->getEntityReader(), $this->entityMapper);
 		}
 
 		return $this->creator;
 	}
 
 	/**
-	 * @return EntityUpdater
+	 * {@inheritdoc}
 	 */
 	public function getEntityUpdater()
 	{
 		if ($this->updater === NULL) {
-			$this->updater = new EntityUpdater($this->getEntityReader(), $this->entityMapper);
+			$this->updater = new Crud\Update\EntityUpdater($this->getEntityReader(), $this->entityMapper);
 		}
 
 		return $this->updater;
 	}
 
 	/**
-	 * @return EntityDeleter
+	 * {@inheritdoc}
 	 */
 	public function getEntityDeleter()
 	{
 		if ($this->deleter === NULL) {
-			$this->deleter = new EntityDeleter($this->getEntityReader());
+			$this->deleter = new Crud\Delete\EntityDeleter($this->getEntityReader());
 		}
 
 		return $this->deleter;
 	}
 
 	/**
-	 * @return \IPub\Doctrine\EntityDao
+	 * {@inheritdoc}
 	 */
 	public function getEntityReader()
 	{

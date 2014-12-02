@@ -14,29 +14,30 @@
 
 namespace IPub\Doctrine\Mapping;
 
-use Kdyby\Doctrine\Entities\BaseEntity;
+use IPub;
+use IPub\Doctrine;
 
 interface IEntityHydrator
 {
 	/**
 	 * @param $values
-	 * @param BaseEntity $entity
+	 * @param Doctrine\IEntity $entity
 	 *
-	 * @return BaseEntity
+	 * @return Doctrine\IEntity
 	 */
-	public function hydrate($values, BaseEntity $entity);
+	public function hydrate($values, Doctrine\IEntity $entity);
 
 	/**
-	 * @param BaseEntity $entity
+	 * @param Doctrine\IEntity $entity
 	 *
 	 * @return array
 	 */
-	public function extract(BaseEntity &$entity);
+	public function extract(Doctrine\IEntity &$entity);
 
 	/**
-	 * @param BaseEntity $entity
+	 * @param Doctrine\IEntity $entity
 	 *
 	 * @return array
 	 */
-	public function simpleExtract(BaseEntity &$entity);
+	public function simpleExtract(Doctrine\IEntity &$entity);
 }

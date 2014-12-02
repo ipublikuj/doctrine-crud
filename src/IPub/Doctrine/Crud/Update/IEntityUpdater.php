@@ -14,6 +14,12 @@
 
 namespace IPub\Doctrine\Crud\Update;
 
+use Nette;
+use Nette\Utils;
+
+use IPub;
+use IPub\Doctrine;
+
 interface IEntityUpdater
 {
 	/**
@@ -24,10 +30,12 @@ interface IEntityUpdater
 	public function setFlush($flush);
 
 	/**
-	 * @param $values
-	 * @param int|\IPub\Doctrine\Entity $entity
+	 * @param Utils\ArrayHash $values
+	 * @param Doctrine\IEntity|int $entity
 	 *
-	 * @return \IPub\Doctrine\Entity
+	 * @return Doctrine\IEntity
+	 *
+	 * @throws Nette\InvalidArgumentException
 	 */
-	public function update($entity, $values);
+	public function update(Utils\ArrayHash $values, $entity);
 }

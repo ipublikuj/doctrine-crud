@@ -14,12 +14,9 @@
 
 namespace IPub\Doctrine\Mapping;
 
-use IPub\ArrayHash;
-use IPub\Doctrine\DI\IContext;
+use IPub;
+use IPub\Doctrine;
 
-use Kdyby\Doctrine\Entities\BaseEntity;
-
-use Nette\Diagnostics\Debugger;
 use Nette\Object,
 	Nette\InvalidStateException,
 	Nette\Reflection\Property;
@@ -27,7 +24,7 @@ use Nette\Object,
 class EntityMapper extends Object implements IEntityMapper
 {
 	/**
-	 * @var \IPub\Doctrine\DI\IContext
+	 * @var Doctrine\DI\IContext
 	 */
 	private $context;
 
@@ -37,10 +34,10 @@ class EntityMapper extends Object implements IEntityMapper
 	private $entityMapper;
 
 	/**
-	 * @param IContext $context
+	 * @param Doctrine\DI\IContext $context
 	 * @param IEntityHydrator $entityMapper
 	 */
-	function __construct(IContext $context, IEntityHydrator $entityMapper)
+	function __construct(Doctrine\DI\IContext $context, IEntityHydrator $entityMapper)
 	{
 		$this->context = $context;
 		$this->entityMapper = $entityMapper;
@@ -48,34 +45,34 @@ class EntityMapper extends Object implements IEntityMapper
 
 	/**
 	 * @param $values
-	 * @param BaseEntity $entity
+	 * @param Doctrine\IEntity $entity
 	 *
-	 * @return BaseEntity
+	 * @return Doctrine\IEntity
 	 */
-	public function setValues($values, BaseEntity $entity)
+	public function setValues($values, Doctrine\IEntity $entity)
 	{
 		return $this->entityMapper->hydrate($values, $entity);
 	}
 
 	/**
-	 * @param BaseEntity $entity
+	 * @param Doctrine\IEntity $entity
 	 *
 	 * @return array
 	 */
-	public function getValues(BaseEntity &$entity)
+	public function getValues(Doctrine\IEntity &$entity)
 	{
 		return $this->entityMapper->extract($entity);
 	}
 
 	/**
 	 * @param $values
-	 * @param BaseEntity $entity
+	 * @param Doctrine\IEntity $entity
 	 *
-	 * @return BaseEntity
+	 * @return Doctrine\IEntity
 	 *
 	 * @throws \Nette\InvalidStateException
 	 */
-	public function initValues($values, BaseEntity $entity)
+	public function initValues($values, Doctrine\IEntity $entity)
 	{
 		$parsedValues = array();
 		$properties = $entity->getReflection()->getProperties();
@@ -93,7 +90,7 @@ class EntityMapper extends Object implements IEntityMapper
 
 			if ($value !== NULL) {
 				if ($value instanceof \Nette\ArrayHash) {
-					if (!$entity->{$property->name} instanceof BaseEntity) {
+					if (!$entity->{$property->name} instanceof Doctrine\IEntity) {
 						$className = NULL;
 
 						if ($property->hasAnnotation('ORM\OneToOne')) {
@@ -113,7 +110,7 @@ class EntityMapper extends Object implements IEntityMapper
 						}
 
 						// Check if class is callable
-						if (!$entity->{$property->name} instanceof BaseEntity && class_exists($className)) {
+						if (!$entity->{$property->name} instanceof Doctrine\IEntity && class_exists($className)) {
 							$entity->{$property->name} = new $className;
 
 						} else {
@@ -122,7 +119,7 @@ class EntityMapper extends Object implements IEntityMapper
 					}
 
 					// Check again if entity was created
-					if ($entity->{$property->name} instanceof BaseEntity) {
+					if ($entity->{$property->name} instanceof Doctrine\IEntity) {
 						$parsedValues[$property->name] = $this->initValues($value, $entity->{$property->name});
 					}
 
@@ -137,11 +134,11 @@ class EntityMapper extends Object implements IEntityMapper
 
 	/**
 	 * @param $values
-	 * @param BaseEntity $entity
+	 * @param Doctrine\IEntity $entity
 	 *
-	 * @return BaseEntity
+	 * @return Doctrine\IEntity
 	 */
-	public function updateValues($values, BaseEntity $entity)
+	public function updateValues($values, Doctrine\IEntity $entity)
 	{
 		$parsedValues = array();
 		$properties = $entity->getReflection()->getProperties();
@@ -155,7 +152,7 @@ class EntityMapper extends Object implements IEntityMapper
 
 			if ($value !== NULL) {
 				if ($value instanceof \Nette\ArrayHash) {
-					if (!$entity->{$property->name} instanceof BaseEntity) {
+					if (!$entity->{$property->name} instanceof Doctrine\IEntity) {
 						$className = NULL;
 
 						if ($property->hasAnnotation('ORM\OneToOne')) {
@@ -175,7 +172,7 @@ class EntityMapper extends Object implements IEntityMapper
 						}
 
 						// Check if class is callable
-						if (!$entity->{$property->name} instanceof BaseEntity && class_exists($className)) {
+						if (!$entity->{$property->name} instanceof Doctrine\IEntity && class_exists($className)) {
 							$entity->{$property->name} = new $className;
 
 						} else {
@@ -184,7 +181,7 @@ class EntityMapper extends Object implements IEntityMapper
 					}
 
 					// Check again if entity was created
-					if ($entity->{$property->name} instanceof BaseEntity) {
+					if ($entity->{$property->name} instanceof Doctrine\IEntity) {
 						$parsedValues[$property->name] = $this->updateValues($value, $entity->{$property->name});
 					}
 

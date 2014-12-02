@@ -14,6 +14,12 @@
 
 namespace IPub\Doctrine\Crud\Create;
 
+use Nette;
+use Nette\Utils;
+
+use IPub;
+use IPub\Doctrine;
+
 interface IEntityCreator
 {
 	/**
@@ -24,9 +30,12 @@ interface IEntityCreator
 	public function setFlush($flush);
 
 	/**
-	 * @param $values
+	 * @param Utils\ArrayHash $values
+	 * @param Doctrine\IEntity|NULL $entity
 	 *
-	 * @return \IPub\Doctrine\Entity
+	 * @return Doctrine\IEntity
+	 *
+	 * @throws Nette\InvalidArgumentException
 	 */
-	public function create($values);
+	public function create(Utils\ArrayHash $values, Doctrine\IEntity $entity = NULL);
 }

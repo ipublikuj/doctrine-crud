@@ -14,25 +14,29 @@
 
 namespace IPub\Doctrine\Crud;
 
+use IPub;
+use IPub\Doctrine;
+use IPub\Doctrine\Crud;
+
 interface IEntityCrud 
 {
 	/**
-	 * @return \IPub\Doctrine\EntityDao
+	 * @return Crud\Create\EntityCreator
 	 */
-	public function getEntityReader();
+	public function getEntityCreator();
 
 	/**
-	 * @return \IPub\Doctrine\Crud\Delete\EntityDeleter
-	 */
-	public function getEntityDeleter();
-
-	/**
-	 * @return \IPub\Doctrine\Crud\Update\EntityUpdater
+	 * @return Crud\Update\EntityUpdater
 	 */
 	public function getEntityUpdater();
 
 	/**
-	 * @return \IPub\Doctrine\Crud\Create\EntityCreator
+	 * @return Crud\Delete\EntityDeleter
 	 */
-	public function getEntityCreator();
+	public function getEntityDeleter();
+
+	/**
+	 * @return Doctrine\EntityDao
+	 */
+	public function getEntityReader();
 }

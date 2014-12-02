@@ -14,29 +14,31 @@
 
 namespace IPub\Doctrine\Crud;
 
-use IPub\Doctrine\Mapping\IEntityMapper;
+use Nette;
 
 use Kdyby\Doctrine\EntityManager;
 
-use Nette\Object;
+use IPub;
+use IPub\Doctrine;
+use IPub\Doctrine\Mapping;
 
-class EntityCrudFactory extends Object implements IEntityCrudFactory
+class EntityCrudFactory extends Nette\Object implements IEntityCrudFactory
 {
 	/**
-	 * @var \Kdyby\Doctrine\EntityManager
+	 * @var EntityManager
 	 */
 	private $entityManager;
 
 	/**
-	 * @var \IPub\Doctrine\Mapping\IEntityMapper
+	 * @var Mapping\IEntityMapper
 	 */
 	private $entityMapper;
 
 	/**
 	 * @param EntityManager $entityManager
-	 * @param IEntityMapper $entityMapper
+	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(EntityManager $entityManager, IEntityMapper $entityMapper)
+	function __construct(EntityManager $entityManager, Mapping\IEntityMapper $entityMapper)
 	{
 		$this->entityManager = $entityManager;
 		$this->entityMapper = $entityMapper;
@@ -44,6 +46,7 @@ class EntityCrudFactory extends Object implements IEntityCrudFactory
 
 	/**
 	 * @param $entityName
+	 *
 	 * @return EntityCrud
 	 */
 	public function createEntityCrud($entityName)

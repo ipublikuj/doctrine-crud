@@ -14,55 +14,64 @@
 
 namespace IPub\Doctrine\Crud\Create;
 
-use IPub\Doctrine\Crud\CrudManager,
-	IPub\Doctrine\EntityDao,
-	IPub\Doctrine\Mapping\IEntityMapper,
-	IPub\Doctrine\Entity;
+use Nette;
+use Nette\Utils;
 
-class EntityCreator extends CrudManager implements IEntityCreator
+use IPub;
+use IPub\Doctrine;
+use IPub\Doctrine\Crud;
+use IPub\Doctrine\Mapping;
+
+class EntityCreator extends Crud\CrudManager implements IEntityCreator
 {
 	/**
 	 * @var array
 	 */
-	public $beforeCreate = array();
+	public $beforeCreate = [];
 
 	/**
 	 * @var array
 	 */
-	public $afterCreate = array();
+	public $afterCreate = [];
 
 	/**
-	 * @var \IPub\Doctrine\Mapping\IEntityMapper
+	 * @var Mapping\IEntityMapper
 	 */
 	private $entityMapper;
 
 	/**
-	 * @var \IPub\Doctrine\EntityDao
+	 * @var Doctrine\EntityDao
 	 */
 	private $dao;
 
 	/**
-	 * @param EntityDao $dao
-	 * @param IEntityMapper $entityMapper
+	 * @param Doctrine\EntityDao $dao
+	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(EntityDao $dao, IEntityMapper $entityMapper)
+	function __construct(Doctrine\EntityDao $dao, Mapping\IEntityMapper $entityMapper)
 	{
 		$this->dao = $dao;
 		$this->entityMapper = $entityMapper;
 	}
 
 	/**
-	 * @param $values
-	 *
-	 * @return Entity
+	 * {@inheritdoc}
 	 */
-	public function create($values)
+	public function create(Utils\ArrayHash $values, Doctrine\IEntity $entity = NULL)
 	{
-		$entity = $this->dao->createEntity();
+		if (!$entity instanceof Doctrine\IEntity) {
+			$entity = $this->dao->createEntity();
+		}
+
+		if (!$entity) {
+			throw new Nette\InvalidArgumentException('Entity could not be created.');
+		}
 
 		$this->processHooks($this->beforeCreate, array($entity, $values));
+
 		$this->entityMapper->initValues($values, $entity);
 		$this->dao->add($entity);
+
 		$this->processHooks($this->afterCreate, array($entity, $values));
 
 		if ($this->getFlush() === TRUE) {

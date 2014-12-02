@@ -14,6 +14,11 @@
 
 namespace IPub\Doctrine\Crud\Delete;
 
+use Nette;
+
+use IPub;
+use IPub\Doctrine;
+
 interface IEntityDeleter
 {
 	/**
@@ -24,9 +29,11 @@ interface IEntityDeleter
 	public function setFlush($flush);
 
 	/**
-	 * @param int|\IPub\Doctrine\Entity $entity
+	 * @param Doctrine\IEntity|int $entity
 	 *
 	 * @return bool
+	 *
+	 * @throws Nette\InvalidStateException
 	 */
 	public function delete($entity);
 }

@@ -14,7 +14,7 @@
 
 namespace IPub\Doctrine\Crud;
 
-interface IEntityCrudFactory 
+interface IEntityCrudFactory
 {
 	/**
 	 * @param $entityName

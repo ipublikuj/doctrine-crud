@@ -14,8 +14,8 @@
 
 namespace IPub\Doctrine\Crud;
 
-use Nette\InvalidStateException,
-	Nette\Object;
+use Nette;
+use Nette\Object;
 
 abstract class CrudManager extends Object
 {
@@ -48,17 +48,17 @@ abstract class CrudManager extends Object
 	 * @param $hooks
 	 * @param array $args
 	 *
-	 * @throws \Nette\InvalidStateException
+	 * @throws Nette\InvalidStateException
 	 */
 	protected function processHooks($hooks, array $args = array())
 	{
 		if (!is_array($hooks)) {
-			throw new InvalidStateException('Hooks configuration must be in array');
+			throw new Nette\InvalidStateException('Hooks configuration must be in array');
 		}
 
 		foreach ($hooks as $hook) {
 			if (!is_callable($hook)) {
-				throw new InvalidStateException('Invalid callback given.');
+				throw new Nette\InvalidStateException('Invalid callback given.');
 			}
 
 			call_user_func_array($hook, $args);

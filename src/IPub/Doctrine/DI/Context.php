@@ -14,41 +14,38 @@
 
 namespace IPub\Doctrine\DI;
 
-use Nette\Object;
-use IPub\Doctrine\IValidator;
-use Nette\InvalidStateException;
-use Nette\DI\Container;
+use Nette;
+use Nette\DI;
 
-class Context extends Object implements IContext
+use IPub;
+use IPub\Doctrine;
+
+class Context extends Nette\Object implements IContext
 {
 	/**
-	 * @var  Container
+	 * @var  DI\Container
 	 */
 	private $container;
 
 	/**
-	 * @param Container $container
+	 * @param DI\Container $container
 	 */
-	function __construct(Container $container)
+	function __construct(DI\Container $container)
 	{
 		$this->container = $container;
 	}
 
 	/**
-	 * @param $class
-	 *
-	 * @return IValidator
-	 *
-	 * @throws \Nette\InvalidStateException
+	 * {@inheritdoc}
 	 */
 	public function getValidator($class)
 	{
 		$validator = $this->container->getByType($class);
 
-		if ($validator instanceof IValidator) {
+		if ($validator instanceof Doctrine\IValidator) {
 			return $validator;
 		}
 
-		throw new InvalidStateException('Object "' . $class . '" is not instance of IPub\Doctrine\IValidator');
+		throw new Nette\InvalidStateException('Object "' . $class . '" is not instance of IPub\Doctrine\IValidator');
 	}
 }

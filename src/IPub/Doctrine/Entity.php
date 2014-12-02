@@ -14,23 +14,24 @@
 
 namespace IPub\Doctrine;
 
-use IPub\Doctrine\Mapping\EntityHydrator,
-	IPub\Doctrine\IdentifiedEntity;
+use IPub;
+use IPub\Doctrine;
+use IPub\Doctrine\Mapping;
 
-abstract class Entity extends IdentifiedEntity
+abstract class Entity extends IdentifiedEntity implements IEntity
 {
 	/**
-	 * @var  EntityHydrator
+	 * @var  Mapping\EntityHydrator
 	 */
 	private $hydrator;
 
 	/**
-	 * @return EntityHydrator
+	 * @return Mapping\EntityHydrator
 	 */
 	private function getHydrator()
 	{
 		if ($this->hydrator === NULL) {
-			$this->hydrator = new EntityHydrator();
+			$this->hydrator = new Mapping\EntityHydrator();
 		}
 
 		return $this->hydrator;
