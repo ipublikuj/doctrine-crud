@@ -28,6 +28,18 @@ use Kdyby;
 abstract class IdentifiedEntity extends \Kdyby\Doctrine\Entities\BaseEntity
 {
 	/**
+	 * @param integer $id
+	 *
+	 * @return $this
+	 */
+	final public function setId($id)
+	{
+		$this->id = $id;
+
+		return $this;
+	}
+
+	/**
 	 * @return integer
 	 */
 	final public function getId()
