@@ -1,17 +1,17 @@
 <?php
 /**
- * IEntity.php
+ * IException.php
  *
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
  * @author		Adam Kadlec http://www.ipublikuj.eu
  * @package		iPublikuj:Doctrine!
- * @subpackage	common
+ * @subpackage	Exceptions
  * @since		5.0
  *
- * @date		29.01.14
+ * @date		06.12.15
  */
 
-namespace IPub\Doctrine;
+namespace IPub\Doctrine\Exceptions;
 
-interface IEntity {}
+interface IException {}

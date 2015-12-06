@@ -1,31 +1,44 @@
 <?php
 /**
- * TIdentifiedEntity.php
+ * IdentifiedEntity.php
  *
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
  * @author		Adam Kadlec http://www.ipublikuj.eu
  * @package		iPublikuj:Doctrine!
- * @subpackage	common
+ * @subpackage	Entities
  * @since		5.0
  *
  * @date		29.01.14
  */
 
-namespace IPub\Doctrine;
+namespace IPub\Doctrine\Entities;
 
-use Doctrine;
 use Doctrine\ORM\Mapping as ORM;
 
+use Nette;
+
+use Kdyby;
+
 /**
- * @ORM\MappedSuperclass()
+ * @ORM\MappedSuperclass
  *
  * @property-read int $id
  */
-trait TIdentifiedEntity
+abstract class IdentifiedEntity extends Entity implements IIdentifiedEntity
 {
 	/**
-	 * @return integer
+	 * {@inheritdoc}
+	 */
+	final public function setId($id)
+	{
+		$this->id = $id;
+
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
 	 */
 	final public function getId()
 	{

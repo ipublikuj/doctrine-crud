@@ -6,24 +6,27 @@
  * @license		http://www.ipublikuj.eu
  * @author		Adam Kadlec http://www.ipublikuj.eu
  * @package		iPublikuj:Doctrine!
- * @subpackage	common
+ * @subpackage	Entities
  * @since		5.0
  *
  * @date		29.01.14
  */
 
-namespace IPub\Doctrine;
+namespace IPub\Doctrine\Entities;
 
 use IPub;
 use IPub\Doctrine;
 use IPub\Doctrine\Mapping;
 
+/**
+ * @ORM\MappedSuperclass
+ */
 trait TEntity
 {
 	/**
 	 * @var  Mapping\EntityHydrator
 	 */
-	private $hydrator;
+	protected $hydrator;
 
 	/**
 	 * @return string
@@ -31,18 +34,6 @@ trait TEntity
 	public static function getClassName()
 	{
 		return get_called_class();
-	}
-
-	/**
-	 * @return Mapping\EntityHydrator
-	 */
-	private function getHydrator()
-	{
-		if ($this->hydrator === NULL) {
-			$this->hydrator = new Mapping\EntityHydrator();
-		}
-
-		return $this->hydrator;
 	}
 
 	/**
@@ -67,9 +58,22 @@ trait TEntity
 	public function __toString()
 	{
 		if (isset($this->name) && $this->name !== NULL) {
-			return (string)$this->name;
+			return (string) $this->name;
+
 		} else {
-			return (string)$this->id;
+			return (string) $this->id;
 		}
+	}
+
+	/**
+	 * @return Mapping\EntityHydrator
+	 */
+	protected function getHydrator()
+	{
+		if ($this->hydrator === NULL) {
+			$this->hydrator = new Mapping\EntityHydrator();
+		}
+
+		return $this->hydrator;
 	}
 }

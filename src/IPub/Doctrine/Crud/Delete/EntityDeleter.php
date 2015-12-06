@@ -14,11 +14,13 @@
 
 namespace IPub\Doctrine\Crud\Delete;
 
-use Nette;
+use Doctrine\ORM;
 
 use IPub;
 use IPub\Doctrine;
 use IPub\Doctrine\Crud;
+use IPub\Doctrine\Entities;
+use IPub\Doctrine\Exceptions;
 
 class EntityDeleter extends Crud\CrudManager implements IEntityDeleter
 {
@@ -33,16 +35,25 @@ class EntityDeleter extends Crud\CrudManager implements IEntityDeleter
 	public $afterDelete = [];
 
 	/**
-	 * @var Doctrine\EntityDao
+	 * @var ORM\EntityRepository
 	 */
-	private $dao;
+	protected $entityRepository;
 
 	/**
-	 * @param Doctrine\EntityDao $dao
+	 * @var ORM\EntityManager
 	 */
-	function __construct(Doctrine\EntityDao $dao)
-	{
-		$this->dao = $dao;
+	protected $entityManager;
+
+	/**
+	 * @param ORM\EntityRepository $entityRepository
+	 * @param ORM\EntityManager $entityManager
+	 */
+	function __construct(
+		ORM\EntityRepository $entityRepository,
+		ORM\EntityManager $entityManager
+	) {
+		$this->entityRepository = $entityRepository;
+		$this->entityManager = $entityManager;
 	}
 
 	/**
@@ -50,22 +61,22 @@ class EntityDeleter extends Crud\CrudManager implements IEntityDeleter
 	 */
 	public function delete($entity)
 	{
-		if (!$entity instanceof Doctrine\IEntity) {
-			$entity = $this->dao->find((int) $entity);
+		if (!$entity instanceof Entities\IEntity) {
+			$entity = $this->entityRepository->find($entity);
 		}
 
 		if (!$entity) {
-			throw new Nette\InvalidArgumentException('Entity not found.');
+			throw new Exceptions\InvalidArgumentException('Entity not found.');
 		}
 
 		$this->processHooks($this->beforeDelete, array($entity));
 
-		$this->dao->delete($entity);
+		$this->entityManager->remove($entity);
 
 		$this->processHooks($this->afterDelete);
 
 		if ($this->getFlush() === TRUE) {
-			$this->dao->save();
+			$this->entityManager->flush();
 		}
 
 		return TRUE;

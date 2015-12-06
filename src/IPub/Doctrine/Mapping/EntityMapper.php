@@ -16,69 +16,62 @@ namespace IPub\Doctrine\Mapping;
 
 use Nette;
 use Nette\Reflection;
+use Nette\Utils;
 
 use IPub;
 use IPub\Doctrine;
+use IPub\Doctrine\Entities;
+use IPub\Doctrine\Exceptions;
 
 class EntityMapper extends Nette\Object implements IEntityMapper
 {
 	/**
-	 * @var Doctrine\DI\IContext
+	 * @var Doctrine\Validators
 	 */
-	private $context;
+	protected $validators;
 
 	/**
 	 * @var Doctrine\Mapping\IEntityHydrator
 	 */
-	private $entityMapper;
+	protected $entityMapper;
 
 	/**
-	 * @param Doctrine\DI\IContext $context
+	 * @param Doctrine\Validators $validators
 	 * @param IEntityHydrator $entityMapper
 	 */
-	function __construct(Doctrine\DI\IContext $context, IEntityHydrator $entityMapper)
+	public function __construct(Doctrine\Validators $validators, IEntityHydrator $entityMapper)
 	{
-		$this->context = $context;
+		$this->validators = $validators;
 		$this->entityMapper = $entityMapper;
 	}
 
 	/**
-	 * @param $values
-	 * @param Doctrine\IEntity $entity
-	 *
-	 * @return Doctrine\IEntity
+	 * {@inheritdoc}
 	 */
-	public function setValues($values, Doctrine\IEntity $entity)
+	public function setValues($values, Entities\IEntity $entity)
 	{
 		return $this->entityMapper->hydrate($values, $entity);
 	}
 
 	/**
-	 * @param Doctrine\IEntity $entity
-	 *
-	 * @return array
+	 * {@inheritdoc}
 	 */
-	public function getValues(Doctrine\IEntity &$entity)
+	public function getValues(Entities\IEntity &$entity)
 	{
 		return $this->entityMapper->extract($entity);
 	}
 
 	/**
-	 * @param $values
-	 * @param Doctrine\IEntity $entity
-	 *
-	 * @return Doctrine\IEntity
-	 *
-	 * @throws Nette\InvalidStateException
+	 * {@inheritdoc}
 	 */
-	public function initValues($values, Doctrine\IEntity $entity)
+	public function initValues($values, Entities\IEntity $entity)
 	{
-		$parsedValues = array();
+		$parsedValues = [];
 		$properties = $entity->getReflection()->getProperties();
 
 		foreach ($properties as $property) {
 			if ($property->hasAnnotation('required') && !isset($values[$property->name])) {
-				throw new Nette\InvalidStateException('Missing required key "' . $property->name . '"');
+				throw new Exceptions\InvalidStateException('Missing required key "' . $property->name . '"');
 			}
 
 			if (!array_key_exists($property->name, $values) || (!$property->hasAnnotation('writable') && !$property->hasAnnotation('required'))) {
@@ -88,8 +81,8 @@ class EntityMapper extends Nette\Object implements IEntityMapper
 			$value = $values[$property->name];
 
 			if ($value !== NULL) {
-				if ($value instanceof Nette\ArrayHash) {
-					if (!$entity->{$property->name} instanceof Doctrine\IEntity) {
+				if ($value instanceof Utils\ArrayHash) {
+					if (!$entity->{$property->name} instanceof Entities\IEntity) {
 						$className = NULL;
 
 						if ($property->hasAnnotation('ORM\OneToOne')) {
@@ -109,7 +102,7 @@ class EntityMapper extends Nette\Object implements IEntityMapper
 						}
 
 						// Check if class is callable
-						if (!$entity->{$property->name} instanceof Doctrine\IEntity && class_exists($className)) {
+						if (!$entity->{$property->name} instanceof Entities\IEntity && class_exists($className)) {
 							$entity->{$property->name} = new $className;
 
 						} else {
@@ -118,7 +111,7 @@ class EntityMapper extends Nette\Object implements IEntityMapper
 					}
 
 					// Check again if entity was created
-					if ($entity->{$property->name} instanceof Doctrine\IEntity) {
+					if ($entity->{$property->name} instanceof Entities\IEntity) {
 						$parsedValues[$property->name] = $this->initValues($value, $entity->{$property->name});
 					}
 
@@ -132,14 +125,11 @@ class EntityMapper extends Nette\Object implements IEntityMapper
 	}
 
 	/**
-	 * @param $values
-	 * @param Doctrine\IEntity $entity
-	 *
-	 * @return Doctrine\IEntity
+	 * {@inheritdoc}
 	 */
-	public function updateValues($values, Doctrine\IEntity $entity)
+	public function updateValues($values, Entities\IEntity $entity)
 	{
-		$parsedValues = array();
+		$parsedValues = [];
 		$properties = $entity->getReflection()->getProperties();
 
 		foreach ($properties as $property) {
@@ -149,8 +139,8 @@ class EntityMapper extends Nette\Object implements IEntityMapper
 
 			$value = $values[$property->name];
 
-				if ($value instanceof Nette\ArrayHash) {
-					if (!$entity->{$property->name} instanceof Doctrine\IEntity) {
+				if ($value instanceof Utils\ArrayHash) {
+					if (!$entity->{$property->name} instanceof Entities\IEntity) {
 						$className = NULL;
 
 						if ($property->hasAnnotation('ORM\OneToOne')) {
@@ -170,7 +160,7 @@ class EntityMapper extends Nette\Object implements IEntityMapper
 						}
 
 						// Check if class is callable
-						if (!$entity->{$property->name} instanceof Doctrine\IEntity && class_exists($className)) {
+						if (!$entity->{$property->name} instanceof Entities\IEntity && class_exists($className)) {
 							$entity->{$property->name} = new $className;
 
 						} else {
@@ -179,7 +169,7 @@ class EntityMapper extends Nette\Object implements IEntityMapper
 					}
 
 					// Check again if entity was created
-					if ($entity->{$property->name} instanceof Doctrine\IEntity) {
+					if ($entity->{$property->name} instanceof Entities\IEntity) {
 						$parsedValues[$property->name] = $this->updateValues($value, $entity->{$property->name});
 					}
 
@@ -197,10 +187,11 @@ class EntityMapper extends Nette\Object implements IEntityMapper
 	 *
 	 * @return mixed
 	 */
-	private function validateProperty(Reflection\Property $property, $value)
+	protected function validateProperty(Reflection\Property $property, $value)
 	{
-		if ($validatorClass = $property->getAnnotation('validator')) {
-			$value = $this->context->getValidator($validatorClass)->validate($value);
+		// Check if property has validator and validator is registered
+		if ($validatorClass = $property->getAnnotation('validator') AND $validator = $this->validators->getValidator($validatorClass)) {
+			$value = $validator->validate($value);
 		}
 
 		return $value;

@@ -16,6 +16,8 @@ namespace IPub\Doctrine\Crud;
 
 use Nette;
 
+use Doctrine\ORM;
+
 use IPub;
 use IPub\Doctrine;
 use IPub\Doctrine\Crud;
@@ -26,36 +28,40 @@ class EntityCrud extends Nette\Object implements IEntityCrud
 	/**
 	 * @var Mapping\IEntityMapper
 	 */
-	private $entityMapper;
-
-	/**
-	 * @var Doctrine\EntityDao
-	 */
-	private $reader;
+	protected $mapper;
 
 	/**
 	 * @var Crud\Delete\EntityDeleter
 	 */
-	private $deleter;
+	protected $deleter;
 
 	/**
 	 * @var Crud\Update\EntityUpdater
 	 */
-	private $updater;
+	protected $updater;
 
 	/**
-	 * @var  Crud\Create\EntityCreator
+	 * @var Crud\Create\EntityCreator
 	 */
-	private $creator;
+	protected $creator;
 
 	/**
-	 * @param Doctrine\EntityDao $dao
-	 * @param Mapping\IEntityMapper $entityMapper
+	 * @var ORM\EntityRepository
 	 */
-	function __construct(Doctrine\EntityDao $dao, Mapping\IEntityMapper $entityMapper)
+	protected $repository;
+
+	protected $em;
+
+	/**
+	 * @param ORM\EntityRepository $repository
+	 * @param ORM\EntityManager $em
+	 * @param Mapping\IEntityMapper $mapper
+	 */
+	function __construct(ORM\EntityRepository $repository, ORM\EntityManager $em, Mapping\IEntityMapper $mapper)
 	{
-		$this->reader = $dao;
-		$this->entityMapper = $entityMapper;
+		$this->repository = $repository;
+		$this->em = $em;
+		$this->mapper = $mapper;
 	}
 
 	/**
@@ -64,7 +70,7 @@ class EntityCrud extends Nette\Object implements IEntityCrud
 	public function getEntityCreator()
 	{
 		if ($this->creator === NULL) {
-			$this->creator = new Crud\Create\EntityCreator($this->getEntityReader(), $this->entityMapper);
+			$this->creator = new Crud\Create\EntityCreator($this->repository, $this->em, $this->mapper);
 		}
 
 		return $this->creator;
@@ -76,7 +82,7 @@ class EntityCrud extends Nette\Object implements IEntityCrud
 	public function getEntityUpdater()
 	{
 		if ($this->updater === NULL) {
-			$this->updater = new Crud\Update\EntityUpdater($this->getEntityReader(), $this->entityMapper);
+			$this->updater = new Crud\Update\EntityUpdater($this->repository, $this->em, $this->mapper);
 		}
 
 		return $this->updater;
@@ -88,17 +94,9 @@ class EntityCrud extends Nette\Object implements IEntityCrud
 	public function getEntityDeleter()
 	{
 		if ($this->deleter === NULL) {
-			$this->deleter = new Crud\Delete\EntityDeleter($this->getEntityReader());
+			$this->deleter = new Crud\Delete\EntityDeleter($this->repository, $this->em);
 		}
 
 		return $this->deleter;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getEntityReader()
-	{
-		return $this->reader;
 	}
 }

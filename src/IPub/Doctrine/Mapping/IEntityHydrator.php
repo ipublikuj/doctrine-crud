@@ -16,28 +16,29 @@ namespace IPub\Doctrine\Mapping;
 
 use IPub;
 use IPub\Doctrine;
+use IPub\Doctrine\Entities;
 
 interface IEntityHydrator
 {
 	/**
 	 * @param $values
-	 * @param Doctrine\IEntity $entity
+	 * @param Entities\IEntity $entity
 	 *
-	 * @return Doctrine\IEntity
+	 * @return Entities\IEntity
 	 */
-	public function hydrate($values, Doctrine\IEntity $entity);
+	public function hydrate($values, Entities\IEntity $entity);
+
+	/**
+	 * @param Entities\IEntity $entity
+	 *
+	 * @return array
+	 */
+	public function extract(Entities\IEntity $entity);
 
 	/**
 	 * @param Doctrine\IEntity $entity
 	 *
 	 * @return array
 	 */
-	public function extract(Doctrine\IEntity &$entity);
-
-	/**
-	 * @param Doctrine\IEntity $entity
-	 *
-	 * @return array
-	 */
-	public function simpleExtract(Doctrine\IEntity &$entity);
+	public function simpleExtract(Entities\IEntity $entity);
 }

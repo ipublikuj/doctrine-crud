@@ -1,6 +1,6 @@
 <?php
 /**
- * IdentifiedEntity.php
+ * TIdentifiedEntity.php
  *
  * @copyright	More in license.md
  * @license		http://www.ipublikuj.eu
@@ -12,35 +12,32 @@
  * @date		29.01.14
  */
 
-namespace IPub\Doctrine;
+namespace IPub\Doctrine\Entities;
 
+use Doctrine;
 use Doctrine\ORM\Mapping as ORM;
 
-use Nette;
-
-use Kdyby;
-
 /**
- * @ORM\MappedSuperclass()
+ * @ORM\MappedSuperclass
  *
  * @property-read int $id
  */
-abstract class IdentifiedEntity extends \Kdyby\Doctrine\Entities\BaseEntity
+trait TIdentifiedEntity
 {
 	/**
-	 * @param integer $id
+	 * @param int $id
 	 *
 	 * @return $this
 	 */
-	final public function setId($id)
+	public function setId($id)
 	{
-		$this->id = $id;
+		$this->id = (int) $id;
 
 		return $this;
 	}
 
 	/**
-	 * @return integer
+	 * @return int
 	 */
 	final public function getId()
 	{

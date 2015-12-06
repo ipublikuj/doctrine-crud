@@ -19,6 +19,8 @@ use Nette\Utils;
 
 use IPub;
 use IPub\Doctrine;
+use IPub\Doctrine\Entities;
+use IPub\Doctrine\Exceptions;
 
 interface IEntityUpdater
 {
@@ -31,11 +33,11 @@ interface IEntityUpdater
 
 	/**
 	 * @param Utils\ArrayHash $values
-	 * @param Doctrine\IEntity|int $entity
+	 * @param Entities\IEntity|mixed $entity
 	 *
-	 * @return Doctrine\IEntity
+	 * @return Entities\IEntity
 	 *
-	 * @throws Nette\InvalidArgumentException
+	 * @throws Exceptions\InvalidArgumentException
 	 */
 	public function update(Utils\ArrayHash $values, $entity);
 }

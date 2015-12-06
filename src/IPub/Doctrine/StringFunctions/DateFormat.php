@@ -14,12 +14,12 @@
 
 namespace IPub\Doctrine\StringFunctions;
 
-use Doctrine\ORM\Query\AST\Functions\FunctionNode,
-	Doctrine\ORM\Query\Lexer;
+use Doctrine;
+use Doctrine\ORM\Query;
 
-class DateFormat extends FunctionNode
+class DateFormat extends Query\AST\Functions\FunctionNode
 {
-	/*
+	/**
 	 * Holds the timestamp of the DATE_FORMAT DQL statement
 	 *
 	 * @var mixed
@@ -34,11 +34,11 @@ class DateFormat extends FunctionNode
 	protected $formatChar;
 
 	/**
-	 * @param \Doctrine\ORM\Query\SqlWalker $sqlWalker
+	 * @param Query\SqlWalker $sqlWalker
 	 *
 	 * @return string
 	 */
-	public function getSql(\Doctrine\ORM\Query\SqlWalker $sqlWalker)
+	public function getSql(Query\SqlWalker $sqlWalker)
 	{
 		return 'DATE_FORMAT(' .
 			$sqlWalker->walkArithmeticExpression($this->dateExpression) .
@@ -48,19 +48,19 @@ class DateFormat extends FunctionNode
 	}
 
 	/**
-	 * @param \Doctrine\ORM\Query\Parser $parser
+	 * @param Query\Parser $parser
 	 *
 	 * @return void
 	 */
-	public function parse(\Doctrine\ORM\Query\Parser $parser)
+	public function parse(Query\Parser $parser)
 	{
-		$parser->match(Lexer::T_IDENTIFIER);
-		$parser->match(Lexer::T_OPEN_PARENTHESIS);
+		$parser->match(Query\Lexer::T_IDENTIFIER);
+		$parser->match(Query\Lexer::T_OPEN_PARENTHESIS);
 
 		$this->dateExpression = $parser->ArithmeticExpression();
-		$parser->match(Lexer::T_COMMA);
+		$parser->match(Query\Lexer::T_COMMA);
 
 		$this->formatChar = $parser->StringPrimary();
-		$parser->match(Lexer::T_CLOSE_PARENTHESIS);
+		$parser->match(Query\Lexer::T_CLOSE_PARENTHESIS);
 	}
 }

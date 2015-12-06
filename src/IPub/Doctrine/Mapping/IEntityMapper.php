@@ -14,38 +14,40 @@
 
 namespace IPub\Doctrine\Mapping;
 
+use IPub;
 use IPub\Doctrine;
+use IPub\Doctrine\Entities;
 
 interface IEntityMapper
 {
 	/**
 	 * @param $values
-	 * @param Doctrine\IEntity $entity
+	 * @param Entities\IEntity $entity
 	 *
-	 * @return Doctrine\IEntity
+	 * @return Entities\IEntity
 	 */
-	public function setValues($values, Doctrine\IEntity $entity);
+	public function setValues($values, Entities\IEntity $entity);
 
 	/**
-	 * @param Doctrine\IEntity $entity
+	 * @param Entities\IEntity $entity
 	 *
 	 * @return array
 	 */
-	public function getValues(Doctrine\IEntity &$entity);
+	public function getValues(Entities\IEntity &$entity);
 
 	/**
 	 * @param $values
-	 * @param Doctrine\IEntity $entity
+	 * @param Entities\IEntity $entity
 	 *
-	 * @return Doctrine\IEntity
+	 * @return Entities\IEntity
 	 */
-	public function initValues($values, Doctrine\IEntity $entity);
+	public function initValues($values, Entities\IEntity $entity);
 
 	/**
 	 * @param $values
-	 * @param Doctrine\IEntity $entity
+	 * @param Entities\IEntity $entity
 	 *
-	 * @return Doctrine\IEntity
+	 * @return Entities\IEntity
 	 */
-	public function updateValues($values, Doctrine\IEntity $entity);
+	public function updateValues($values, Entities\IEntity $entity);
 }

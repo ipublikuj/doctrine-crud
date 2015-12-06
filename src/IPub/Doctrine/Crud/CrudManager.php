@@ -15,9 +15,12 @@
 namespace IPub\Doctrine\Crud;
 
 use Nette;
-use Nette\Object;
 
-abstract class CrudManager extends Object
+use IPub;
+use IPub\Doctrine;
+use IPub\Doctrine\Exceptions;
+
+abstract class CrudManager extends Nette\Object
 {
 	/**
 	 * @var bool
@@ -45,20 +48,20 @@ abstract class CrudManager extends Object
 	}
 
 	/**
-	 * @param $hooks
+	 * @param array|mixed $hooks
 	 * @param array $args
 	 *
-	 * @throws Nette\InvalidStateException
+	 * @throws Exceptions\InvalidStateException
 	 */
 	protected function processHooks($hooks, array $args = array())
 	{
 		if (!is_array($hooks)) {
-			throw new Nette\InvalidStateException('Hooks configuration must be in array');
+			throw new Exceptions\InvalidStateException('Hooks configuration must be in array');
 		}
 
 		foreach ($hooks as $hook) {
 			if (!is_callable($hook)) {
-				throw new Nette\InvalidStateException('Invalid callback given.');
+				throw new Exceptions\InvalidStateException('Invalid callback given.');
 			}
 
 			call_user_func_array($hook, $args);

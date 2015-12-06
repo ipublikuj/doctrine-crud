@@ -14,12 +14,16 @@
 
 namespace IPub\Doctrine\Crud\Update;
 
+use Doctrine\ORM;
+
 use Nette;
 use Nette\Utils;
 
 use IPub;
 use IPub\Doctrine;
 use IPub\Doctrine\Crud;
+use IPub\Doctrine\Entities;
+use IPub\Doctrine\Exceptions;
 use IPub\Doctrine\Mapping;
 
 class EntityUpdater extends Crud\CrudManager implements IEntityUpdater
@@ -40,18 +44,28 @@ class EntityUpdater extends Crud\CrudManager implements IEntityUpdater
 	private $entityMapper;
 
 	/**
-	 * @var Doctrine\EntityDao
+	 * @var ORM\EntityRepository
 	 */
-	private $dao;
+	protected $entityRepository;
 
 	/**
-	 * @param Doctrine\EntityDao $dao
+	 * @var ORM\EntityManager
+	 */
+	protected $entityManager;
+
+	/**
+	 * @param ORM\EntityRepository $entityRepository
+	 * @param ORM\EntityManager $entityManager
 	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(Doctrine\EntityDao $dao, Mapping\IEntityMapper $entityMapper)
-	{
-		$this->dao = $dao;
+	function __construct(
+			ORM\EntityRepository $entityRepository,
+			ORM\EntityManager $entityManager,
+			Mapping\IEntityMapper $entityMapper
+	) {
 		$this->entityMapper = $entityMapper;
+		$this->entityRepository = $entityRepository;
+		$this->entityManager = $entityManager;
 	}
 
 	/**
@@ -59,23 +73,23 @@ class EntityUpdater extends Crud\CrudManager implements IEntityUpdater
 	 */
 	public function update(Utils\ArrayHash $values, $entity)
 	{
-		if (!$entity instanceof Doctrine\IEntity) {
-			$entity = $this->dao->find((int) $entity);
+		if (!$entity instanceof Entities\IEntity) {
+			$entity = $this->entityRepository->find($entity);
 		}
 
 		if (!$entity) {
-			throw new Nette\InvalidArgumentException('Entity not found.');
+			throw new Exceptions\InvalidArgumentException('Entity not found.');
 		}
 
 		$this->processHooks($this->beforeUpdate, array($entity, $values));
 
 		$this->entityMapper->updateValues($values, $entity);
-		$this->dao->add($entity);
+		$this->entityManager->persist($entity);
 
 		$this->processHooks($this->afterUpdate, array($entity, $values));
 
 		if ($this->getFlush() === TRUE) {
-			$this->dao->getEntityManager()->flush();
+			$this->entityManager->flush();
 		}
 
 		return $entity;

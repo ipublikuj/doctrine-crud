@@ -14,12 +14,16 @@
 
 namespace IPub\Doctrine\Crud\Create;
 
+use Doctrine\ORM;
+
 use Nette;
 use Nette\Utils;
 
 use IPub;
 use IPub\Doctrine;
 use IPub\Doctrine\Crud;
+use IPub\Doctrine\Entities;
+use IPub\Doctrine\Exceptions;
 use IPub\Doctrine\Mapping;
 
 class EntityCreator extends Crud\CrudManager implements IEntityCreator
@@ -37,45 +41,55 @@ class EntityCreator extends Crud\CrudManager implements IEntityCreator
 	/**
 	 * @var Mapping\IEntityMapper
 	 */
-	private $entityMapper;
+	protected $entityMapper;
 
 	/**
-	 * @var Doctrine\EntityDao
+	 * @var ORM\EntityRepository
 	 */
-	private $dao;
+	protected $entityRepository;
 
 	/**
-	 * @param Doctrine\EntityDao $dao
+	 * @var ORM\EntityManager
+	 */
+	protected $entityManager;
+
+	/**
+	 * @param ORM\EntityRepository $entityRepository
+	 * @param ORM\EntityManager $entityManager
 	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(Doctrine\EntityDao $dao, Mapping\IEntityMapper $entityMapper)
-	{
-		$this->dao = $dao;
+	function __construct(
+		ORM\EntityRepository $entityRepository,
+		ORM\EntityManager $entityManager,
+		Mapping\IEntityMapper $entityMapper
+	) {
 		$this->entityMapper = $entityMapper;
+		$this->entityRepository = $entityRepository;
+		$this->entityManager = $entityManager;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function create(Utils\ArrayHash $values, Doctrine\IEntity $entity = NULL)
+	public function create(Utils\ArrayHash $values, Entities\IEntity $entity  = NULL)
 	{
-		if (!$entity instanceof Doctrine\IEntity) {
-			$entity = $this->dao->createEntity();
+		if (!$entity instanceof Entities\IEntity) {
+			$entity = $this->entityRepository->createEntity();
 		}
 
 		if (!$entity) {
-			throw new Nette\InvalidArgumentException('Entity could not be created.');
+			throw new Exceptions\InvalidArgumentException('Entity could not be created.');
 		}
 
 		$this->processHooks($this->beforeCreate, array($entity, $values));
 
 		$this->entityMapper->initValues($values, $entity);
-		$this->dao->add($entity);
+		$this->entityManager->persist($entity);
 
 		$this->processHooks($this->afterCreate, array($entity, $values));
 
 		if ($this->getFlush() === TRUE) {
-			$this->dao->save();
+			$this->entityManager->flush($entity);
 		}
 
 		return $entity;

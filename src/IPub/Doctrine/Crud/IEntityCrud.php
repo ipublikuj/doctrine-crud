@@ -34,9 +34,4 @@ interface IEntityCrud
 	 * @return Crud\Delete\EntityDeleter
 	 */
 	public function getEntityDeleter();
-
-	/**
-	 * @return Doctrine\EntityDao
-	 */
-	public function getEntityReader();
 }

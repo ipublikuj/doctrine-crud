@@ -16,7 +16,7 @@ namespace IPub\Doctrine\Crud;
 
 use Nette;
 
-use Kdyby\Doctrine\EntityManager;
+use Doctrine\ORM;
 
 use IPub;
 use IPub\Doctrine;
@@ -25,7 +25,7 @@ use IPub\Doctrine\Mapping;
 class EntityCrudFactory extends Nette\Object implements IEntityCrudFactory
 {
 	/**
-	 * @var EntityManager
+	 * @var ORM\EntityManager
 	 */
 	private $entityManager;
 
@@ -35,22 +35,20 @@ class EntityCrudFactory extends Nette\Object implements IEntityCrudFactory
 	private $entityMapper;
 
 	/**
-	 * @param EntityManager $entityManager
+	 * @param ORM\EntityManager $entityManager
 	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(EntityManager $entityManager, Mapping\IEntityMapper $entityMapper)
+	function __construct(ORM\EntityManager $entityManager, Mapping\IEntityMapper $entityMapper)
 	{
 		$this->entityManager = $entityManager;
 		$this->entityMapper = $entityMapper;
 	}
 
 	/**
-	 * @param $entityName
-	 *
-	 * @return EntityCrud
+	 * {@inheritdoc}
 	 */
 	public function createEntityCrud($entityName)
 	{
-		return new EntityCrud($this->entityManager->getDao($entityName), $this->entityMapper);
+		return new EntityCrud($this->entityManager->getRepository($entityName), $this->entityManager, $this->entityMapper);
 	}
 }

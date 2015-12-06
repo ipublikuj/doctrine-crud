@@ -14,23 +14,20 @@
 
 namespace IPub\Doctrine\Mapping;
 
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common;
 
 use IPub;
 use IPub\Doctrine;
-use IPub\Doctrine\IdentifiedEntity;
+use IPub\Doctrine\Entities;
 
-use Nette\Object;
+use Nette;
 
-class EntityHydrator extends Object implements IEntityHydrator
+class EntityHydrator extends Nette\Object implements IEntityHydrator
 {
 	/**
-	 * @param $values
-	 * @param Doctrine\IEntity $entity
-	 *
-	 * @return Doctrine\IEntity
+	 * {@inheritdoc}
 	 */
-	public function hydrate($values, Doctrine\IEntity $entity)
+	public function hydrate($values, Entities\IEntity $entity)
 	{
 		if (count($values)) {
 			foreach ($values as $key => $value) {
@@ -44,15 +41,13 @@ class EntityHydrator extends Object implements IEntityHydrator
 	}
 
 	/**
-	 * @param Doctrine\IEntity $entity
-	 *
-	 * @return array
+	 * {@inheritdoc}
 	 */
-	public function extract(Doctrine\IEntity &$entity)
+	public function extract(Entities\IEntity $entity)
 	{
-		$details = array();
+		$details = [];
 
-		if ($entity instanceof IdentifiedEntity) {
+		if ($entity instanceof Doctrine\IIdentifiedEntity) {
 			$details['id'] = $entity->getId();
 		}
 
@@ -69,15 +64,13 @@ class EntityHydrator extends Object implements IEntityHydrator
 	}
 
 	/**
-	 * @param Doctrine\IEntity $entity
-	 *
-	 * @return array
+	 * {@inheritdoc}
 	 */
-	public function simpleExtract(Doctrine\IEntity &$entity)
+	public function simpleExtract(Entities\IEntity $entity)
 	{
-		$details = array();
+		$details = [];
 
-		if ($entity instanceof IdentifiedEntity) {
+		if ($entity instanceof Doctrine\IIdentifiedEntity) {
 			$details['id'] = $entity->getId();
 		}
 
@@ -94,11 +87,11 @@ class EntityHydrator extends Object implements IEntityHydrator
 	}
 
 	/**
-	 * @param Doctrine\IEntity $entity
+	 * @param Entities\IEntity $entity
 	 *
-	 * @return \Nette\Reflection\Property[]
+	 * @return Nette\Reflection\Property[]
 	 */
-	protected function getEntityProperties(Doctrine\IEntity &$entity)
+	protected function getEntityProperties(Entities\IEntity $entity)
 	{
 		return $entity->getReflection()->getProperties(\ReflectionProperty::IS_PROTECTED);
 	}
@@ -110,12 +103,12 @@ class EntityHydrator extends Object implements IEntityHydrator
 	 */
 	protected function extractor($value)
 	{
-		if ($value instanceof Doctrine\IEntity) {
+		if ($value instanceof Entities\IEntity) {
 			$value = $this->extract($value);
 
-		} else if ($value instanceof Collection) {
+		} else if ($value instanceof Common\Collections\Collection) {
 			$value = array_map(function ($entity) {
-				if ($entity instanceof Doctrine\IEntity) {
+				if ($entity instanceof Entities\IEntity) {
 					$entity = $this->simpleExtract($entity);
 				}
 
@@ -133,12 +126,12 @@ class EntityHydrator extends Object implements IEntityHydrator
 	 */
 	protected function simpleExtractor($value)
 	{
-		if ($value instanceof IdentifiedEntity) {
+		if ($value instanceof Doctrine\IIdentifiedEntity) {
 			$value = $value->getId();
 
-		} else if ($value instanceof Collection) {
+		} else if ($value instanceof Common\Collections\Collection) {
 			$value = array_map(function ($entity) {
-				if ($entity instanceof IdentifiedEntity) {
+				if ($entity instanceof Doctrine\IIdentifiedEntity) {
 					$entity = $entity->getId();
 				}
 

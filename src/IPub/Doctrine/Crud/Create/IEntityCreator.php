@@ -19,6 +19,8 @@ use Nette\Utils;
 
 use IPub;
 use IPub\Doctrine;
+use IPub\Doctrine\Entities;
+use IPub\Doctrine\Exceptions;
 
 interface IEntityCreator
 {
@@ -31,11 +33,11 @@ interface IEntityCreator
 
 	/**
 	 * @param Utils\ArrayHash $values
-	 * @param Doctrine\IEntity|NULL $entity
+	 * @param Entities\IEntity $entity
 	 *
-	 * @return Doctrine\IEntity
+	 * @return Entities\IEntity
 	 *
-	 * @throws Nette\InvalidArgumentException
+	 * @throws Exceptions\InvalidArgumentException
 	 */
-	public function create(Utils\ArrayHash $values, Doctrine\IEntity $entity = NULL);
+	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL);
 }
