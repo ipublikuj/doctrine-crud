@@ -34,18 +34,10 @@ use IPub\Doctrine\Mapping;
 class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
 {
 	/**
-	 * @var array
-	 */
-	public $defaults = [];
-
-	/**
 	 * @return void
 	 */
 	public function loadConfiguration()
 	{
-		// Merge extension configuration with kdyby/doctrine configuration
-		$this->managerDefaults = array_merge($this->managerDefaults, $this->defaults);
-
 		// Get container builder
 		$builder = $this->getContainerBuilder();
 
@@ -72,6 +64,8 @@ class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
 
 	public function beforeCompile()
 	{
+		parent::beforeCompile();
+
 		// Get container builder
 		$builder = $this->getContainerBuilder();
 
