@@ -2,14 +2,14 @@
 /**
  * EntityCrud.php
  *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Doctrine!
- * @subpackage	Crud
- * @since		5.0
+ * @copyright      More in license.md
+ * @license        http://www.ipublikuj.eu
+ * @author         Adam Kadlec http://www.ipublikuj.eu
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Crud
+ * @since          1.0.0
  *
- * @date		29.01.14
+ * @date           29.01.14
  */
 
 namespace IPub\Doctrine\Crud;
@@ -23,8 +23,21 @@ use IPub\Doctrine;
 use IPub\Doctrine\Crud;
 use IPub\Doctrine\Mapping;
 
+/**
+ * Doctrine CRUD
+ *
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Crud
+ *
+ * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ */
 class EntityCrud extends Nette\Object implements IEntityCrud
 {
+	/**
+	 * Define class name
+	 */
+	const CLASS_NAME = __CLASS__;
+
 	/**
 	 * @var Mapping\IEntityMapper
 	 */
@@ -50,6 +63,9 @@ class EntityCrud extends Nette\Object implements IEntityCrud
 	 */
 	protected $repository;
 
+	/**
+	 * @var ORM\EntityManager
+	 */
 	protected $em;
 
 	/**

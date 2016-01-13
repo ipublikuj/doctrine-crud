@@ -2,14 +2,14 @@
 /**
  * IEntityCrudFactory.php
  *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Doctrine!
- * @subpackage	Crud
- * @since		5.0
+ * @copyright      More in license.md
+ * @license        http://www.ipublikuj.eu
+ * @author         Adam Kadlec http://www.ipublikuj.eu
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Crud
+ * @since          1.0.0
  *
- * @date		29.01.14
+ * @date           29.01.14
  */
 
 namespace IPub\Doctrine\Crud\Create;
@@ -26,6 +26,14 @@ use IPub\Doctrine\Entities;
 use IPub\Doctrine\Exceptions;
 use IPub\Doctrine\Mapping;
 
+/**
+ * Doctrine CRUD entity creator
+ *
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Crud
+ *
+ * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ */
 class EntityCreator extends Crud\CrudManager implements IEntityCreator
 {
 	/**
@@ -71,22 +79,23 @@ class EntityCreator extends Crud\CrudManager implements IEntityCreator
 	/**
 	 * {@inheritdoc}
 	 */
-	public function create(Utils\ArrayHash $values, Entities\IEntity $entity  = NULL)
+	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL)
 	{
 		if (!$entity instanceof Entities\IEntity) {
-			$entity = $this->entityRepository->createEntity();
+			$entityName = $this->entityRepository->getClassName();
+			$entity = $this->entityManager->getClassMetadata($entityName)->newInstance();
 		}
 
-		if (!$entity) {
+		if (!$entity || !$entity instanceof Entities\IEntity) {
 			throw new Exceptions\InvalidArgumentException('Entity could not be created.');
 		}
 
-		$this->processHooks($this->beforeCreate, array($entity, $values));
+		$this->processHooks($this->beforeCreate, [$entity, $values]);
 
-		$this->entityMapper->initValues($values, $entity);
+		$this->entityMapper->fillEntity($values, $entity, TRUE);
 		$this->entityManager->persist($entity);
 
-		$this->processHooks($this->afterCreate, array($entity, $values));
+		$this->processHooks($this->afterCreate, [$entity, $values]);
 
 		if ($this->getFlush() === TRUE) {
 			$this->entityManager->flush($entity);

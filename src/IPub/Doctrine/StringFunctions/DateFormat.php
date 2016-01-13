@@ -2,14 +2,14 @@
 /**
  * DateFormat.php
  *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Doctrine!
- * @subpackage	String functions
- * @since		5.0
+ * @copyright      More in license.md
+ * @license        http://www.ipublikuj.eu
+ * @author         Adam Kadlec http://www.ipublikuj.eu
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     String functions
+ * @since          1.0.0
  *
- * @date		29.01.14
+ * @date           29.01.14
  */
 
 namespace IPub\Doctrine\StringFunctions;
@@ -19,6 +19,11 @@ use Doctrine\ORM\Query;
 
 class DateFormat extends Query\AST\Functions\FunctionNode
 {
+	/**
+	 * Define class name
+	 */
+	const CLASS_NAME = __CLASS__;
+
 	/**
 	 * Holds the timestamp of the DATE_FORMAT DQL statement
 	 *
@@ -41,9 +46,9 @@ class DateFormat extends Query\AST\Functions\FunctionNode
 	public function getSql(Query\SqlWalker $sqlWalker)
 	{
 		return 'DATE_FORMAT(' .
-			$sqlWalker->walkArithmeticExpression($this->dateExpression) .
-			','.
-			$sqlWalker->walkStringPrimary($this->formatChar) .
+		$sqlWalker->walkArithmeticExpression($this->dateExpression) .
+		',' .
+		$sqlWalker->walkStringPrimary($this->formatChar) .
 		')';
 	}
 

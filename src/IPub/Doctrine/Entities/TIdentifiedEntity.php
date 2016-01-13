@@ -2,14 +2,14 @@
 /**
  * TIdentifiedEntity.php
  *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Doctrine!
- * @subpackage	common
- * @since		5.0
+ * @copyright      More in license.md
+ * @license        http://www.ipublikuj.eu
+ * @author         Adam Kadlec http://www.ipublikuj.eu
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Entities
+ * @since          1.0.0
  *
- * @date		29.01.14
+ * @date           29.01.14
  */
 
 namespace IPub\Doctrine\Entities;
@@ -18,34 +18,44 @@ use Doctrine;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Doctrine CRUD identified entity helper trait
+ *
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     common
+ *
+ * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ *
  * @ORM\MappedSuperclass
  *
  * @property-read int $id
  */
 trait TIdentifiedEntity
 {
+	use TEntity;
+
 	/**
-	 * @param int $id
+	 * @param mixed $id
 	 *
 	 * @return $this
 	 */
 	public function setId($id)
 	{
-		$this->id = (int) $id;
-
-		return $this;
+		$this->id = $id;
 	}
 
 	/**
-	 * @return int
+	 * @return mixed
 	 */
 	final public function getId()
 	{
 		return $this->id;
 	}
 
-	public function __clone()
+	/**
+	 * @return string
+	 */
+	public function __toString()
 	{
-		$this->id = NULL;
+		return $this->id;
 	}
 }

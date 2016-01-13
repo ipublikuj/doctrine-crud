@@ -2,32 +2,40 @@
 /**
  * IEntity.php
  *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Doctrine!
- * @subpackage	Entities
- * @since		5.0
+ * @copyright      More in license.md
+ * @license        http://www.ipublikuj.eu
+ * @author         Adam Kadlec http://www.ipublikuj.eu
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Entities
+ * @since          1.0.0
  *
- * @date		29.01.14
+ * @date           29.01.14
  */
 
 namespace IPub\Doctrine\Entities;
 
+/**
+ * Doctrine CRUD base entity interface
+ *
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     common
+ *
+ * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ */
 interface IEntity
 {
 	/**
 	 * @return array
 	 */
-	public function toArray();
+	function toArray();
 
 	/**
 	 * @return array
 	 */
-	public function toSimpleArray();
+	function toSimpleArray();
 
 	/**
 	 * @return string
 	 */
-	public function __toString();
+	function __toString();
 }

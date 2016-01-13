@@ -20,16 +20,22 @@
 	},
 
 	"require": {
-		"php"				: ">=5.4",
-		"kdyby/doctrine"	: ">=2.0.0"
+		"php"	: ">=5.4",
+
+		"nette/di"		: "~2.2",
+		"nette/utils"	: "~2.2",
+
+		"kdyby/doctrine"	: "~3.0"
 	},
 
 	"require-dev": {
 		"nette/bootstrap"		: "~2.2",
+		"nette/mail"			: "~2.2",
+		"nette/safe-stream"		: "~2.2",
 		"nette/robot-loader"	: "~2.2",
 		"nette/tester"			: "@dev",
-		"tracy/tracy"			: "@dev",
-		"janmarek/mockista"		: "@dev"
+
+		"tracy/tracy"	: "@dev"
 	},
 
 	"autoload": {

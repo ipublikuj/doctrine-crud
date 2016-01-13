@@ -2,22 +2,35 @@
 /**
  * Validators.php
  *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Doctrine!
- * @subpackage	common
- * @since		5.0
+ * @copyright      More in license.md
+ * @license        http://www.ipublikuj.eu
+ * @author         Adam Kadlec http://www.ipublikuj.eu
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     common
+ * @since          1.0.0
  *
- * @date		06.12.15
+ * @date           06.12.15
  */
 
 namespace IPub\Doctrine;
 
 use Nette;
 
-class Validators extends Nette\Object
+/**
+ * Doctrine CRUD validators container
+ *
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     common
+ *
+ * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ */
+final class Validators extends Nette\Object
 {
+	/**
+	 * Define class name
+	 */
+	const CLASS_NAME = __CLASS__;
+
 	/**
 	 * @var IValidator[]
 	 */

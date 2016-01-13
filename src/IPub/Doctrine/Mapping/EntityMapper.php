@@ -2,17 +2,20 @@
 /**
  * EntityMapper.php
  *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Doctrine!
- * @subpackage	Mapping
- * @since		5.0
+ * @copyright      More in license.md
+ * @license        http://www.ipublikuj.eu
+ * @author         Adam Kadlec http://www.ipublikuj.eu
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Mapping
+ * @since          1.0.0
  *
- * @date		29.01.14
+ * @date           29.01.14
  */
 
 namespace IPub\Doctrine\Mapping;
+
+use Doctrine\Common;
+use Doctrine\ORM;
 
 use Nette;
 use Nette\Reflection;
@@ -23,177 +26,151 @@ use IPub\Doctrine;
 use IPub\Doctrine\Entities;
 use IPub\Doctrine\Exceptions;
 
-class EntityMapper extends Nette\Object implements IEntityMapper
+/**
+ * Doctrine CRUD entity mapper
+ *
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Mapping
+ *
+ * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ */
+final class EntityMapper extends Nette\Object implements IEntityMapper
 {
+	/**
+	 * Annotation field is blameable
+	 */
+	const EXTENSION_ANNOTATION = 'IPub\Doctrine\Mapping\Annotation\Crud';
+
+	/**
+	 * Define class name
+	 */
+	const CLASS_NAME = __CLASS__;
+
 	/**
 	 * @var Doctrine\Validators
 	 */
-	protected $validators;
+	private $validators;
 
 	/**
-	 * @var Doctrine\Mapping\IEntityHydrator
+	 * @var ORM\EntityManager
 	 */
-	protected $entityMapper;
+	private $entityManager;
+
+	/**
+	 * @var Common\Annotations\AnnotationReader
+	 */
+	private $annotationReader;
 
 	/**
 	 * @param Doctrine\Validators $validators
-	 * @param IEntityHydrator $entityMapper
+	 * @param ORM\EntityManager $entityManager
 	 */
-	public function __construct(Doctrine\Validators $validators, IEntityHydrator $entityMapper)
+	public function __construct(Doctrine\Validators $validators, ORM\EntityManager $entityManager)
 	{
 		$this->validators = $validators;
-		$this->entityMapper = $entityMapper;
+		$this->entityManager = $entityManager;
+
+		$this->annotationReader = $this->getDefaultAnnotationReader();
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function setValues($values, Entities\IEntity $entity)
+	public function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, $isNew = FALSE)
 	{
-		return $this->entityMapper->hydrate($values, $entity);
-	}
+		$classMetadata = $this->entityManager->getClassMetadata(get_class($entity));
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getValues(Entities\IEntity &$entity)
-	{
-		return $this->entityMapper->extract($entity);
-	}
+		foreach (array_merge($classMetadata->getFieldNames(), $classMetadata->getAssociationNames()) as $fieldName) {
+			$propertyReflection = new Nette\Reflection\Property(get_class($entity), $fieldName);
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function initValues($values, Entities\IEntity $entity)
-	{
-		$parsedValues = [];
-		$properties = $entity->getReflection()->getProperties();
+			/** @var Doctrine\Mapping\Annotation\Crud $crud */
+			if ($crud = $this->annotationReader->getPropertyAnnotation($propertyReflection, self::EXTENSION_ANNOTATION)) {
+				if ($isNew && $crud->isRequired() && !$values->offsetExists($fieldName)) {
+					throw new Exceptions\InvalidStateException('Missing required key "' . $fieldName . '"');
+				}
 
-		foreach ($properties as $property) {
-			if ($property->hasAnnotation('required') && !isset($values[$property->name])) {
-				throw new Exceptions\InvalidStateException('Missing required key "' . $property->name . '"');
-			}
+				if (!$values->offsetExists($fieldName) || (!$isNew && !$crud->isWritable()) || ($isNew && !$crud->isRequired())) {
+					continue;
+				}
 
-			if (!array_key_exists($property->name, $values) || (!$property->hasAnnotation('writable') && !$property->hasAnnotation('required'))) {
-				continue;
-			}
+				$value = $values->offsetGet($fieldName);
 
-			$value = $values[$property->name];
+				if ($value instanceof Utils\ArrayHash || is_array($value)) {
+					if (!$classMetadata->getFieldValue($entity, $fieldName) instanceof Entities\IEntity) {
+						$propertyAnnotations = $this->annotationReader->getPropertyAnnotations($propertyReflection);
 
-			if ($value !== NULL) {
-				if ($value instanceof Utils\ArrayHash) {
-					if (!$entity->{$property->name} instanceof Entities\IEntity) {
-						$className = NULL;
+						$annotations = array_map((function ($annotation) {
+							return get_class($annotation);
+						}), $propertyAnnotations);
 
-						if ($property->hasAnnotation('ORM\OneToOne')) {
-							$className = $property->getAnnotation('ORM\OneToOne')->targetEntity;
+						if (in_array(ORM\Mapping\OneToOne::class, $annotations, TRUE)) {
+							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, ORM\Mapping\OneToOne::class)->targetEntity;
 
-						} else if ($property->hasAnnotation('OneToOne')) {
-							$className = $property->getAnnotation('OneToOne')->targetEntity;
+						} elseif (in_array(ORM\Mapping\ManyToOne::class, $annotations, TRUE)) {
+							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, ORM\Mapping\ManyToOne::class)->targetEntity;
 
-						} else if ($property->hasAnnotation('ORM\ManyToOne')) {
-							$className = $property->getAnnotation('ORM\ManyToOne')->targetEntity;
-
-						} else if ($property->hasAnnotation('ManyToOne')) {
-							$className = $property->getAnnotation('ManyToOne')->targetEntity;
-
-						} else if ($property->hasAnnotation('var')) {
-							$className = $property->getAnnotation('var');
+						} else {
+							$className = $propertyReflection->getAnnotation('var');
 						}
 
 						// Check if class is callable
-						if (!$entity->{$property->name} instanceof Entities\IEntity && class_exists($className)) {
-							$entity->{$property->name} = new $className;
+						if (class_exists($className)) {
+							$classMetadata->setFieldValue($entity, $fieldName, new $className);
 
 						} else {
-							$entity->{$property->name} = $value;
+							$classMetadata->setFieldValue($entity, $fieldName, $value);
 						}
 					}
 
 					// Check again if entity was created
-					if ($entity->{$property->name} instanceof Entities\IEntity) {
-						$parsedValues[$property->name] = $this->initValues($value, $entity->{$property->name});
+					if (($fieldValue = $classMetadata->getFieldValue($entity, $fieldName)) && $fieldValue instanceof Entities\IEntity) {
+						$classMetadata->setFieldValue($entity, $fieldName, $this->fillEntity(Utils\ArrayHash::from((array) $value), $fieldValue, $isNew));
 					}
 
 				} else {
-					$parsedValues[$property->name] = $this->validateProperty($property, $value);
+					if ($crud->validator !== NULL) {
+						$value = $this->validateProperty($crud->validator, $value);
+					}
+
+					$classMetadata->setFieldValue($entity, $fieldName, $value);
 				}
 			}
 		}
 
-		return $this->setValues($parsedValues, $entity);
+		return $entity;
 	}
 
 	/**
-	 * {@inheritdoc}
-	 */
-	public function updateValues($values, Entities\IEntity $entity)
-	{
-		$parsedValues = [];
-		$properties = $entity->getReflection()->getProperties();
-
-		foreach ($properties as $property) {
-			if (!array_key_exists($property->name, $values) || !$property->hasAnnotation('writable')) {
-				continue;
-			}
-
-			$value = $values[$property->name];
-
-				if ($value instanceof Utils\ArrayHash) {
-					if (!$entity->{$property->name} instanceof Entities\IEntity) {
-						$className = NULL;
-
-						if ($property->hasAnnotation('ORM\OneToOne')) {
-							$className = $property->getAnnotation('ORM\OneToOne')->targetEntity;
-
-						} else if ($property->hasAnnotation('OneToOne')) {
-							$className = $property->getAnnotation('OneToOne')->targetEntity;
-
-						} else if ($property->hasAnnotation('ORM\ManyToOne')) {
-							$className = $property->getAnnotation('ORM\ManyToOne')->targetEntity;
-
-						} else if ($property->hasAnnotation('ManyToOne')) {
-							$className = $property->getAnnotation('ManyToOne')->targetEntity;
-
-						} else if ($property->hasAnnotation('var')) {
-							$className = $property->getAnnotation('var');
-						}
-
-						// Check if class is callable
-						if (!$entity->{$property->name} instanceof Entities\IEntity && class_exists($className)) {
-							$entity->{$property->name} = new $className;
-
-						} else {
-							$entity->{$property->name} = $value;
-						}
-					}
-
-					// Check again if entity was created
-					if ($entity->{$property->name} instanceof Entities\IEntity) {
-						$parsedValues[$property->name] = $this->updateValues($value, $entity->{$property->name});
-					}
-
-				} else {
-					$parsedValues[$property->name] = $this->validateProperty($property, $value);
-				}
-		}
-
-		return $this->setValues($parsedValues, $entity);
-	}
-
-	/**
-	 * @param Reflection\Property $property
+	 * @param string $validatorClass
 	 * @param $value
 	 *
 	 * @return mixed
 	 */
-	protected function validateProperty(Reflection\Property $property, $value)
+	private function validateProperty($validatorClass, $value)
 	{
 		// Check if property has validator and validator is registered
-		if ($validatorClass = $property->getAnnotation('validator') AND $validator = $this->validators->getValidator($validatorClass)) {
+		if ($validator = $this->validators->getValidator($validatorClass)) {
 			$value = $validator->validate($value);
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Create default annotation reader for extensions
+	 *
+	 * @return Common\Annotations\AnnotationReader
+	 */
+	private function getDefaultAnnotationReader()
+	{
+		$reader = new Common\Annotations\AnnotationReader;
+
+		Common\Annotations\AnnotationRegistry::registerAutoloadNamespace(
+			'IPub\\Doctrine\\Entities\\IEntity'
+		);
+
+		$reader = new Common\Annotations\CachedReader($reader, new Common\Cache\ArrayCache);
+
+		return $reader;
 	}
 }

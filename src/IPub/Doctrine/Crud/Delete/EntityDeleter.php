@@ -2,14 +2,14 @@
 /**
  * EntityDeleter.php
  *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Doctrine!
- * @subpackage	Crud
- * @since		5.0
+ * @copyright      More in license.md
+ * @license        http://www.ipublikuj.eu
+ * @author         Adam Kadlec http://www.ipublikuj.eu
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Crud
+ * @since          1.0.0
  *
- * @date		29.01.14
+ * @date           29.01.14
  */
 
 namespace IPub\Doctrine\Crud\Delete;
@@ -22,6 +22,14 @@ use IPub\Doctrine\Crud;
 use IPub\Doctrine\Entities;
 use IPub\Doctrine\Exceptions;
 
+/**
+ * Doctrine CRUD entity deleter
+ *
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Crud
+ *
+ * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ */
 class EntityDeleter extends Crud\CrudManager implements IEntityDeleter
 {
 	/**
@@ -69,7 +77,7 @@ class EntityDeleter extends Crud\CrudManager implements IEntityDeleter
 			throw new Exceptions\InvalidArgumentException('Entity not found.');
 		}
 
-		$this->processHooks($this->beforeDelete, array($entity));
+		$this->processHooks($this->beforeDelete, [$entity]);
 
 		$this->entityManager->remove($entity);
 

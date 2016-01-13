@@ -2,14 +2,14 @@
 /**
  * IEntityCreator.php
  *
- * @copyright	More in license.md
- * @license		http://www.ipublikuj.eu
- * @author		Adam Kadlec http://www.ipublikuj.eu
- * @package		iPublikuj:Doctrine!
- * @subpackage	Crud
- * @since		5.0
+ * @copyright      More in license.md
+ * @license        http://www.ipublikuj.eu
+ * @author         Adam Kadlec http://www.ipublikuj.eu
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Crud
+ * @since          1.0.0
  *
- * @date		29.01.14
+ * @date           29.01.14
  */
 
 namespace IPub\Doctrine\Crud\Create;
@@ -22,6 +22,14 @@ use IPub\Doctrine;
 use IPub\Doctrine\Entities;
 use IPub\Doctrine\Exceptions;
 
+/**
+ * Doctrine CRUD entity creator interface
+ *
+ * @package        iPublikuj:Doctrine!
+ * @subpackage     Crud
+ *
+ * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ */
 interface IEntityCreator
 {
 	/**
@@ -29,7 +37,7 @@ interface IEntityCreator
 	 *
 	 * @return $this
 	 */
-	public function setFlush($flush);
+	function setFlush($flush);
 
 	/**
 	 * @param Utils\ArrayHash $values
@@ -39,5 +47,5 @@ interface IEntityCreator
 	 *
 	 * @throws Exceptions\InvalidArgumentException
 	 */
-	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL);
+	function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL);
 }
