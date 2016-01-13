@@ -59,7 +59,7 @@ class ExtensionTest extends Tester\TestCase
 
 		$config->addConfig(__DIR__ . '/files/config.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22');
 
-		Doctrine\DI\ORMExtension::register($config);
+		Doctrine\DI\OrmExtension::register($config);
 
 		return $config->createContainer();
 	}
