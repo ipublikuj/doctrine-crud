@@ -14,11 +14,9 @@ $composer  = json_decode($content, TRUE);
 
 $composer['require']['nette/di'] = $version;
 $composer['require']['nette/utils'] = $version;
-$composer['require']['nette/security'] = $version;
-$composer['require']['nette/http'] = $version;
 
 if ($version === '~2.2.0') {
-	$composer['require-dev']['kdyby/doctrine'] = '2.3.1';
+	$composer['require']['kdyby/doctrine'] = '2.3.1';
 }
 
 $content = json_encode($composer);
