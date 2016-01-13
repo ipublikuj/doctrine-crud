@@ -39,11 +39,11 @@ final class EntityHydrator extends Nette\Object implements IEntityHydrator
 	 * @var array
 	 */
 	public static $mappedPropertyAnnotations = [
-		ORM\Mapping\Column::class,
-		ORM\Mapping\OneToMany::class,
-		ORM\Mapping\OneToOne::class,
-		ORM\Mapping\ManyToOne::class,
-		ORM\Mapping\ManyToMany::class,
+		'Doctrine\ORM\Mapping\Column',
+		'Doctrine\ORM\Mapping\OneToMany',
+		'Doctrine\ORM\Mapping\OneToOne',
+		'Doctrine\ORM\Mapping\ManyToOne',
+		'Doctrine\ORM\Mapping\ManyToMany',
 	];
 
 	/**

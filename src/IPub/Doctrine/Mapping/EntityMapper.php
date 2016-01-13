@@ -103,11 +103,11 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 							return get_class($annotation);
 						}), $propertyAnnotations);
 
-						if (in_array(ORM\Mapping\OneToOne::class, $annotations, TRUE)) {
-							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, ORM\Mapping\OneToOne::class)->targetEntity;
+						if (in_array('Doctrine\ORM\Mapping\OneToOne', $annotations, TRUE)) {
+							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, 'Doctrine\ORM\Mapping\OneToOne')->targetEntity;
 
-						} elseif (in_array(ORM\Mapping\ManyToOne::class, $annotations, TRUE)) {
-							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, ORM\Mapping\ManyToOne::class)->targetEntity;
+						} elseif (in_array('Doctrine\ORM\Mapping\ManyToOne', $annotations, TRUE)) {
+							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, 'Doctrine\ORM\Mapping\ManyToOne')->targetEntity;
 
 						} else {
 							$className = $propertyReflection->getAnnotation('var');
