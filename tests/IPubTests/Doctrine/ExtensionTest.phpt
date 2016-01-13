@@ -39,9 +39,14 @@ class ExtensionTest extends Tester\TestCase
 	{
 		$dic = $this->createContainer();
 
-		Assert::true($dic->getService('doctrine.validators') instanceof Doctrine\Validators);
-		Assert::true($dic->getService('doctrine.entity.mapper') instanceof Doctrine\Mapping\EntityMapper);
-		Assert::true($dic->getService('doctrine.entity.crudFactory') instanceof Doctrine\Crud\EntityCrudFactory);
+		$validators = $dic->getByType('IPub\Doctrine\Validators');
+		Assert::true($validators instanceof Doctrine\Validators);
+
+		$mapper = $dic->getByType('IPub\Doctrine\Mapping\EntityMapper');
+		Assert::true($mapper instanceof Doctrine\Mapping\EntityMapper);
+
+		$crudFactory = $dic->getByType('IPub\Doctrine\Crud\EntityCrudFactory');
+		Assert::true($crudFactory instanceof Doctrine\Crud\EntityCrudFactory);
 	}
 
 	/**
@@ -58,8 +63,6 @@ class ExtensionTest extends Tester\TestCase
 		$config->addParameters(['appDir' => $rootDir, 'wwwDir' => $rootDir]);
 
 		$config->addConfig(__DIR__ . '/files/config.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22');
-
-		Doctrine\DI\OrmExtension::register($config);
 
 		return $config->createContainer();
 	}
