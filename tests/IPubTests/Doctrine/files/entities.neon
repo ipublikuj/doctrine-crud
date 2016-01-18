@@ -1,5 +1,9 @@
 services:
-	- IPubTests\Doctrine\Models\UsersManager
+	userCrud:
+		factory: @doctrine.crud(IPubTests\Doctrine\Models\UserEntity)
+
+	usersManager:
+		class: IPubTests\Doctrine\Models\UsersManager(@userCrud)
 
 doctrine:
 	metadata:
