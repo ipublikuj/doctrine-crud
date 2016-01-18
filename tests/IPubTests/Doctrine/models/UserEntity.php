@@ -17,11 +17,16 @@ namespace IPubTests\Doctrine\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use IPub;
+use IPub\Doctrine\Entities;
+
 /**
  * @ORM\Entity
  */
-class UserEntity
+class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 {
+	use Entities\TIdentifiedEntity;
+
 	/**
 	 * @var int
 	 * @ORM\Id
