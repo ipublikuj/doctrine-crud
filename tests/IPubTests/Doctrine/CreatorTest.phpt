@@ -29,6 +29,7 @@ use Doctrine\Common;
 use IPub;
 
 require __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/models/UsersManager.php';
 
 /**
  * Creating entity tests
