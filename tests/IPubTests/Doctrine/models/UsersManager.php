@@ -17,7 +17,6 @@ namespace IPubTests\Doctrine\Models;
 
 use Nette;
 use Nette\Utils;
-use Nette\Security as NS;
 
 use IPub;
 use IPub\Doctrine;
@@ -26,28 +25,18 @@ use IPub\Doctrine\Crud;
 class UsersManager extends Nette\Object
 {
 	/**
-	 * @var NS\User
-	 */
-	private $user;
-
-	/**
 	 * @var Crud\IEntityCrud
 	 */
 	private $entityCrud;
 
 	/**
 	 * @param Crud\IEntityCrud $entityCrud
-	 * @param NS\User $user
 	 */
 	function __construct(
-		Crud\IEntityCrud $entityCrud,
-		NS\User $user
+		Crud\IEntityCrud $entityCrud
 	) {
 		// Entity CRUD for handling entities
 		$this->entityCrud = $entityCrud;
-
-		// Get logged in user
-		$this->user = $user;
 	}
 
 	/**
