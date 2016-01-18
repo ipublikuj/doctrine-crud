@@ -26,7 +26,7 @@ use IPub\Doctrine;
 require __DIR__ . '/../bootstrap.php';
 
 /**
- * Registering doctrine blameable extension tests
+ * Registering doctrine extension tests
  *
  * @package        iPublikuj:Doctrine!
  * @subpackage     Tests

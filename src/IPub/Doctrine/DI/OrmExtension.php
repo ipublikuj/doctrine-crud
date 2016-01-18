@@ -33,6 +33,9 @@ use IPub\Doctrine\Mapping;
  */
 class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
 {
+	// Define tag string for validator
+	const TAG_VALIDATOR = 'ipub.doctrine.validator';
+
 	/**
 	 * @return void
 	 */
@@ -72,7 +75,7 @@ class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
 		// Get validators service
 		$factory = $builder->getDefinition($this->prefix('validators'));
 
-		foreach (array_keys($builder->findByType(Doctrine\IValidator::INTERFACE_NAME)) as $serviceName) {
+		foreach (array_keys($builder->findByTag(self::TAG_VALIDATOR)) as $serviceName) {
 			// Register validator to service
 			$factory->addSetup('registerValidator', ['@' . $serviceName, $serviceName]);
 		}
