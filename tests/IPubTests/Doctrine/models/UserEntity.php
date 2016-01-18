@@ -20,6 +20,8 @@ use Doctrine\ORM\Mapping as ORM;
 use IPub;
 use IPub\Doctrine\Entities;
 
+use IPub\Doctrine\Mapping\Annotation as IPubDoctrine;
+
 /**
  * @ORM\Entity
  */
@@ -38,6 +40,7 @@ class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 	/**
 	 * @var string
 	 * @ORM\Column(type="string")
+	 * @IPubDoctrine\Crud(is={"required", "writable"})
 	 */
 	private $username;
 
