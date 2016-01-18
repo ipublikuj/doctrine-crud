@@ -1,3 +1,6 @@
+services:
+	- IPubTests\Doctrine\Models\UsersManager
+
 doctrine:
 	metadata:
 		IPubTests\Doctrine: %appDir%IPubTests/Doctrine/models
