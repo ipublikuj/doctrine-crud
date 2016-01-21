@@ -70,6 +70,11 @@ class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 	private $updatedAt;
 
 	/**
+	 * @ORM\OneToMany(targetEntity="ArticleEntity", mappedBy="type")
+	 */
+	private $articles;
+
+	/**
 	 * @return string
 	 */
 	public function getUsername()

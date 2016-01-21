@@ -195,7 +195,7 @@ final class EntityHydrator extends Nette\Object implements IEntityHydrator
 	{
 		$entityReflection = new \ReflectionClass(get_class($entity));
 
-		return $entityReflection->getProperties(\ReflectionProperty::IS_PROTECTED);
+		return $entityReflection->getProperties();
 	}
 
 	/**

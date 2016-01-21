@@ -30,7 +30,9 @@ use IPub;
 
 require __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/models/UserEntity.php';
+require_once __DIR__ . '/models/ArticleEntity.php';
 require_once __DIR__ . '/models/UsersManager.php';
+require_once __DIR__ . '/models/ArticlesManager.php';
 
 /**
  * Creating entity tests
@@ -138,7 +140,7 @@ class CRUDTest extends Tester\TestCase
 		Assert::same('White side', $entity->getNotWritable());
 	}
 
-	public function testEntityTraits()
+	public function testDeleteEntity()
 	{
 		$this->generateDbSchema();
 
@@ -150,23 +152,77 @@ class CRUDTest extends Tester\TestCase
 		$this->em->persist($entity);
 		$this->em->flush();
 
-		Assert::same((string) $entity->getId(), (string) $entity);
+		$id = $entity->getId();
+
+		$entity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($id);
+
+		Assert::true($entity instanceof UserEntity);
+
+		$this->manager->delete($entity);
+
+		$entity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($id);
+
+		Assert::null($entity);
+	}
+
+	public function testEntityTraits()
+	{
+		$this->generateDbSchema();
+
+		$user = new Models\UserEntity;
+		$user->setUsername('tester');
+		$user->setName('Tester');
+		$user->setNotWritable('White side');
+
+		$this->em->persist($user);
+		$this->em->flush();
+
+		$article = new Models\ArticleEntity();
+		$article->setTitle('Testing article');
+		$article->setOwner($user);
+
+		$this->em->persist($article);
+		$this->em->flush();
+
+		Assert::same((string) $user->getId(), (string) $user);
+		Assert::same('', (string) $article);
+
 		Assert::same([
-			'id'          => $entity->getId(),
+			'id'          => $user->getId(),
 			'username'    => 'tester',
 			'name'        => 'Tester',
 			'notWritable' => 'White side',
 			'createdAt'   => NULL,
-			'updateddAt'  => NULL,
-		], $entity->toArray());
+			'updatedAt'   => NULL,
+		], $user->toArray());
 		Assert::same([
-			'id'          => $entity->getId(),
+			'id'          => $user->getId(),
 			'username'    => 'tester',
 			'name'        => 'Tester',
 			'notWritable' => 'White side',
 			'createdAt'   => NULL,
-			'updateddAt'  => NULL,
-		], $entity->toSimpleArray());
+			'updatedAt'   => NULL,
+		], $user->toSimpleArray());
+
+		Assert::same([
+			'title' => 'Testing article',
+			'owner' => $user,
+		], $article->toArray());
+		Assert::same([
+			'title' => 'Testing article',
+			'owner' => [
+				'id'          => $user->getId(),
+				'username'    => 'tester',
+				'name'        => 'Tester',
+				'notWritable' => 'White side',
+				'createdAt'   => NULL,
+				'updatedAt'   => NULL,
+			],
+		], $article->toArray(2));
+		Assert::same([
+			'title' => 'Testing article',
+			'owner' => $user->getId(),
+		], $article->toSimpleArray());
 	}
 
 	private function generateDbSchema()
