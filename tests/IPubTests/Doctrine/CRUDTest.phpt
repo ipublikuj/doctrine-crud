@@ -40,7 +40,7 @@ require_once __DIR__ . '/models/UsersManager.php';
  *
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  */
-class CreatorTest extends Tester\TestCase
+class CRUDTest extends Tester\TestCase
 {
 	/**
 	 * @var \Nette\DI\Container
@@ -71,13 +71,41 @@ class CreatorTest extends Tester\TestCase
 		$this->generateDbSchema();
 
 		$values = Utils\ArrayHash::from([
-			'username' => 'Tester'
+			'username' => 'Tester',
 		]);
 
 		$entity = $this->manager->create($values);
 
 		Assert::true($entity instanceof UserEntity);
 		Assert::same('Tester', $entity->getUsername());
+		Assert::true($entity->getCreatedAt() instanceof \DateTime);
+
+		$this->em->clear();
+
+		$reloadedEntity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($entity->getId());
+
+		Assert::true($reloadedEntity instanceof UserEntity);
+		Assert::same($entity, $reloadedEntity);
+	}
+
+	public function testCreateEntityWithEntity()
+	{
+		$this->generateDbSchema();
+
+		$entity = new Models\UserEntity;
+		$entity->setUsername('Phantom');
+		$entity->setNotWritable('Dark side');
+
+		$values = Utils\ArrayHash::from([
+			'username'    => 'Tester',
+			'notWritable' => 'White side',
+		]);
+
+		$entity = $this->manager->create($values);
+
+		Assert::true($entity instanceof UserEntity);
+		Assert::same('Tester', $entity->getUsername());
+		Assert::same('Dark side', $entity->getNotWritable());
 	}
 
 	private function generateDbSchema()
@@ -106,4 +134,4 @@ class CreatorTest extends Tester\TestCase
 	}
 }
 
-\run(new CreatorTest());
+\run(new CRUDTest());

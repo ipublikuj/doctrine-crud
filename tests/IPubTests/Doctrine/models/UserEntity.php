@@ -40,9 +40,22 @@ class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 	/**
 	 * @var string
 	 * @ORM\Column(type="string")
-	 * @IPubDoctrine\Crud(is={"required", "writable"})
+	 * @IPubDoctrine\Crud(is={"required"})
 	 */
 	private $username;
+
+	/**
+	 * @var string
+	 * @ORM\Column(type="string")
+	 * @IPubDoctrine\Crud(is={"required", "writable"})
+	 */
+	private $name;
+
+	/**
+	 * @var string
+	 * @ORM\Column(type="string")
+	 */
+	private $notWritable;
 
 	/**
 	 * @var \DateTime
@@ -67,6 +80,22 @@ class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	/**
+	 * @param string $name
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
+
+	/**
 	 * @return \DateTime
 	 */
 	public function getCreatedAt()
@@ -80,5 +109,21 @@ class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 	public function setCreatedAt(\DateTime $created)
 	{
 		$this->created = $created;
+	}
+
+	/**
+	 * @param $text
+	 */
+	public function setNotWritable($text)
+	{
+		$this->notWritable = $text;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getNotWritable()
+	{
+		return $this->notWritable;
 	}
 }
