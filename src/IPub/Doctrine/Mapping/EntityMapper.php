@@ -52,9 +52,9 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 	private $validators;
 
 	/**
-	 * @var ORM\EntityManager
+	 * @var Common\Persistence\ManagerRegistry
 	 */
-	private $entityManager;
+	private $managerRegistry;
 
 	/**
 	 * @var Common\Annotations\AnnotationReader
@@ -63,12 +63,12 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 
 	/**
 	 * @param Doctrine\Validators $validators
-	 * @param ORM\EntityManager $entityManager
+	 * @param Common\Persistence\ManagerRegistry $managerRegistry
 	 */
-	public function __construct(Doctrine\Validators $validators, ORM\EntityManager $entityManager)
+	public function __construct(Doctrine\Validators $validators, Common\Persistence\ManagerRegistry $managerRegistry)
 	{
 		$this->validators = $validators;
-		$this->entityManager = $entityManager;
+		$this->managerRegistry = $managerRegistry;
 
 		$this->annotationReader = $this->getDefaultAnnotationReader();
 	}
@@ -78,7 +78,7 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 	 */
 	public function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, $isNew = FALSE)
 	{
-		$classMetadata = $this->entityManager->getClassMetadata(get_class($entity));
+		$classMetadata = $this->managerRegistry->getManagerForClass(get_class($entity))->getClassMetadata(get_class($entity));
 
 		foreach (array_merge($classMetadata->getFieldNames(), $classMetadata->getAssociationNames()) as $fieldName) {
 			$propertyReflection = new Nette\Reflection\Property(get_class($entity), $fieldName);
@@ -159,7 +159,7 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 	/**
 	 * Create default annotation reader for extensions
 	 *
-	 * @return Common\Annotations\AnnotationReader
+	 * @return Common\Annotations\AnnotationReader|Common\Annotations\CachedReader
 	 */
 	private function getDefaultAnnotationReader()
 	{
