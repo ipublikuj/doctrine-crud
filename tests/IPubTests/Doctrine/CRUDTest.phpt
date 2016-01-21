@@ -138,6 +138,37 @@ class CRUDTest extends Tester\TestCase
 		Assert::same('White side', $entity->getNotWritable());
 	}
 
+	public function testEntityTraits()
+	{
+		$this->generateDbSchema();
+
+		$entity = new Models\UserEntity;
+		$entity->setUsername('tester');
+		$entity->setName('Tester');
+		$entity->setNotWritable('White side');
+
+		$this->em->persist($entity);
+		$this->em->flush();
+
+		Assert::same((string) $entity->getId(), (string) $entity);
+		Assert::same([
+			'id'          => $entity->getId(),
+			'username'    => 'tester',
+			'name'        => 'Tester',
+			'notWritable' => 'White side',
+			'createdAt'   => NULL,
+			'updateddAt'  => NULL,
+		], $entity->toArray());
+		Assert::same([
+			'id'          => $entity->getId(),
+			'username'    => 'tester',
+			'name'        => 'Tester',
+			'notWritable' => 'White side',
+			'createdAt'   => NULL,
+			'updateddAt'  => NULL,
+		], $entity->toSimpleArray());
+	}
+
 	private function generateDbSchema()
 	{
 		$schema = new ORM\Tools\SchemaTool($this->em);
