@@ -71,7 +71,8 @@ class CRUDTest extends Tester\TestCase
 		$this->generateDbSchema();
 
 		$values = Utils\ArrayHash::from([
-			'username' => 'Tester',
+			'username' => 'tester',
+			'name'     => 'Tester',
 		]);
 
 		$entity = $this->manager->create($values);
@@ -97,7 +98,8 @@ class CRUDTest extends Tester\TestCase
 		$entity->setNotWritable('Dark side');
 
 		$values = Utils\ArrayHash::from([
-			'username'    => 'Tester',
+			'username'    => 'tester',
+			'name'        => 'Tester',
 			'notWritable' => 'White side',
 		]);
 
