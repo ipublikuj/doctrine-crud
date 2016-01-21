@@ -70,7 +70,7 @@ trait TEntity
 			return (string) $this->name;
 
 		} else if (property_exists($this, 'id')) {
-			return $this->id;
+			return (string) $this->id;
 
 		} else {
 			return '';
