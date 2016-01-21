@@ -53,7 +53,7 @@ class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 
 	/**
 	 * @var string
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="string", nullable=TRUE)
 	 */
 	private $notWritable;
 
