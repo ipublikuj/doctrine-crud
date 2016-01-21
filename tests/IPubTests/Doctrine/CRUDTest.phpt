@@ -87,7 +87,7 @@ class CRUDTest extends Tester\TestCase
 		$reloadedEntity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($entity->getId());
 
 		Assert::true($reloadedEntity instanceof UserEntity);
-		Assert::true($entity === $reloadedEntity);
+		Assert::true($entity->getUsername() === $reloadedEntity->getUsername());
 	}
 
 	public function testCreateEntityWithEntity()
@@ -104,12 +104,38 @@ class CRUDTest extends Tester\TestCase
 			'notWritable' => 'White side',
 		]);
 
-		$entity = $this->manager->create($values);
+		$entity = $this->manager->create($values, $entity);
 
 		Assert::true($entity instanceof UserEntity);
 		Assert::same('tester', $entity->getUsername());
 		Assert::same('Tester', $entity->getName());
 		Assert::same('Dark side', $entity->getNotWritable());
+	}
+
+	public function testUpdateEntity()
+	{
+		$this->generateDbSchema();
+
+		$entity = new Models\UserEntity;
+		$entity->setUsername('tester');
+		$entity->setName('Tester');
+		$entity->setNotWritable('White side');
+
+		$this->em->persist($entity);
+		$this->em->flush();
+
+		$values = Utils\ArrayHash::from([
+			'username'    => 'phantom',
+			'name'        => 'Phantom',
+			'notWritable' => 'Dark side',
+		]);
+
+		$entity = $this->manager->update($entity, $values);
+
+		Assert::true($entity instanceof UserEntity);
+		Assert::same('tester', $entity->getUsername());
+		Assert::same('Phantom', $entity->getName());
+		Assert::same('White side', $entity->getNotWritable());
 	}
 
 	private function generateDbSchema()
