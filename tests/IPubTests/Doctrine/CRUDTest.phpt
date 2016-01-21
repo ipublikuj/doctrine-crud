@@ -87,7 +87,7 @@ class CRUDTest extends Tester\TestCase
 		$reloadedEntity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($entity->getId());
 
 		Assert::true($reloadedEntity instanceof UserEntity);
-		Assert::same($entity, $reloadedEntity);
+		Assert::true($entity === $reloadedEntity);
 	}
 
 	public function testCreateEntityWithEntity()

@@ -41,10 +41,11 @@ class UsersManager extends Nette\Object
 
 	/**
 	 * @param Utils\ArrayHash $values
+	 * @param UserEntity|NULL $entity
 	 *
 	 * @return UserEntity
 	 */
-	public function create(Utils\ArrayHash $values)
+	public function create(Utils\ArrayHash $values, $entity = NULL)
 	{
 		// Get entity creator
 		$creator = $this->entityCrud->getEntityCreator();
@@ -59,7 +60,7 @@ class UsersManager extends Nette\Object
 		};
 
 		// Create new entity
-		return $creator->create($values);
+		return $creator->create($values, $entity);
 	}
 
 	/**
