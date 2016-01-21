@@ -25,7 +25,7 @@ abstract class CrudManager extends Nette\Object
 	/**
 	 * @var bool
 	 */
-	private $flush = TRUE;
+	protected $flush = TRUE;
 
 	/**
 	 * @param bool $flush

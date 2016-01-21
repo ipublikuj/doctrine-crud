@@ -14,7 +14,7 @@
 
 namespace IPub\Doctrine\Crud\Update;
 
-use Doctrine\ORM;
+use Doctrine\Common;
 
 use Nette;
 use Nette\Utils;
@@ -52,28 +52,28 @@ class EntityUpdater extends Crud\CrudManager implements IEntityUpdater
 	private $entityMapper;
 
 	/**
-	 * @var ORM\EntityRepository
+	 * @var Common\Persistence\ObjectRepository
 	 */
 	protected $entityRepository;
 
 	/**
-	 * @var ORM\EntityManager
+	 * @var Common\Persistence\ManagerRegistry
 	 */
-	protected $entityManager;
+	protected $managerRegistry;
 
 	/**
-	 * @param ORM\EntityRepository $entityRepository
-	 * @param ORM\EntityManager $entityManager
+	 * @param Common\Persistence\ObjectRepository $entityRepository
+	 * @param Common\Persistence\ManagerRegistry $managerRegistry
 	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(
-		ORM\EntityRepository $entityRepository,
-		ORM\EntityManager $entityManager,
+	public function __construct(
+		Common\Persistence\ObjectRepository $entityRepository,
+		Common\Persistence\ManagerRegistry $managerRegistry,
 		Mapping\IEntityMapper $entityMapper
 	) {
 		$this->entityMapper = $entityMapper;
 		$this->entityRepository = $entityRepository;
-		$this->entityManager = $entityManager;
+		$this->managerRegistry = $managerRegistry;
 	}
 
 	/**
@@ -92,12 +92,15 @@ class EntityUpdater extends Crud\CrudManager implements IEntityUpdater
 		$this->processHooks($this->beforeUpdate, [$entity, $values]);
 
 		$this->entityMapper->fillEntity($values, $entity, FALSE);
-		$this->entityManager->persist($entity);
+
+		$entityManager = $this->managerRegistry->getManagerForClass(get_class($entity));
+
+		$entityManager->persist($entity);
 
 		$this->processHooks($this->afterUpdate, [$entity, $values]);
 
 		if ($this->getFlush() === TRUE) {
-			$this->entityManager->flush();
+			$entityManager->flush();
 		}
 
 		return $entity;

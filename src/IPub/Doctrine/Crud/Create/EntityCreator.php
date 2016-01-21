@@ -15,6 +15,7 @@
 namespace IPub\Doctrine\Crud\Create;
 
 use Doctrine\ORM;
+use Doctrine\Common;
 
 use Nette;
 use Nette\Utils;
@@ -52,28 +53,28 @@ class EntityCreator extends Crud\CrudManager implements IEntityCreator
 	protected $entityMapper;
 
 	/**
-	 * @var ORM\EntityRepository
+	 * @var Common\Persistence\ObjectRepository
 	 */
 	protected $entityRepository;
 
 	/**
-	 * @var ORM\EntityManager
+	 * @var Common\Persistence\ManagerRegistry
 	 */
-	protected $entityManager;
+	protected $managerRegistry;
 
 	/**
-	 * @param ORM\EntityRepository $entityRepository
-	 * @param ORM\EntityManager $entityManager
+	 * @param Common\Persistence\ObjectRepository $entityRepository
+	 * @param Common\Persistence\ManagerRegistry $managerRegistry
 	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(
-		ORM\EntityRepository $entityRepository,
-		ORM\EntityManager $entityManager,
+	public function __construct(
+		Common\Persistence\ObjectRepository $entityRepository,
+		Common\Persistence\ManagerRegistry $managerRegistry,
 		Mapping\IEntityMapper $entityMapper
 	) {
 		$this->entityMapper = $entityMapper;
 		$this->entityRepository = $entityRepository;
-		$this->entityManager = $entityManager;
+		$this->managerRegistry = $managerRegistry;
 	}
 
 	/**
@@ -83,7 +84,7 @@ class EntityCreator extends Crud\CrudManager implements IEntityCreator
 	{
 		if (!$entity instanceof Entities\IEntity) {
 			$entityName = $this->entityRepository->getClassName();
-			$entity = $this->entityManager->getClassMetadata($entityName)->newInstance();
+			$entity = $this->managerRegistry->getManagerForClass($entityName)->getClassMetadata($entityName)->newInstance();
 		}
 
 		if (!$entity || !$entity instanceof Entities\IEntity) {
@@ -93,12 +94,15 @@ class EntityCreator extends Crud\CrudManager implements IEntityCreator
 		$this->processHooks($this->beforeCreate, [$entity, $values]);
 
 		$this->entityMapper->fillEntity($values, $entity, TRUE);
-		$this->entityManager->persist($entity);
+
+		$entityManager = $this->managerRegistry->getManagerForClass(get_class($entity));
+
+		$entityManager->persist($entity);
 
 		$this->processHooks($this->afterCreate, [$entity, $values]);
 
 		if ($this->getFlush() === TRUE) {
-			$this->entityManager->flush($entity);
+			$entityManager->flush();
 		}
 
 		return $entity;

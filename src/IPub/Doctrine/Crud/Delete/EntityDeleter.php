@@ -14,7 +14,7 @@
 
 namespace IPub\Doctrine\Crud\Delete;
 
-use Doctrine\ORM;
+use Doctrine\Common;
 
 use IPub;
 use IPub\Doctrine;
@@ -43,25 +43,25 @@ class EntityDeleter extends Crud\CrudManager implements IEntityDeleter
 	public $afterDelete = [];
 
 	/**
-	 * @var ORM\EntityRepository
+	 * @var Common\Persistence\ObjectRepository
 	 */
 	protected $entityRepository;
 
 	/**
-	 * @var ORM\EntityManager
+	 * @var Common\Persistence\ManagerRegistry
 	 */
-	protected $entityManager;
+	protected $managerRegistry;
 
 	/**
-	 * @param ORM\EntityRepository $entityRepository
-	 * @param ORM\EntityManager $entityManager
+	 * @param Common\Persistence\ObjectRepository $entityRepository
+	 * @param Common\Persistence\ManagerRegistry $managerRegistry
 	 */
-	function __construct(
-		ORM\EntityRepository $entityRepository,
-		ORM\EntityManager $entityManager
+	public function __construct(
+		Common\Persistence\ObjectRepository $entityRepository,
+		Common\Persistence\ManagerRegistry $managerRegistry
 	) {
 		$this->entityRepository = $entityRepository;
-		$this->entityManager = $entityManager;
+		$this->managerRegistry = $managerRegistry;
 	}
 
 	/**
@@ -79,12 +79,14 @@ class EntityDeleter extends Crud\CrudManager implements IEntityDeleter
 
 		$this->processHooks($this->beforeDelete, [$entity]);
 
-		$this->entityManager->remove($entity);
+		$entityManager = $this->managerRegistry->getManagerForClass(get_class($entity));
+
+		$entityManager->remove($entity);
 
 		$this->processHooks($this->afterDelete);
 
 		if ($this->getFlush() === TRUE) {
-			$this->entityManager->flush();
+			$entityManager->flush();
 		}
 
 		return TRUE;

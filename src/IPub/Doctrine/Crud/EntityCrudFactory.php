@@ -16,7 +16,7 @@ namespace IPub\Doctrine\Crud;
 
 use Nette;
 
-use Doctrine\ORM;
+use Doctrine\Common;
 
 use IPub;
 use IPub\Doctrine;
@@ -30,7 +30,7 @@ use IPub\Doctrine\Mapping;
  *
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  */
-class EntityCrudFactory extends Nette\Object implements IEntityCrudFactory
+final class EntityCrudFactory extends Nette\Object implements IEntityCrudFactory
 {
 	/**
 	 * Define class name
@@ -38,9 +38,9 @@ class EntityCrudFactory extends Nette\Object implements IEntityCrudFactory
 	const CLASS_NAME = __CLASS__;
 
 	/**
-	 * @var ORM\EntityManager
+	 * @var Common\Persistence\ManagerRegistry
 	 */
-	private $entityManager;
+	private $managerRegistry;
 
 	/**
 	 * @var Mapping\IEntityMapper
@@ -48,12 +48,12 @@ class EntityCrudFactory extends Nette\Object implements IEntityCrudFactory
 	private $entityMapper;
 
 	/**
-	 * @param ORM\EntityManager $entityManager
+	 * @param Common\Persistence\ManagerRegistry $managerRegistry
 	 * @param Mapping\IEntityMapper $entityMapper
 	 */
-	function __construct(ORM\EntityManager $entityManager, Mapping\IEntityMapper $entityMapper)
+	public function __construct(Common\Persistence\ManagerRegistry $managerRegistry, Mapping\IEntityMapper $entityMapper)
 	{
-		$this->entityManager = $entityManager;
+		$this->managerRegistry = $managerRegistry;
 		$this->entityMapper = $entityMapper;
 	}
 
@@ -62,6 +62,6 @@ class EntityCrudFactory extends Nette\Object implements IEntityCrudFactory
 	 */
 	public function createEntityCrud($entityName)
 	{
-		return new EntityCrud($this->entityManager->getRepository($entityName), $this->entityManager, $this->entityMapper);
+		return new EntityCrud($this->managerRegistry->getManagerForClass($entityName)->getRepository($entityName), $this->managerRegistry, $this->entityMapper);
 	}
 }
