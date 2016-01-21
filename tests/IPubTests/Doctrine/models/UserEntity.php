@@ -59,9 +59,15 @@ class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 
 	/**
 	 * @var \DateTime
-	 * @ORM\Column(type="datetime")
+	 * @ORM\Column(type="datetime", nullable=TRUE)
 	 */
-	private $created;
+	private $createdAt;
+
+	/**
+	 * @var \DateTime
+	 * @ORM\Column(type="datetime", nullable=TRUE)
+	 */
+	private $updatedAt;
 
 	/**
 	 * @return string
@@ -100,15 +106,31 @@ class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 	 */
 	public function getCreatedAt()
 	{
-		return $this->created;
+		return $this->createdAt;
 	}
 
 	/**
-	 * @param \DateTime $created
+	 * @param \DateTime $createdAt
 	 */
-	public function setCreatedAt(\DateTime $created)
+	public function setCreatedAt(\DateTime $createdAt)
 	{
-		$this->created = $created;
+		$this->createdAt = $createdAt;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
+	}
+
+	/**
+	 * @param \DateTime $updatedAt
+	 */
+	public function setUpdatedAt(\DateTime $updatedAt)
+	{
+		$this->updatedAt = $updatedAt;
 	}
 
 	/**

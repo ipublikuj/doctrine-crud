@@ -75,6 +75,7 @@ class UsersManager extends Nette\Object
 
 		// Assign before update entity events
 		$updater->beforeUpdate[] = function (UserEntity $entity, Utils\ArrayHash $values) {
+			$entity->setUpdatedAt(new \DateTime);
 		};
 
 		// Assign after create entity events

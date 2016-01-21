@@ -78,7 +78,8 @@ class CRUDTest extends Tester\TestCase
 		$entity = $this->manager->create($values);
 
 		Assert::true($entity instanceof UserEntity);
-		Assert::same('Tester', $entity->getUsername());
+		Assert::same('tester', $entity->getUsername());
+		Assert::same('Tester', $entity->getName());
 		Assert::true($entity->getCreatedAt() instanceof \DateTime);
 
 		$this->em->clear();
@@ -106,7 +107,8 @@ class CRUDTest extends Tester\TestCase
 		$entity = $this->manager->create($values);
 
 		Assert::true($entity instanceof UserEntity);
-		Assert::same('Tester', $entity->getUsername());
+		Assert::same('tester', $entity->getUsername());
+		Assert::same('Tester', $entity->getName());
 		Assert::same('Dark side', $entity->getNotWritable());
 	}
 
