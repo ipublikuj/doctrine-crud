@@ -19,6 +19,8 @@ extensions:
 	doctrine: IPub\Doctrine\DI\OrmExtension
 ```
 
+This extensions extends [Kdyby/Doctrine](https://github.com/Kdyby/Doctrine) extensions, so therefore you have to remove extensions definition for Kdyby/Doctrine. Configuration is same as for Kdyby/Doctrine.
+
 ## Usage
 
 At first you have to create CRUD service for given entity. It can be easily created in neon configuration:
@@ -61,11 +63,11 @@ class YourEntityManager extends \Nette\Object
 		$creator = $this->entityCrud->getEntityCreator();
 
 		// Assign before create entity events
-		$creator->beforeCreate[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+		$creator->beforeAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Assign after create entity events
-		$creator->afterCreate[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+		$creator->afterAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Create new entity
@@ -84,11 +86,11 @@ class YourEntityManager extends \Nette\Object
 		$updater = $this->entityCrud->getEntityUpdater();
 
 		// Assign before update entity events
-		$updater->beforeUpdate[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+		$updater->beforeAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Assign after create entity events
-		$updater->afterUpdate[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+		$updater->afterAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Update entity in database
@@ -106,11 +108,11 @@ class YourEntityManager extends \Nette\Object
 		$deleter = $this->entityCrud->getEntityDeleter();
 
 		// Assign before delete entity events
-		$deleter->beforeDelete[] = function (ArticleEntity $entity) {
+		$deleter->beforeAction[] = function (ArticleEntity $entity) {
 		};
 
 		// Assign after delete entity events
-		$deleter->afterDelete[] = function () {
+		$deleter->afterAction[] = function () {
 		};
 
 		// Delete entity from database
@@ -129,7 +131,7 @@ services:
 
 ### Creating new entity
 
-For example you need create new entity after form submitting. Inject created manager service and just pass values to create method>
+For example you need create new entity after form submitting. Inject created manager service and just pass values to create method:
 
 ```php
 class ItemPresenter extends \Nette\Application\UI\Presenter
@@ -152,6 +154,38 @@ class ItemPresenter extends \Nette\Application\UI\Presenter
     }
 }
 ```
+
+Don't worry about your entity constructor dependencies. This extension will take a look on constructor dependencies and passed values and tries to create entity with proper values.
+So if you have entity with dependencies like this:
+
+```php
+class MyEntityWithConstructor implements \IPub\Doctrine\Entities\IEntity
+{
+    use \IPub\Doctrine\Entities\TEntity;
+
+    // ...
+
+    public function __construct(string $name, OwnerEntity $owner)
+    {
+        $this->name = $name;
+        $this->owner = $owner
+    }
+
+    // ...
+}
+```
+
+You have just to pass all needed values to manager:
+
+```php
+$values = new \Nette\Utils\ArrayHash();
+$values->name = 'My name is';
+$values->owner = $ownerEntity;
+
+$entity = $this->manager->create($values);
+```
+
+And a dark magic inside the extension will create new instance of entity without any problems :D
 
 ### Updating existing entity
 
@@ -297,6 +331,8 @@ class ArticleEntity implements \IPub\Doctrine\Entities\IEntity
 
 When the attribute has defined **required** event it has to be filled in input data, otherwise an exception will be thrown. **Writable** event is need for properties which could be edited.
 
+Property without annotation will be skipped and not filled with provided value.
+
 ### Useful traits and interfaces
 
 This extension come with two useful traits **TIdentifiedEntity**/**IIdentifiedEntity** for identified entity type and **TEntity**/**IEntity** for all other entities. One of this traits have to be implemented in your entities, because CRUD service is using them for detecting valid entity.
@@ -337,13 +373,16 @@ class SomeValidator implements \IPub\Doctrine\IValidator\IValidator
     /**
      * @param mixed $data
      * 
-     * @return mixed
+     * @return bool
      */
-    public function validate($data)
+    public function validate($data) : bool
     {
         // do validation
+        if ($data !== 'expected') {
+            return FALSE;
+        }
 
-        return $data;
+        return TRUE;
     }
 }
 ```
