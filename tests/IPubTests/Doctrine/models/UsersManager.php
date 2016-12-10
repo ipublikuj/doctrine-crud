@@ -51,12 +51,12 @@ class UsersManager extends Nette\Object
 		$creator = $this->entityCrud->getEntityCreator();
 
 		// Assign before create entity events
-		$creator->beforeCreate[] = function (UserEntity $entity, Utils\ArrayHash $values) {
+		$creator->beforeAction[] = function (UserEntity $entity, Utils\ArrayHash $values) {
 			$entity->setCreatedAt(new \DateTime);
 		};
 
 		// Assign after create entity events
-		$creator->afterCreate[] = function (UserEntity $entity, Utils\ArrayHash $values) {
+		$creator->afterAction[] = function (UserEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Create new entity
@@ -75,12 +75,12 @@ class UsersManager extends Nette\Object
 		$updater = $this->entityCrud->getEntityUpdater();
 
 		// Assign before update entity events
-		$updater->beforeUpdate[] = function (UserEntity $entity, Utils\ArrayHash $values) {
+		$updater->beforeAction[] = function (UserEntity $entity, Utils\ArrayHash $values) {
 			$entity->setUpdatedAt(new \DateTime);
 		};
 
 		// Assign after create entity events
-		$updater->afterUpdate[] = function (UserEntity $entity, Utils\ArrayHash $values) {
+		$updater->afterAction[] = function (UserEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Update entity in database
@@ -98,11 +98,11 @@ class UsersManager extends Nette\Object
 		$deleter = $this->entityCrud->getEntityDeleter();
 
 		// Assign before delete entity events
-		$deleter->beforeDelete[] = function (UserEntity $entity) {
+		$deleter->beforeAction[] = function (UserEntity $entity) {
 		};
 
 		// Assign after delete entity events
-		$deleter->afterDelete[] = function () {
+		$deleter->afterAction[] = function () {
 		};
 
 		// Delete entity from database

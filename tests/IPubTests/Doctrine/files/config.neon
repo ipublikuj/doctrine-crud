@@ -1,42 +1,32 @@
-common:
-	php:
-		date.timezone: Europe/Prague
+php:
+	date.timezone: Europe/Prague
 
-	extensions:
-		annotations: Kdyby\Annotations\DI\AnnotationsExtension
-		doctrine: IPub\Doctrine\DI\OrmExtension
-		console: Kdyby\Console\DI\ConsoleExtension
-		events: Kdyby\Events\DI\EventsExtension
+extensions:
+	annotations: Kdyby\Annotations\DI\AnnotationsExtension
+	doctrine: IPub\Doctrine\DI\OrmExtension
+	console: Kdyby\Console\DI\ConsoleExtension
+	events: Kdyby\Events\DI\EventsExtension
 
-	services:
-		cacheStorage:
-			class: Nette\Caching\Storages\MemoryStorage
+services:
+	cacheStorage:
+		class: Nette\Caching\Storages\MemoryStorage
 
-	annotations:
-		cache: array
+annotations:
+	cache: array
 
-	console:
-		url: http://example.com
+console:
+	url: http://example.com
 
-	doctrine:
-		metadataCache: array
-		queryCache: array
-		resultCache: array
-		hydrationCache: array
-		driver: pdo_sqlite
-		memory: true
+doctrine:
+	metadataCache: array
+	queryCache: array
+	resultCache: array
+	hydrationCache: array
+	driver: pdo_sqlite
+	memory: true
 
-v22 < common:
-	nette:
-		security:
-			frames: null
+http:
+	frames: null
 
-		session:
-			autoStart: false
-
-v23 < common:
-	http:
-		frames: null
-
-	session:
-		autoStart: false
+session:
+	autoStart: false

@@ -103,7 +103,7 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 					throw new Exceptions\InvalidStateException('Missing required key "' . $fieldName . '"');
 				}
 
-				if (!$values->offsetExists($fieldName) || (!$crud->isWritable() && !$crud->isRequired())) {
+				if (!$values->offsetExists($fieldName) || (!$isNew && !$crud->isWritable())) {
 					continue;
 				}
 

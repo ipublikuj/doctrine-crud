@@ -13,11 +13,14 @@
  * @date           18.01.16
  */
 
+declare(strict_types = 1);
+
 namespace IPubTests\Doctrine;
 
-use IPubTests\Doctrine\Models\UserEntity;
 use Nette;
 use Nette\Utils;
+
+use Kdyby;
 
 use Tester;
 use Tester\Assert;
@@ -28,11 +31,13 @@ use Doctrine\Common;
 
 use IPub;
 
-require __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/models/UserEntity.php';
-require_once __DIR__ . '/models/ArticleEntity.php';
-require_once __DIR__ . '/models/UsersManager.php';
-require_once __DIR__ . '/models/ArticlesManager.php';
+use IPubTests\Doctrine\Models;
+
+require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+require_once __DIR__ . DS . 'models' . DS . 'UserEntity.php';
+require_once __DIR__ . DS . 'models' . DS . 'ArticleEntity.php';
+require_once __DIR__ . DS . 'models' . DS . 'UsersManager.php';
+require_once __DIR__ . DS . 'models' . DS . 'ArticlesManager.php';
 
 /**
  * Creating entity tests
@@ -45,12 +50,12 @@ require_once __DIR__ . '/models/ArticlesManager.php';
 class CRUDTest extends Tester\TestCase
 {
 	/**
-	 * @var \Nette\DI\Container
+	 * @var Nette\DI\Container
 	 */
 	private $container;
 
 	/**
-	 * @var \Kdyby\Doctrine\EntityManager
+	 * @var Kdyby\Doctrine\EntityManager
 	 */
 	private $em;
 
@@ -79,7 +84,7 @@ class CRUDTest extends Tester\TestCase
 
 		$entity = $this->manager->create($values);
 
-		Assert::true($entity instanceof UserEntity);
+		Assert::true($entity instanceof Models\UserEntity);
 		Assert::same('tester', $entity->getUsername());
 		Assert::same('Tester', $entity->getName());
 		Assert::true($entity->getCreatedAt() instanceof \DateTime);
@@ -88,7 +93,7 @@ class CRUDTest extends Tester\TestCase
 
 		$reloadedEntity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($entity->getId());
 
-		Assert::true($reloadedEntity instanceof UserEntity);
+		Assert::true($reloadedEntity instanceof Models\UserEntity);
 		Assert::true($entity->getUsername() === $reloadedEntity->getUsername());
 	}
 
@@ -108,7 +113,7 @@ class CRUDTest extends Tester\TestCase
 
 		$entity = $this->manager->create($values, $entity);
 
-		Assert::true($entity instanceof UserEntity);
+		Assert::true($entity instanceof Models\UserEntity);
 		Assert::same('tester', $entity->getUsername());
 		Assert::same('Tester', $entity->getName());
 		Assert::same('Dark side', $entity->getNotWritable());
@@ -134,7 +139,7 @@ class CRUDTest extends Tester\TestCase
 
 		$entity = $this->manager->update($entity, $values);
 
-		Assert::true($entity instanceof UserEntity);
+		Assert::true($entity instanceof Models\UserEntity);
 		Assert::same('tester', $entity->getUsername());
 		Assert::same('Phantom', $entity->getName());
 		Assert::same('White side', $entity->getNotWritable());
@@ -156,7 +161,7 @@ class CRUDTest extends Tester\TestCase
 
 		$entity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($id);
 
-		Assert::true($entity instanceof UserEntity);
+		Assert::true($entity instanceof Models\UserEntity);
 
 		$this->manager->delete($entity);
 
@@ -184,8 +189,8 @@ class CRUDTest extends Tester\TestCase
 		$this->em->persist($article);
 		$this->em->flush();
 
-		Assert::same((string) $user->getId(), (string) $user);
-		Assert::same('', (string) $article);
+		Assert::same((string) $user->getName(), (string) $user, 'UserEntity toString');
+		Assert::same('', (string) $article, 'ArticleEntity toString');
 
 		Assert::same([
 			'id'          => $user->getId(),
@@ -194,7 +199,7 @@ class CRUDTest extends Tester\TestCase
 			'notWritable' => 'White side',
 			'createdAt'   => NULL,
 			'updatedAt'   => NULL,
-		], $user->toArray());
+		], $user->toArray(), 'UserEntity - toArray()');
 		Assert::same([
 			'id'          => $user->getId(),
 			'username'    => 'tester',
@@ -202,12 +207,12 @@ class CRUDTest extends Tester\TestCase
 			'notWritable' => 'White side',
 			'createdAt'   => NULL,
 			'updatedAt'   => NULL,
-		], $user->toSimpleArray());
+		], $user->toSimpleArray(), 'UserEntity - toSimpleArray()');
 
 		Assert::same([
 			'title' => 'Testing article',
 			'owner' => $user,
-		], $article->toArray());
+		], $article->toArray(), 'ArticleEntity - toArray()');
 		Assert::same([
 			'title' => 'Testing article',
 			'owner' => [
@@ -218,11 +223,11 @@ class CRUDTest extends Tester\TestCase
 				'createdAt'   => NULL,
 				'updatedAt'   => NULL,
 			],
-		], $article->toArray(2));
+		], $article->toArray(2), 'ArticleEntity - toArray(2)');
 		Assert::same([
 			'title' => 'Testing article',
 			'owner' => $user->getId(),
-		], $article->toSimpleArray());
+		], $article->toSimpleArray(), 'ArticleEntity - toSimpleArray()');
 	}
 
 	private function generateDbSchema()
@@ -241,11 +246,11 @@ class CRUDTest extends Tester\TestCase
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 
-		$config->addParameters(['container' => ['class' => 'SystemContainer_' . md5(time())]]);
+		$config->addParameters(['container' => ['class' => 'SystemContainer_' . md5((string) time())]]);
 		$config->addParameters(['appDir' => $rootDir, 'wwwDir' => $rootDir]);
 
-		$config->addConfig(__DIR__ . '/files/config.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22');
-		$config->addConfig(__DIR__ . '/files/entities.neon', $config::NONE);
+		$config->addConfig(__DIR__ . DS . 'files' . DS . 'config.neon');
+		$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities.neon');
 
 		return $config->createContainer();
 	}

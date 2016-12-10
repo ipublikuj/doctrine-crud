@@ -25,8 +25,9 @@ use IPub\Doctrine\Mapping\Annotation as IPubDoctrine;
 /**
  * @ORM\Entity
  */
-class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
+class UserEntity implements Entities\IIdentifiedEntity
 {
+	use Entities\TEntity;
 	use Entities\TIdentifiedEntity;
 
 	/**
@@ -35,7 +36,7 @@ class UserEntity implements Entities\IIdentifiedEntity, Entities\IEntity
 	 * @ORM\Column(type="integer")
 	 * @ORM\GeneratedValue(strategy="AUTO")
 	 */
-	private $id;
+	protected $id;
 
 	/**
 	 * @var string

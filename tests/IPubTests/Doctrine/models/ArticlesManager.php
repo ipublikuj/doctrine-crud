@@ -51,11 +51,11 @@ class ArticlesManager extends Nette\Object
 		$creator = $this->entityCrud->getEntityCreator();
 
 		// Assign before create entity events
-		$creator->beforeCreate[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+		$creator->beforeAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Assign after create entity events
-		$creator->afterCreate[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+		$creator->afterAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Create new entity
@@ -74,11 +74,11 @@ class ArticlesManager extends Nette\Object
 		$updater = $this->entityCrud->getEntityUpdater();
 
 		// Assign before update entity events
-		$updater->beforeUpdate[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+		$updater->beforeAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Assign after create entity events
-		$updater->afterUpdate[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+		$updater->afterAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
 		};
 
 		// Update entity in database
@@ -96,11 +96,11 @@ class ArticlesManager extends Nette\Object
 		$deleter = $this->entityCrud->getEntityDeleter();
 
 		// Assign before delete entity events
-		$deleter->beforeDelete[] = function (ArticleEntity $entity) {
+		$deleter->beforeAction[] = function (ArticleEntity $entity) {
 		};
 
 		// Assign after delete entity events
-		$deleter->afterDelete[] = function () {
+		$deleter->afterAction[] = function () {
 		};
 
 		// Delete entity from database

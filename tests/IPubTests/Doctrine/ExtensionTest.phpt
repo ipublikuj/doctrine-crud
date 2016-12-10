@@ -13,6 +13,8 @@
  * @date           13.01.16
  */
 
+declare(strict_types = 1);
+
 namespace IPubTests\Doctrine;
 
 use Nette;
@@ -23,7 +25,7 @@ use Tester\Assert;
 use IPub;
 use IPub\Doctrine;
 
-require __DIR__ . '/../bootstrap.php';
+require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
 /**
  * Registering doctrine extension tests
@@ -39,12 +41,6 @@ class ExtensionTest extends Tester\TestCase
 	{
 		$dic = $this->createContainer();
 
-		$validators = $dic->getByType('IPub\Doctrine\Validators');
-		Assert::true($validators instanceof Doctrine\Validators);
-
-		$mapper = $dic->getByType('IPub\Doctrine\Mapping\EntityMapper');
-		Assert::true($mapper instanceof Doctrine\Mapping\EntityMapper);
-
 		$crudFactory = $dic->getByType('IPub\Doctrine\Crud\EntityCrudFactory');
 		Assert::true($crudFactory instanceof Doctrine\Crud\EntityCrudFactory);
 	}
@@ -59,10 +55,10 @@ class ExtensionTest extends Tester\TestCase
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 
-		$config->addParameters(['container' => ['class' => 'SystemContainer_' . md5(time())]]);
+		$config->addParameters(['container' => ['class' => 'SystemContainer_' . md5((string) time())]]);
 		$config->addParameters(['appDir' => $rootDir, 'wwwDir' => $rootDir]);
 
-		$config->addConfig(__DIR__ . '/files/config.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22');
+		$config->addConfig(__DIR__ . DS . 'files' . DS . 'config.neon');
 
 		return $config->createContainer();
 	}
