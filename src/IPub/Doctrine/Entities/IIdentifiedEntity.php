@@ -12,25 +12,27 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Entities;
 
 /**
  * Doctrine CRUD identified entity interface
  *
  * @package        iPublikuj:Doctrine!
- * @subpackage     common
+ * @subpackage     Entities
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
-interface IIdentifiedEntity
+interface IIdentifiedEntity extends IEntity
 {
 	/**
-	 * @param mixed $id
+	 * @return mixed
 	 */
-	public function setId($id);
+	function getId();
 
 	/**
 	 * @return mixed
 	 */
-	public function getId();
+	function getRawId();
 }

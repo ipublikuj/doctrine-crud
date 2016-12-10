@@ -29,7 +29,7 @@ use IPub\Doctrine\Entities;
  * @package        iPublikuj:Doctrine!
  * @subpackage     Mapping
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 final class EntityHydrator extends Nette\Object implements IEntityHydrator
 {

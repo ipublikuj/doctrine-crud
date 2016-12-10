@@ -12,7 +12,11 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\DI;
+
+use Doctrine\Common;
 
 use Nette;
 use Nette\PhpGenerator;
@@ -29,7 +33,7 @@ use IPub\Doctrine\Mapping;
  * @package        iPublikuj:Doctrine!
  * @subpackage     DI
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
 {
@@ -44,27 +48,76 @@ class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
 		// Get container builder
 		$builder = $this->getContainerBuilder();
 
-		$builder->addDefinition($this->prefix('validators'))
-			->setClass(Doctrine\Validators::CLASS_NAME);
+		$annotationReader = new Common\Annotations\AnnotationReader;
+
+		Common\Annotations\AnnotationRegistry::registerAutoloadNamespace(
+			'IPub\\Doctrine\\Entities\\IEntity'
+		);
+
+		$annotationReader = new Common\Annotations\CachedReader($annotationReader, new Common\Cache\ArrayCache);
+
+		/**
+		 * Extensions helpers
+		 */
+
+		$builder->addDefinition($this->prefix('entity.validator'))
+			->setClass(Doctrine\Validation\ValidatorProxy::class)
+			->setArguments([$annotationReader])
+			->setAutowired(FALSE);
 
 		$builder->addDefinition($this->prefix('entity.mapper'))
-			->setClass(Mapping\EntityMapper::CLASS_NAME);
+			->setClass(Mapping\EntityMapper::class)
+			->setArguments(['@' . $this->prefix('entity.validator'), $annotationReader])
+			->setAutowired(FALSE);
+
+		/**
+		 * CRUD factories
+		 */
+
+		$builder->addDefinition($this->prefix('entity.creator'))
+			->setClass(Crud\Create\EntityCreator::class)
+			->setImplement(Crud\Create\IEntityCreator::class)
+			->setAutowired(FALSE);
+
+		$builder->addDefinition($this->prefix('entity.updater'))
+			->setClass(Crud\Update\EntityUpdater::class)
+			->setImplement(Crud\Update\IEntityUpdater::class)
+			->setAutowired(FALSE);
+
+		$builder->addDefinition($this->prefix('entity.deleter'))
+			->setClass(Crud\Delete\EntityDeleter::class)
+			->setImplement(Crud\Delete\IEntityDeleter::class)
+			->setAutowired(FALSE);
 
 		$builder->addDefinition($this->prefix('entity.crudFactory'))
-			->setClass(Crud\EntityCrudFactory::CLASS_NAME);
+			->setClass(Crud\EntityCrudFactory::class)
+			->setArguments([
+				'@' . $this->prefix('entity.mapper'),
+				'@' . $this->prefix('entity.creator'),
+				'@' . $this->prefix('entity.updater'),
+				'@' . $this->prefix('entity.deleter'),
+			]);
 
-		// syntax sugar for config
+		// Syntax sugar for config
 		$builder->addDefinition($this->prefix('crud'))
-			->setClass(Crud\EntityCrud::CLASS_NAME)
-			->setFactory('@IPub\Doctrine\Crud\EntityCrudFactory::createEntityCrud', [new PhpGenerator\PhpLiteral('$entityName')])
-			->setParameters(['entityName']);
+			->setClass(Crud\EntityCrud::class)
+			->setFactory('@IPub\Doctrine\Crud\EntityCrudFactory::create', [new PhpGenerator\PhpLiteral('$entityName')])
+			->setParameters(['entityName'])
+			->setAutowired(FALSE);
+
+		/**
+		 *
+		 */
 
 		parent::loadConfiguration();
 
 		$configuration = $builder->getDefinition('doctrine.default.ormConfiguration');
-		$configuration->addSetup('addCustomStringFunction', ['DATE_FORMAT', Doctrine\StringFunctions\DateFormat::CLASS_NAME]);
+		$configuration->addSetup('addCustomStringFunction', ['DATE_FORMAT', Doctrine\StringFunctions\DateFormat::class]);
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public function beforeCompile()
 	{
 		parent::beforeCompile();
@@ -73,11 +126,11 @@ class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
 		$builder = $this->getContainerBuilder();
 
 		// Get validators service
-		$factory = $builder->getDefinition($this->prefix('validators'));
+		$validator = $builder->getDefinition($this->prefix('entity.validator'));
 
 		foreach (array_keys($builder->findByTag(self::TAG_VALIDATOR)) as $serviceName) {
-			// Register validator to service
-			$factory->addSetup('registerValidator', ['@' . $serviceName, $serviceName]);
+			// Register validator to proxy validator
+			$validator->addSetup('registerValidator', ['@' . $serviceName, $serviceName]);
 		}
 	}
 }

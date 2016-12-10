@@ -1,6 +1,6 @@
 <?php
 /**
- * InvalidStateException.php
+ * EntityCreationException.php
  *
  * @copyright      More in license.md
  * @license        http://www.ipublikuj.eu
@@ -9,13 +9,13 @@
  * @subpackage     Exceptions
  * @since          1.0.0
  *
- * @date           06.12.15
+ * @date           10.12.16
  */
 
 declare(strict_types = 1);
 
 namespace IPub\Doctrine\Exceptions;
 
-class InvalidStateException extends \Nette\InvalidStateException implements IException
+class EntityCreationException extends \Nette\InvalidStateException implements IException
 {
 }

@@ -12,36 +12,24 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Crud\Delete;
 
-use IPub;
-use IPub\Doctrine;
-use IPub\Doctrine\Entities;
-use IPub\Doctrine\Exceptions;
-
 /**
- * Doctrine CRUD entity deleter interface
+ * Doctrine CRUD entity deleter factory
  *
  * @package        iPublikuj:Doctrine!
  * @subpackage     Crud
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 interface IEntityDeleter
 {
 	/**
-	 * @param bool $flush
+	 * @param string $entityName
 	 *
-	 * @return $this
+	 * @return EntityDeleter
 	 */
-	function setFlush($flush);
-
-	/**
-	 * @param Entities\IEntity|mixed $entity
-	 *
-	 * @return bool
-	 *
-	 * @throws Exceptions\InvalidArgumentException
-	 */
-	function delete($entity);
+	function create(string $entityName) : EntityDeleter;
 }

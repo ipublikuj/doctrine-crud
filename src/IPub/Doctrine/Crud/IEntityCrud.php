@@ -12,10 +12,11 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Crud;
 
 use IPub;
-use IPub\Doctrine;
 use IPub\Doctrine\Crud;
 
 /**
@@ -24,22 +25,22 @@ use IPub\Doctrine\Crud;
  * @package        iPublikuj:Doctrine!
  * @subpackage     Crud
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 interface IEntityCrud
 {
 	/**
 	 * @return Crud\Create\EntityCreator
 	 */
-	function getEntityCreator();
+	function getEntityCreator() : Crud\Create\EntityCreator;
 
 	/**
 	 * @return Crud\Update\EntityUpdater
 	 */
-	function getEntityUpdater();
+	function getEntityUpdater() : Crud\Update\EntityUpdater;
 
 	/**
 	 * @return Crud\Delete\EntityDeleter
 	 */
-	function getEntityDeleter();
+	function getEntityDeleter() : Crud\Delete\EntityDeleter;
 }

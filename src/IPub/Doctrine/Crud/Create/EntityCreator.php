@@ -1,6 +1,6 @@
 <?php
 /**
- * IEntityCrudFactory.php
+ * EntityCreator.php
  *
  * @copyright      More in license.md
  * @license        http://www.ipublikuj.eu
@@ -12,10 +12,11 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Crud\Create;
 
-use Doctrine\ORM;
-use Doctrine\Common;
+use Doctrine\Common\Persistence;
 
 use Nette;
 use Nette\Utils;
@@ -33,76 +34,69 @@ use IPub\Doctrine\Mapping;
  * @package        iPublikuj:Doctrine!
  * @subpackage     Crud
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
+ *
+ * @method beforeAction(Entities\IEntity $entity, Utils\ArrayHash $values)
+ * @method afterAction(Entities\IEntity $entity, Utils\ArrayHash $values)
  */
-class EntityCreator extends Crud\CrudManager implements IEntityCreator
+class EntityCreator extends Crud\CrudManager
 {
-	/**
-	 * @var array
-	 */
-	public $beforeCreate = [];
-
-	/**
-	 * @var array
-	 */
-	public $afterCreate = [];
-
 	/**
 	 * @var Mapping\IEntityMapper
 	 */
-	protected $entityMapper;
+	private $entityMapper;
 
 	/**
-	 * @var Common\Persistence\ObjectRepository
-	 */
-	protected $entityRepository;
-
-	/**
-	 * @var Common\Persistence\ManagerRegistry
-	 */
-	protected $managerRegistry;
-
-	/**
-	 * @param Common\Persistence\ObjectRepository $entityRepository
-	 * @param Common\Persistence\ManagerRegistry $managerRegistry
+	 * @param string $entityName
 	 * @param Mapping\IEntityMapper $entityMapper
+	 * @param Persistence\ManagerRegistry $managerRegistry
 	 */
 	public function __construct(
-		Common\Persistence\ObjectRepository $entityRepository,
-		Common\Persistence\ManagerRegistry $managerRegistry,
-		Mapping\IEntityMapper $entityMapper
+		string $entityName,
+		Mapping\IEntityMapper $entityMapper,
+		Persistence\ManagerRegistry $managerRegistry
 	) {
+		parent::__construct($entityName, $managerRegistry);
+
 		$this->entityMapper = $entityMapper;
-		$this->entityRepository = $entityRepository;
-		$this->managerRegistry = $managerRegistry;
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param Utils\ArrayHash $values
+	 * @param Entities\IEntity|NULL $entity
+	 *
+	 * @return Entities\IEntity
+	 * 
+	 * @throws Exceptions\InvalidArgumentException
+	 * @throws Exceptions\EntityCreationException
 	 */
 	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL)
 	{
 		if (!$entity instanceof Entities\IEntity) {
-			$entityName = $this->entityRepository->getClassName();
-			$entity = $this->managerRegistry->getManagerForClass($entityName)->getClassMetadata($entityName)->newInstance();
+			$rc = new \ReflectionClass($this->entityName);
+
+			if ($constructor = $rc->getConstructor()) {
+				$entity = $rc->newInstanceArgs(Doctrine\Helpers::autowireArguments($constructor, (array) $values));
+
+			} else {
+				$entity = $this->entityManager->getClassMetadata($this->entityName)->newInstance();
+			}
 		}
 
 		if (!$entity || !$entity instanceof Entities\IEntity) {
 			throw new Exceptions\InvalidArgumentException('Entity could not be created.');
 		}
 
-		$this->processHooks($this->beforeCreate, [$entity, $values]);
+		$this->processHooks($this->beforeAction, [$entity, $values]);
 
 		$this->entityMapper->fillEntity($values, $entity, TRUE);
 
-		$entityManager = $this->managerRegistry->getManagerForClass(get_class($entity));
+		$this->entityManager->persist($entity);
 
-		$entityManager->persist($entity);
+		$this->processHooks($this->afterAction, [$entity, $values]);
 
-		$this->processHooks($this->afterCreate, [$entity, $values]);
-
-		if ($this->getFlush() === TRUE) {
-			$entityManager->flush();
+		if ($this->getFlush()) {
+			$this->entityManager->flush();
 		}
 
 		return $entity;

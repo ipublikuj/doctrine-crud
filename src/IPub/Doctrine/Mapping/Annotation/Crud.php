@@ -12,6 +12,8 @@
  * @date           13.01.16
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Mapping\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
@@ -25,7 +27,7 @@ use IPub\Doctrine\Mapping;
  * @package        iPublikuj:Doctrine!
  * @subpackage     Annotation
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  *
  * @Annotation
  * @Target({"PROPERTY"})
@@ -38,7 +40,7 @@ final class Crud extends Annotation
 	public $is;
 
 	/**
-	 * @var mixed
+	 * @var string|array
 	 */
 	public $validator;
 

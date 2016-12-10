@@ -20,11 +20,6 @@ use Doctrine\ORM\Query;
 class DateFormat extends Query\AST\Functions\FunctionNode
 {
 	/**
-	 * Define class name
-	 */
-	const CLASS_NAME = __CLASS__;
-
-	/**
 	 * Holds the timestamp of the DATE_FORMAT DQL statement
 	 *
 	 * @var mixed

@@ -1,6 +1,6 @@
 <?php
 /**
- * Entity.php
+ * TEntity.php
  *
  * @copyright      More in license.md
  * @license        http://www.ipublikuj.eu
@@ -12,6 +12,8 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Entities;
 
 use IPub;
@@ -22,23 +24,23 @@ use IPub\Doctrine\Mapping;
  * Doctrine CRUD identified entity helper trait
  *
  * @package        iPublikuj:Doctrine!
- * @subpackage     common
+ * @subpackage     Entities
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  *
  * @ORM\MappedSuperclass
  */
 trait TEntity
 {
 	/**
-	 * @var  Mapping\EntityHydrator
+	 * @var Mapping\EntityHydrator
 	 */
 	protected $hydrator;
 
 	/**
 	 * @return string
 	 */
-	public static function getClassName()
+	public static function getClassName() : string
 	{
 		return get_called_class();
 	}
@@ -48,7 +50,7 @@ trait TEntity
 	 *
 	 * @return array
 	 */
-	public function toArray($maxLevel = 1)
+	public function toArray(int $maxLevel = 1) : array
 	{
 		return $this->getHydrator()->extract($this, $maxLevel);
 	}
@@ -56,7 +58,7 @@ trait TEntity
 	/**
 	 * @return array
 	 */
-	public function toSimpleArray()
+	public function toSimpleArray() : array
 	{
 		return $this->getHydrator()->simpleExtract($this);
 	}
@@ -69,7 +71,7 @@ trait TEntity
 		if (isset($this->name) && $this->name !== NULL) {
 			return (string) $this->name;
 
-		} else if (property_exists($this, 'id')) {
+		} elseif (property_exists($this, 'id')) {
 			return (string) $this->id;
 
 		} else {
@@ -80,7 +82,7 @@ trait TEntity
 	/**
 	 * @return Mapping\EntityHydrator
 	 */
-	protected function getHydrator()
+	protected function getHydrator() : Mapping\EntityHydrator
 	{
 		if ($this->hydrator === NULL) {
 			$this->hydrator = new Mapping\EntityHydrator;

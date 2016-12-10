@@ -12,40 +12,28 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Crud\Create;
 
-use Nette;
-use Nette\Utils;
-
 use IPub;
-use IPub\Doctrine;
-use IPub\Doctrine\Entities;
-use IPub\Doctrine\Exceptions;
+use IPub\Doctrine\Mapping;
 
 /**
- * Doctrine CRUD entity creator interface
+ * Doctrine CRUD entity creator factory
  *
  * @package        iPublikuj:Doctrine!
  * @subpackage     Crud
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 interface IEntityCreator
 {
 	/**
-	 * @param bool $flush
+	 * @param string $entityName
+	 * @param Mapping\IEntityMapper $entityMapper
 	 *
-	 * @return $this
+	 * @return EntityCreator
 	 */
-	function setFlush($flush);
-
-	/**
-	 * @param Utils\ArrayHash $values
-	 * @param Entities\IEntity $entity
-	 *
-	 * @return Entities\IEntity
-	 *
-	 * @throws Exceptions\InvalidArgumentException
-	 */
-	function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL);
+	function create(string $entityName, Mapping\IEntityMapper $entityMapper) : EntityCreator;
 }

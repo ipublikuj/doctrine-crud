@@ -12,6 +12,8 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Mapping;
 
 use Doctrine\Common;
@@ -25,6 +27,7 @@ use IPub;
 use IPub\Doctrine;
 use IPub\Doctrine\Entities;
 use IPub\Doctrine\Exceptions;
+use IPub\Doctrine\Validation;
 
 /**
  * Doctrine CRUD entity mapper
@@ -32,22 +35,12 @@ use IPub\Doctrine\Exceptions;
  * @package        iPublikuj:Doctrine!
  * @subpackage     Mapping
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 final class EntityMapper extends Nette\Object implements IEntityMapper
 {
 	/**
-	 * Annotation field is blameable
-	 */
-	const EXTENSION_ANNOTATION = 'IPub\Doctrine\Mapping\Annotation\Crud';
-
-	/**
-	 * Define class name
-	 */
-	const CLASS_NAME = __CLASS__;
-
-	/**
-	 * @var Doctrine\Validators
+	 * @var Validation\IValidator
 	 */
 	private $validators;
 
@@ -62,34 +55,55 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 	private $annotationReader;
 
 	/**
-	 * @param Doctrine\Validators $validators
+	 * @param Validation\IValidator $validators
+	 * @param Common\Annotations\Reader $annotationReader
 	 * @param Common\Persistence\ManagerRegistry $managerRegistry
 	 */
-	public function __construct(Doctrine\Validators $validators, Common\Persistence\ManagerRegistry $managerRegistry)
-	{
+	public function __construct(
+		Validation\IValidator $validators,
+		Common\Annotations\Reader $annotationReader,
+		Common\Persistence\ManagerRegistry $managerRegistry
+	) {
 		$this->validators = $validators;
+		$this->annotationReader = $annotationReader;
 		$this->managerRegistry = $managerRegistry;
-
-		$this->annotationReader = $this->getDefaultAnnotationReader();
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, $isNew = FALSE)
+	public function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, $isNew = FALSE) : Entities\IEntity
 	{
-		$classMetadata = $this->managerRegistry->getManagerForClass(get_class($entity))->getClassMetadata(get_class($entity));
+		$reflectionClass = new Reflection\ClassType(get_class($entity));
+
+		// Hack for proxy classes...
+		if ($reflectionClass->implementsInterface(Common\Proxy\Proxy::class)) {
+			// ... we need to extract entity class name from proxy class
+			$entityClass = $reflectionClass->getParentClass()->getName();
+
+		} else {
+			$entityClass = get_class($entity);
+		}
+
+		$classMetadata = $this->managerRegistry->getManagerForClass($entityClass)->getClassMetadata($entityClass);
 
 		foreach (array_merge($classMetadata->getFieldNames(), $classMetadata->getAssociationNames()) as $fieldName) {
-			$propertyReflection = new Nette\Reflection\Property(get_class($entity), $fieldName);
+
+			try {
+				$propertyReflection = new Nette\Reflection\Property($entityClass, $fieldName);
+
+			} catch (\ReflectionException $ex) {
+				// Entity property is readonly
+				continue;
+			}
 
 			/** @var Doctrine\Mapping\Annotation\Crud $crud */
-			if ($crud = $this->annotationReader->getPropertyAnnotation($propertyReflection, self::EXTENSION_ANNOTATION)) {
+			if ($crud = $this->annotationReader->getPropertyAnnotation($propertyReflection, Doctrine\Mapping\Annotation\Crud::class)) {
 				if ($isNew && $crud->isRequired() && !$values->offsetExists($fieldName)) {
 					throw new Exceptions\InvalidStateException('Missing required key "' . $fieldName . '"');
 				}
 
-				if (!$values->offsetExists($fieldName) || (!$isNew && !$crud->isWritable()) || ($isNew && !$crud->isRequired())) {
+				if (!$values->offsetExists($fieldName) || (!$crud->isWritable() && !$crud->isRequired())) {
 					continue;
 				}
 
@@ -115,24 +129,30 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 
 						// Check if class is callable
 						if (class_exists($className)) {
-							$classMetadata->setFieldValue($entity, $fieldName, new $className);
+							$rc = new \ReflectionClass($className);
+
+							if ($constructor = $rc->getConstructor()) {
+								$subEntity = $rc->newInstanceArgs(Doctrine\Helpers::autowireArguments($constructor, array_merge((array) $value, [$entity])));
+
+								$this->setFieldValue($classMetadata, $entity, $fieldName, $subEntity);
+
+							} else {
+								$this->setFieldValue($classMetadata, $entity, $fieldName, new $className);
+							}
 
 						} else {
-							$classMetadata->setFieldValue($entity, $fieldName, $value);
+							$this->setFieldValue($classMetadata, $entity, $fieldName, $value);
 						}
 					}
 
 					// Check again if entity was created
 					if (($fieldValue = $classMetadata->getFieldValue($entity, $fieldName)) && $fieldValue instanceof Entities\IEntity) {
-						$classMetadata->setFieldValue($entity, $fieldName, $this->fillEntity(Utils\ArrayHash::from((array) $value), $fieldValue, $isNew));
+						$this->setFieldValue($classMetadata, $entity, $fieldName, $this->fillEntity(Utils\ArrayHash::from((array) $value), $fieldValue, $isNew));
 					}
 
-				} else {
-					if ($crud->validator !== NULL) {
-						$value = $this->validateProperty($crud->validator, $value);
-					}
+				} elseif ($this->validators->validate($value, $propertyReflection)) {
 
-					$classMetadata->setFieldValue($entity, $fieldName, $value);
+					$this->setFieldValue($classMetadata, $entity, $fieldName, $value);
 				}
 			}
 		}
@@ -141,36 +161,24 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 	}
 
 	/**
-	 * @param string $validatorClass
-	 * @param $value
+	 * @param Common\Persistence\Mapping\ClassMetadata $classMetadata
+	 * @param Entities\IEntity $entity
+	 * @param string $field
+	 * @param mixed $value
 	 *
-	 * @return mixed
+	 * @return void
 	 */
-	private function validateProperty($validatorClass, $value)
+	private function setFieldValue(Common\Persistence\Mapping\ClassMetadata $classMetadata, Entities\IEntity $entity, $field, $value)
 	{
-		// Check if property has validator and validator is registered
-		if ($validator = $this->validators->getValidator($validatorClass)) {
-			$value = $validator->validate($value);
+		$methodName = 'set' . ucfirst($field);
+
+		// Try to call entity setter
+		if (method_exists($entity, $methodName)) {
+			call_user_func_array([$entity, $methodName], [$value]);
+
+		// Fallback for missing setter
+		} else {
+			$classMetadata->setFieldValue($entity, $field, $value);
 		}
-
-		return $value;
-	}
-
-	/**
-	 * Create default annotation reader for extensions
-	 *
-	 * @return Common\Annotations\AnnotationReader|Common\Annotations\CachedReader
-	 */
-	private function getDefaultAnnotationReader()
-	{
-		$reader = new Common\Annotations\AnnotationReader;
-
-		Common\Annotations\AnnotationRegistry::registerAutoloadNamespace(
-			'IPub\\Doctrine\\Entities\\IEntity'
-		);
-
-		$reader = new Common\Annotations\CachedReader($reader, new Common\Cache\ArrayCache);
-
-		return $reader;
 	}
 }

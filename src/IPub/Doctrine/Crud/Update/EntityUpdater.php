@@ -12,9 +12,11 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Crud\Update;
 
-use Doctrine\Common;
+use Doctrine\Common\Persistence;
 
 use Nette;
 use Nette\Utils;
@@ -32,52 +34,40 @@ use IPub\Doctrine\Mapping;
  * @package        iPublikuj:Doctrine!
  * @subpackage     Crud
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
+ *
+ * @method beforeAction(Entities\IEntity $entity, Utils\ArrayHash $values)
+ * @method afterAction(Entities\IEntity $entity, Utils\ArrayHash $values)
  */
-class EntityUpdater extends Crud\CrudManager implements IEntityUpdater
+class EntityUpdater extends Crud\CrudManager
 {
-	/**
-	 * @var array
-	 */
-	public $beforeUpdate = [];
-
-	/**
-	 * @var array
-	 */
-	public $afterUpdate = [];
-
 	/**
 	 * @var Mapping\IEntityMapper
 	 */
 	private $entityMapper;
 
 	/**
-	 * @var Common\Persistence\ObjectRepository
-	 */
-	protected $entityRepository;
-
-	/**
-	 * @var Common\Persistence\ManagerRegistry
-	 */
-	protected $managerRegistry;
-
-	/**
-	 * @param Common\Persistence\ObjectRepository $entityRepository
-	 * @param Common\Persistence\ManagerRegistry $managerRegistry
+	 * @param string $entityName
 	 * @param Mapping\IEntityMapper $entityMapper
+	 * @param Persistence\ManagerRegistry $managerRegistry
 	 */
 	public function __construct(
-		Common\Persistence\ObjectRepository $entityRepository,
-		Common\Persistence\ManagerRegistry $managerRegistry,
-		Mapping\IEntityMapper $entityMapper
+		string $entityName,
+		Mapping\IEntityMapper $entityMapper,
+		Persistence\ManagerRegistry $managerRegistry
 	) {
+		parent::__construct($entityName, $managerRegistry);
+
 		$this->entityMapper = $entityMapper;
-		$this->entityRepository = $entityRepository;
-		$this->managerRegistry = $managerRegistry;
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param Utils\ArrayHash $values
+	 * @param Entities\IEntity|int|string $entity
+	 *
+	 * @return Entities\IEntity
+	 *
+	 * @throws Exceptions\InvalidArgumentException
 	 */
 	public function update(Utils\ArrayHash $values, $entity)
 	{
@@ -89,18 +79,16 @@ class EntityUpdater extends Crud\CrudManager implements IEntityUpdater
 			throw new Exceptions\InvalidArgumentException('Entity not found.');
 		}
 
-		$this->processHooks($this->beforeUpdate, [$entity, $values]);
+		$this->processHooks($this->beforeAction, [$entity, $values]);
 
 		$this->entityMapper->fillEntity($values, $entity, FALSE);
 
-		$entityManager = $this->managerRegistry->getManagerForClass(get_class($entity));
+		$this->entityManager->persist($entity);
 
-		$entityManager->persist($entity);
-
-		$this->processHooks($this->afterUpdate, [$entity, $values]);
+		$this->processHooks($this->afterAction, [$entity, $values]);
 
 		if ($this->getFlush() === TRUE) {
-			$entityManager->flush();
+			$this->entityManager->flush();
 		}
 
 		return $entity;

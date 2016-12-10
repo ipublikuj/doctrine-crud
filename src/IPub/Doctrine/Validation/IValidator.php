@@ -6,33 +6,30 @@
  * @license        http://www.ipublikuj.eu
  * @author         Adam Kadlec http://www.ipublikuj.eu
  * @package        iPublikuj:Doctrine!
- * @subpackage     common
+ * @subpackage     Validation
  * @since          1.0.0
  *
  * @date           29.01.14
  */
 
-namespace IPub\Doctrine;
+declare(strict_types = 1);
+
+namespace IPub\Doctrine\Validation;
 
 /**
  * Doctrine CRUD validator interface
  *
  * @package        iPublikuj:Doctrine!
- * @subpackage     common
+ * @subpackage     Validation
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 interface IValidator
 {
 	/**
-	 * Define class name
-	 */
-	const INTERFACE_NAME = __CLASS__;
-
-	/**
-	 * @param $data
+	 * @param mixed $data
 	 *
-	 * @return mixed
+	 * @return bool
 	 */
-	public function validate($data);
+	public function validate($data) : bool;
 }

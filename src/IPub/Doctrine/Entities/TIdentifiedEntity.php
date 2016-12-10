@@ -12,6 +12,8 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Entities;
 
 use Doctrine;
@@ -21,9 +23,9 @@ use Doctrine\ORM\Mapping as ORM;
  * Doctrine CRUD identified entity helper trait
  *
  * @package        iPublikuj:Doctrine!
- * @subpackage     common
+ * @subpackage     Entities
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  *
  * @ORM\MappedSuperclass
  *
@@ -31,31 +33,19 @@ use Doctrine\ORM\Mapping as ORM;
  */
 trait TIdentifiedEntity
 {
-	use TEntity;
-
 	/**
-	 * @param mixed $id
-	 *
-	 * @return $this
+	 * @return mixed
 	 */
-	public function setId($id)
+	public function getId()
 	{
-		$this->id = $id;
+		return is_integer($this->id) ? $this->id : $this->id;
 	}
 
 	/**
 	 * @return mixed
 	 */
-	final public function getId()
+	public function getRawId()
 	{
 		return $this->id;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return (string) $this->id;
 	}
 }

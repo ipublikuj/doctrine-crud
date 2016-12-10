@@ -40,7 +40,7 @@ require_once __DIR__ . '/models/ArticlesManager.php';
  * @package        iPublikuj:Doctrine!
  * @subpackage     Tests
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 class CRUDTest extends Tester\TestCase
 {

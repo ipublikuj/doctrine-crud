@@ -12,27 +12,31 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Entities;
 
 /**
  * Doctrine CRUD base entity interface
  *
  * @package        iPublikuj:Doctrine!
- * @subpackage     common
+ * @subpackage     Entities
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 interface IEntity
 {
 	/**
+	 * @param int $maxLevel
+	 *
 	 * @return array
 	 */
-	function toArray();
+	function toArray(int $maxLevel = 1) : array;
 
 	/**
 	 * @return array
 	 */
-	function toSimpleArray();
+	function toSimpleArray() : array;
 
 	/**
 	 * @return string

@@ -12,14 +12,14 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Crud;
 
 use Nette;
 
-use Doctrine\Common;
-
 use IPub;
-use IPub\Doctrine;
+use IPub\Doctrine\Crud;
 use IPub\Doctrine\Mapping;
 
 /**
@@ -28,40 +28,63 @@ use IPub\Doctrine\Mapping;
  * @package        iPublikuj:Doctrine!
  * @subpackage     Crud
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
-final class EntityCrudFactory extends Nette\Object implements IEntityCrudFactory
+final class EntityCrudFactory extends Nette\Object
 {
-	/**
-	 * Define class name
-	 */
-	const CLASS_NAME = __CLASS__;
-
-	/**
-	 * @var Common\Persistence\ManagerRegistry
-	 */
-	private $managerRegistry;
-
 	/**
 	 * @var Mapping\IEntityMapper
 	 */
 	private $entityMapper;
 
 	/**
-	 * @param Common\Persistence\ManagerRegistry $managerRegistry
-	 * @param Mapping\IEntityMapper $entityMapper
+	 * @var Create\IEntityCreator
 	 */
-	public function __construct(Common\Persistence\ManagerRegistry $managerRegistry, Mapping\IEntityMapper $entityMapper)
-	{
-		$this->managerRegistry = $managerRegistry;
+	private $entityCreatorFactory;
+
+	/**
+	 * @var Update\IEntityUpdater
+	 */
+	private $entityUpdaterFactory;
+
+	/**
+	 * @var Delete\IEntityDeleter
+	 */
+	private $entityDeleterFactory;
+
+	/**
+	 * @param Mapping\IEntityMapper $entityMapper
+	 * @param Create\IEntityCreator $entityCreatorFactory
+	 * @param Update\IEntityUpdater $entityUpdaterFactory
+	 * @param Delete\IEntityDeleter $entityDeleterFactory
+	 */
+	public function __construct(
+		Mapping\IEntityMapper $entityMapper,
+		Crud\Create\IEntityCreator $entityCreatorFactory,
+		Crud\Update\IEntityUpdater $entityUpdaterFactory,
+		Crud\Delete\IEntityDeleter $entityDeleterFactory
+	) {
 		$this->entityMapper = $entityMapper;
+
+		// CRUD factories
+		$this->entityCreatorFactory = $entityCreatorFactory;
+		$this->entityUpdaterFactory = $entityUpdaterFactory;
+		$this->entityDeleterFactory = $entityDeleterFactory;
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param string $entityName
+	 *
+	 * @return IEntityCrud
 	 */
-	public function createEntityCrud($entityName)
+	public function create(string $entityName) : IEntityCrud
 	{
-		return new EntityCrud($this->managerRegistry->getManagerForClass($entityName)->getRepository($entityName), $this->managerRegistry, $this->entityMapper);
+		return new EntityCrud(
+			$entityName,
+			$this->entityMapper,
+			$this->entityCreatorFactory,
+			$this->entityUpdaterFactory,
+			$this->entityDeleterFactory
+		);
 	}
 }

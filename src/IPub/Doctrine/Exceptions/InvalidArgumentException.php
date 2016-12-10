@@ -12,6 +12,8 @@
  * @date           06.12.15
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Exceptions;
 
 class InvalidArgumentException extends \InvalidArgumentException implements IException

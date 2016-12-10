@@ -12,6 +12,8 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Mapping;
 
 use Nette;
@@ -27,7 +29,7 @@ use IPub\Doctrine\Entities;
  * @package        iPublikuj:Doctrine!
  * @subpackage     Mapping
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 interface IEntityMapper
 {
@@ -45,5 +47,5 @@ interface IEntityMapper
 	 *
 	 * @return Entities\IEntity
 	 */
-	function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, $isNew = FALSE);
+	function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, $isNew = FALSE) : Entities\IEntity;
 }

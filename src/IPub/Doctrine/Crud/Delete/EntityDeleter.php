@@ -12,12 +12,13 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Crud\Delete;
 
-use Doctrine\Common;
+use Doctrine\Common\Persistence;
 
 use IPub;
-use IPub\Doctrine;
 use IPub\Doctrine\Crud;
 use IPub\Doctrine\Entities;
 use IPub\Doctrine\Exceptions;
@@ -28,46 +29,21 @@ use IPub\Doctrine\Exceptions;
  * @package        iPublikuj:Doctrine!
  * @subpackage     Crud
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
+ *
+ * @method beforeAction(Entities\IEntity $entity)
+ * @method afterAction()
  */
-class EntityDeleter extends Crud\CrudManager implements IEntityDeleter
+class EntityDeleter extends Crud\CrudManager
 {
 	/**
-	 * @var array
+	 * @param Entities\IEntity|int|string $entity
+	 *
+	 * @return bool
+	 *
+	 * @throws Exceptions\InvalidArgumentException
 	 */
-	public $beforeDelete = [];
-
-	/**
-	 * @var array
-	 */
-	public $afterDelete = [];
-
-	/**
-	 * @var Common\Persistence\ObjectRepository
-	 */
-	protected $entityRepository;
-
-	/**
-	 * @var Common\Persistence\ManagerRegistry
-	 */
-	protected $managerRegistry;
-
-	/**
-	 * @param Common\Persistence\ObjectRepository $entityRepository
-	 * @param Common\Persistence\ManagerRegistry $managerRegistry
-	 */
-	public function __construct(
-		Common\Persistence\ObjectRepository $entityRepository,
-		Common\Persistence\ManagerRegistry $managerRegistry
-	) {
-		$this->entityRepository = $entityRepository;
-		$this->managerRegistry = $managerRegistry;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function delete($entity)
+	public function delete($entity) : bool
 	{
 		if (!$entity instanceof Entities\IEntity) {
 			$entity = $this->entityRepository->find($entity);
@@ -77,16 +53,14 @@ class EntityDeleter extends Crud\CrudManager implements IEntityDeleter
 			throw new Exceptions\InvalidArgumentException('Entity not found.');
 		}
 
-		$this->processHooks($this->beforeDelete, [$entity]);
+		$this->processHooks($this->beforeAction, [$entity]);
 
-		$entityManager = $this->managerRegistry->getManagerForClass(get_class($entity));
+		$this->entityManager->remove($entity);
 
-		$entityManager->remove($entity);
-
-		$this->processHooks($this->afterDelete);
+		$this->processHooks($this->afterAction);
 
 		if ($this->getFlush() === TRUE) {
-			$entityManager->flush();
+			$this->entityManager->flush();
 		}
 
 		return TRUE;

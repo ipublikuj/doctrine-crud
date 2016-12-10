@@ -12,40 +12,28 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Crud\Update;
 
-use Nette;
-use Nette\Utils;
-
 use IPub;
-use IPub\Doctrine;
-use IPub\Doctrine\Entities;
-use IPub\Doctrine\Exceptions;
+use IPub\Doctrine\Mapping;
 
 /**
- * Doctrine CRUD entity updater interface
+ * Doctrine CRUD entity updater factory
  *
  * @package        iPublikuj:Doctrine!
  * @subpackage     Crud
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 interface IEntityUpdater
 {
 	/**
-	 * @param bool $flush
+	 * @param string $entityName
+	 * @param Mapping\IEntityMapper $entityMapper
 	 *
-	 * @return $this
+	 * @return EntityUpdater
 	 */
-	function setFlush($flush);
-
-	/**
-	 * @param Utils\ArrayHash $values
-	 * @param Entities\IEntity|mixed $entity
-	 *
-	 * @return Entities\IEntity
-	 *
-	 * @throws Exceptions\InvalidArgumentException
-	 */
-	function update(Utils\ArrayHash $values, $entity);
+	function create(string $entityName, Mapping\IEntityMapper $entityMapper) : EntityUpdater;
 }

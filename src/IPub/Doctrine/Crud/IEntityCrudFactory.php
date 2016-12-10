@@ -12,22 +12,29 @@
  * @date           29.01.14
  */
 
+declare(strict_types = 1);
+
 namespace IPub\Doctrine\Crud;
 
+use Nette;
+
+use IPub;
+use IPub\Doctrine\Crud;
+
 /**
- * Doctrine CRUD factory interface
+ * Doctrine CRUD factory
  *
  * @package        iPublikuj:Doctrine!
  * @subpackage     Crud
  *
- * @author         Adam Kadlec <adam.kadlec@fastybird.com>
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
 interface IEntityCrudFactory
 {
 	/**
-	 * @param $entityName
+	 * @param string $entityName
 	 *
-	 * @return IEntityCrud
+	 * @return EntityCrud
 	 */
-	public function createEntityCrud($entityName);
+	public function create(string $entityName) : EntityCrud;
 }
