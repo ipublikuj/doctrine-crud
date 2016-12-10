@@ -22,8 +22,9 @@
 	"require": {
 		"php"	: ">=7.0.0",
 
-		"nette/di"		: "~2.3",
-		"nette/utils"	: "~2.3",
+		"nette/di"			: "~2.3",
+		"nette/utils"		: "~2.3",
+		"nette/reflection"	: "~2.3",
 
 		"kdyby/doctrine"	: "~3.0"
 	},
