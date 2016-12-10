@@ -25,8 +25,5 @@ doctrine:
 	driver: pdo_sqlite
 	memory: true
 
-http:
-	frames: null
-
 session:
 	autoStart: false
