@@ -1,6 +1,6 @@
 <?php
 /**
- * OrmExtension.php
+ * DoctrineCrudExtension.php
  *
  * @copyright      More in license.md
  * @license        http://www.ipublikuj.eu
@@ -19,6 +19,7 @@ namespace IPub\Doctrine\DI;
 use Doctrine\Common;
 
 use Nette;
+use Nette\DI;
 use Nette\PhpGenerator;
 
 use Kdyby;
@@ -35,7 +36,7 @@ use IPub\Doctrine\Mapping;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
-class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
+class DoctrineCrudExtension extends DI\CompilerExtension
 {
 	// Define tag string for validator
 	const TAG_VALIDATOR = 'ipub.doctrine.validator';
@@ -109,8 +110,6 @@ class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
 		 *
 		 */
 
-		parent::loadConfiguration();
-
 		$configuration = $builder->getDefinition('doctrine.default.ormConfiguration');
 		$configuration->addSetup('addCustomStringFunction', ['DATE_FORMAT', Doctrine\StringFunctions\DateFormat::class]);
 	}
@@ -132,5 +131,16 @@ class OrmExtension extends Kdyby\Doctrine\DI\OrmExtension
 			// Register validator to proxy validator
 			$validator->addSetup('registerValidator', ['@' . $serviceName, $serviceName]);
 		}
+	}
+
+	/**
+	 * @param Nette\Configurator $config
+	 * @param string $extensionName
+	 */
+	public static function register(Nette\Configurator $config, string $extensionName = 'doctrineCRUD')
+	{
+		$config->onCompile[] = function (Nette\Configurator $config, DI\Compiler $compiler) use ($extensionName) {
+			$compiler->addExtension($extensionName, new DoctrineCrudExtension());
+		};
 	}
 }
