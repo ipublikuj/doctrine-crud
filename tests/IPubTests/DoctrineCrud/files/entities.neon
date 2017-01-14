@@ -1,8 +1,8 @@
 services:
 	userCrud:
-		factory: @doctrine.crud(IPubTests\DoctrineCrud\Models\UserEntity)
+		factory: @doctrineCrud.crud(IPubTests\DoctrineCrud\Models\UserEntity)
 	articleCrud:
-		factory: @doctrine.crud(IPubTests\DoctrineCrud\Models\ArticleEntity)
+		factory: @doctrineCrud.crud(IPubTests\DoctrineCrud\Models\ArticleEntity)
 
 	usersManager:
 		class: IPubTests\DoctrineCrud\Models\UsersManager(@userCrud)
