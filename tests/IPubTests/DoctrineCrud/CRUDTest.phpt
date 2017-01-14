@@ -15,7 +15,7 @@
 
 declare(strict_types = 1);
 
-namespace IPubTests\Doctrine;
+namespace IPubTests\DoctrineCrud;
 
 use Nette;
 use Nette\Utils;
@@ -31,7 +31,7 @@ use Doctrine\Common;
 
 use IPub;
 
-use IPubTests\Doctrine\Models;
+use IPubTests\DoctrineCrud\Models;
 
 require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 require_once __DIR__ . DS . 'models' . DS . 'UserEntity.php';
@@ -70,7 +70,7 @@ class CRUDTest extends Tester\TestCase
 
 		$this->container = $this->createContainer();
 		$this->em = $this->container->getByType('Kdyby\Doctrine\EntityManager');
-		$this->manager = $this->container->getByType('IPubTests\Doctrine\Models\UsersManager');
+		$this->manager = $this->container->getByType('IPubTests\DoctrineCrud\Models\UsersManager');
 	}
 
 	public function testCreateEntity()
@@ -91,7 +91,7 @@ class CRUDTest extends Tester\TestCase
 
 		$this->em->clear();
 
-		$reloadedEntity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($entity->getId());
+		$reloadedEntity = $this->em->getRepository('IPubTests\DoctrineCrud\Models\UserEntity')->find($entity->getId());
 
 		Assert::true($reloadedEntity instanceof Models\UserEntity);
 		Assert::true($entity->getUsername() === $reloadedEntity->getUsername());
@@ -159,13 +159,13 @@ class CRUDTest extends Tester\TestCase
 
 		$id = $entity->getId();
 
-		$entity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($id);
+		$entity = $this->em->getRepository('IPubTests\DoctrineCrud\Models\UserEntity')->find($id);
 
 		Assert::true($entity instanceof Models\UserEntity);
 
 		$this->manager->delete($entity);
 
-		$entity = $this->em->getRepository('IPubTests\Doctrine\Models\UserEntity')->find($id);
+		$entity = $this->em->getRepository('IPubTests\DoctrineCrud\Models\UserEntity')->find($id);
 
 		Assert::null($entity);
 	}

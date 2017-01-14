@@ -15,7 +15,7 @@
 
 declare(strict_types = 1);
 
-namespace IPubTests\Doctrine;
+namespace IPubTests\DoctrineCrud;
 
 use Nette;
 
