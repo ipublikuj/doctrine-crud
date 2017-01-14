@@ -13,7 +13,7 @@
  * @date           21.01.16
  */
 
-namespace IPubTests\Doctrine\Models;
+namespace IPubTests\DoctrineCrud\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 

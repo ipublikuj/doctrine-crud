@@ -13,7 +13,7 @@
  * @date           18.01.16
  */
 
-namespace IPubTests\Doctrine\Models;
+namespace IPubTests\DoctrineCrud\Models;
 
 use Nette;
 use Nette\Utils;

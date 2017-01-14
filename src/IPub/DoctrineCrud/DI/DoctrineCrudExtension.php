@@ -135,7 +135,7 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 	 * @param Nette\Configurator $config
 	 * @param string $extensionName
 	 */
-	public static function register(Nette\Configurator $config, string $extensionName = 'doctrine-crud')
+	public static function register(Nette\Configurator $config, string $extensionName = 'doctrineCrud')
 	{
 		$config->onCompile[] = function (Nette\Configurator $config, DI\Compiler $compiler) use ($extensionName) {
 			$compiler->addExtension($extensionName, new DoctrineCrudExtension());
