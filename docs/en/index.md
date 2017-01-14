@@ -1,25 +1,25 @@
 # Quickstart
 
-This Doctrine extension brings you easier way how to **C**reate, **R**ead, **U**pdate and **D**elete entities with [Kdyby/Doctrine](https://github.com/Kdyby/Doctrine)
+This Doctrine CRUD extension brings you easier way how to **C**reate, **R**ead, **U**pdate and **D**elete entities with [Doctrine](http://doctrine-project.org/) database extension
 
 > NOTE: reading is not implemented, because it depends on project what you are programming.
+
+> WARGING: This extension does not implement Doctrine functions into your project. You have to install some third-party extension like [Kdyby/Doctrine](https://github.com/kdyby/doctrine) or write your own implementation od Doctrine database system
 
 ## Installation
 
 The best way to install ipub/doctrine is using [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require ipub/doctrine
+$ composer require ipub/doctrine-crud
 ```
 
 After that you have to register extension in config.neon.
 
 ```neon
 extensions:
-	doctrine: IPub\DoctrineCrud\DI\OrmExtension
+    doctrineCrud: IPub\DoctrineCrud\DI\DoctrineCrudExtension
 ```
-
-This extensions extends [Kdyby/Doctrine](https://github.com/Kdyby/Doctrine) extensions, so therefore you have to remove extensions definition for Kdyby/Doctrine. Configuration is same as for Kdyby/Doctrine.
 
 ## Usage
 
@@ -27,8 +27,8 @@ At first you have to create CRUD service for given entity. It can be easily crea
 
 ```neon
 services:
-	yourEntityCrud:
-		factory: @doctrine.crud(Your\Cool\NameSpace\YourEntity)
+    yourEntityCrud:
+        factory: @doctrine.crud(Your\Cool\NameSpace\YourEntity)
 ```
 
 Now CRUD service for given entity is created and now you can create a manager for this entity:
@@ -36,88 +36,90 @@ Now CRUD service for given entity is created and now you can create a manager fo
 ```php
 class YourEntityManager extends \Nette\Object
 {
-	/**
-	 * @var \IPub\DoctrineCrud\Crud\IEntityCrud
-	 */
-	private $entityCrud;
+    /**
+     * @var \IPub\DoctrineCrud\Crud\IEntityCrud
+     */
+    private $entityCrud;
 
-	/**
-	 * @param \IPub\DoctrineCrud\Crud\IEntityCrud $entityCrud
-	 */
-	function __construct(
-		\IPub\DoctrineCrud\Crud\IEntityCrud $entityCrud
-	) {
-		// Entity CRUD for handling entities
-		$this->entityCrud = $entityCrud;
-	}
+    /**
+     * @param \IPub\DoctrineCrud\Crud\IEntityCrud $entityCrud
+     */
+    function __construct(
+        \IPub\DoctrineCrud\Crud\IEntityCrud $entityCrud
+    ) {
+        // Entity CRUD for handling entities
+        $this->entityCrud = $entityCrud;
+    }
 
-	/**
-	 * @param \Nette\Utils\ArrayHash $values
-	 * @param YourEntity|NULL $entity
-	 *
-	 * @return ArticleEntity
-	 */
-	public function create(\Nette\Utils\ArrayHash $values, $entity = NULL)
-	{
-		// Get entity creator
-		$creator = $this->entityCrud->getEntityCreator();
+    /**
+     * @param \Nette\Utils\ArrayHash $values
+     * @param YourEntity|NULL $entity
+     *
+     * @return ArticleEntity
+     */
+    public function create(\Nette\Utils\ArrayHash $values, $entity = NULL)
+    {
+        // Get entity creator
+        $creator = $this->entityCrud->getEntityCreator();
 
-		// Assign before create entity events
-		$creator->beforeAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
-		};
+        // Assign before create entity events
+        $creator->beforeAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+            // This piece of code will be executed before entity is created
+        };
 
-		// Assign after create entity events
-		$creator->afterAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
-		};
+        // Assign after create entity events
+        $creator->afterAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+            // This piece of code will be executed after entity is created
+        };
 
-		// Create new entity
-		return $creator->create($values, $entity);
-	}
+        // Create new entity
+        return $creator->create($values, $entity);
+    }
 
-	/**
-	 * @param ArticleEntity|mixed $entity
-	 * @param \Nette\Utils\ArrayHash $values
-	 *
-	 * @return YourEntity
-	 */
-	public function update($entity, Utils\ArrayHash $values)
-	{
-		// Get entity updater
-		$updater = $this->entityCrud->getEntityUpdater();
+    /**
+     * @param ArticleEntity|mixed $entity
+     * @param \Nette\Utils\ArrayHash $values
+     *
+     * @return YourEntity
+     */
+    public function update($entity, Utils\ArrayHash $values)
+    {
+        // Get entity updater
+        $updater = $this->entityCrud->getEntityUpdater();
 
-		// Assign before update entity events
-		$updater->beforeAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
-		};
+        // Assign before update entity events
+        $updater->beforeAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+        };
 
-		// Assign after create entity events
-		$updater->afterAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
-		};
+        // Assign after create entity events
+        $updater->afterAction[] = function (ArticleEntity $entity, Utils\ArrayHash $values) {
+        };
 
-		// Update entity in database
-		return $updater->update($values, $entity);
-	}
+        // Update entity in database
+        return $updater->update($values, $entity);
+    }
 
-	/**
-	 * @param ArticleEntity|mixed $entity
-	 *
-	 * @return bool
-	 */
-	public function delete($entity)
-	{
-		// Get entity deleter
-		$deleter = $this->entityCrud->getEntityDeleter();
+    /**
+     * @param ArticleEntity|mixed $entity
+     *
+     * @return bool
+     */
+    public function delete($entity)
+    {
+        // Get entity deleter
+        $deleter = $this->entityCrud->getEntityDeleter();
 
-		// Assign before delete entity events
-		$deleter->beforeAction[] = function (ArticleEntity $entity) {
-		};
+        // Assign before delete entity events
+        $deleter->beforeAction[] = function (ArticleEntity $entity) {
+        };
 
-		// Assign after delete entity events
-		$deleter->afterAction[] = function () {
-		};
+        // Assign after delete entity events
+        $deleter->afterAction[] = function () {
+        };
 
-		// Delete entity from database
-		return $deleter->delete($entity);
-	}
+        // Delete entity from database
+        return $deleter->delete($entity);
+    }
 }
 ```
 
@@ -125,8 +127,8 @@ and that is all, now just register this manager as service:
 
 ```neon
 services:
-	yourEntityManager:
-		class: Your\Cool\NameSpace\YourEntityManager(@yourEntityCrud)
+    yourEntityManager:
+        class: Your\Cool\NameSpace\YourEntityManager(@yourEntityCrud)
 ```
 
 ### Creating new entity
@@ -289,34 +291,34 @@ use IPub\DoctrineCrud\Mapping\Annotation\Crud;
  */
 class ArticleEntity implements \IPub\DoctrineCrud\Entities\IEntity
 {
-	use \IPub\DoctrineCrud\Entities\TEntity;
+    use \IPub\DoctrineCrud\Entities\TEntity;
 
-	/**
-	 * @var string
-	 *
-	 * @ORM\Column(type="string")
-	 *
-	 * @Crud(is={"required", "writable"})
-	 */
-	private $title;
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     *
+     * @Crud(is={"required", "writable"})
+     */
+    private $title;
 
-	/**
-	 * @var string
-	 *
-	 * @ORM\Column(type="string")
-	 *
-	 * @Crud(is="required")
-	 */
-	private $another;
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     *
+     * @Crud(is="required")
+     */
+    private $another;
 
-	/**
-	 * @var string
-	 *
-	 * @ORM\Column(type="string")
-	 *
-	 * @Crud(is="writable" validator="NameSpace\To\Your\Validator")
-	 */
-	private $some;
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     *
+     * @Crud(is="writable" validator="NameSpace\To\Your\Validator")
+     */
+    private $some;
 }
 ```
 
