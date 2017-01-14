@@ -1,0 +1,14 @@
+services:
+	userCrud:
+		factory: @doctrine.crud(IPubTests\DoctrineCrud\Models\UserEntity)
+	articleCrud:
+		factory: @doctrine.crud(IPubTests\DoctrineCrud\Models\ArticleEntity)
+
+	usersManager:
+		class: IPubTests\DoctrineCrud\Models\UsersManager(@userCrud)
+	articlesManager:
+		class: IPubTests\DoctrineCrud\Models\ArticlesManager(@articleCrud)
+
+doctrine:
+	metadata:
+		IPubTests\DoctrineCrud: %appDir%IPubTests/DoctrineCrud/models

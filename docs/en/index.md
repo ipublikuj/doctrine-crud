@@ -16,7 +16,7 @@ After that you have to register extension in config.neon.
 
 ```neon
 extensions:
-	doctrine: IPub\Doctrine\DI\OrmExtension
+	doctrine: IPub\DoctrineCrud\DI\OrmExtension
 ```
 
 This extensions extends [Kdyby/Doctrine](https://github.com/Kdyby/Doctrine) extensions, so therefore you have to remove extensions definition for Kdyby/Doctrine. Configuration is same as for Kdyby/Doctrine.
@@ -37,15 +37,15 @@ Now CRUD service for given entity is created and now you can create a manager fo
 class YourEntityManager extends \Nette\Object
 {
 	/**
-	 * @var \IPub\Doctrine\Crud\IEntityCrud
+	 * @var \IPub\DoctrineCrud\Crud\IEntityCrud
 	 */
 	private $entityCrud;
 
 	/**
-	 * @param \IPub\Doctrine\Crud\IEntityCrud $entityCrud
+	 * @param \IPub\DoctrineCrud\Crud\IEntityCrud $entityCrud
 	 */
 	function __construct(
-		\IPub\Doctrine\Crud\IEntityCrud $entityCrud
+		\IPub\DoctrineCrud\Crud\IEntityCrud $entityCrud
 	) {
 		// Entity CRUD for handling entities
 		$this->entityCrud = $entityCrud;
@@ -159,9 +159,9 @@ Don't worry about your entity constructor dependencies. This extension will take
 So if you have entity with dependencies like this:
 
 ```php
-class MyEntityWithConstructor implements \IPub\Doctrine\Entities\IEntity
+class MyEntityWithConstructor implements \IPub\DoctrineCrud\Entities\IEntity
 {
-    use \IPub\Doctrine\Entities\TEntity;
+    use \IPub\DoctrineCrud\Entities\TEntity;
 
     // ...
 
@@ -282,14 +282,14 @@ Every property which should be filled during creating or updating entity must ha
 ```php
 use Doctrine\ORM\Mapping as ORM;
 
-use IPub\Doctrine\Mapping\Annotation\Crud;
+use IPub\DoctrineCrud\Mapping\Annotation\Crud;
 
 /**
  * @ORM\Entity
  */
-class ArticleEntity implements \IPub\Doctrine\Entities\IEntity
+class ArticleEntity implements \IPub\DoctrineCrud\Entities\IEntity
 {
-	use \IPub\Doctrine\Entities\TEntity;
+	use \IPub\DoctrineCrud\Entities\TEntity;
 
 	/**
 	 * @var string
@@ -322,7 +322,7 @@ class ArticleEntity implements \IPub\Doctrine\Entities\IEntity
 
 #### Annotation syntax
 
-**@IPub\Doctrine\Mapping\Annotation\Crud** used in entity property, tells that this column/property should be handled during creating or updating.
+**@IPub\DoctrineCrud\Mapping\Annotation\Crud** used in entity property, tells that this column/property should be handled during creating or updating.
 
 ##### Available options
 
@@ -368,7 +368,7 @@ services:
 and have to implement validator interface:
 
 ```php
-class SomeValidator implements \IPub\Doctrine\IValidator\IValidator
+class SomeValidator implements \IPub\DoctrineCrud\IValidator\IValidator
 {
     /**
      * @param mixed $data

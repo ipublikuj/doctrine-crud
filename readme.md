@@ -22,7 +22,7 @@ After that you have to register extension in config.neon.
 
 ```neon
 extensions:
-	doctrine: IPub\Doctrine\DI\OrmExtension
+	doctrine: IPub\DoctrineCrud\DI\OrmExtension
 ```
 
 ## Documentation
