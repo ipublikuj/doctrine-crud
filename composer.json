@@ -1,5 +1,5 @@
 {
-	"name"			: "ipub/doctrine",
+	"name"			: "ipub/doctrine-crud",
 	"type"			: "library",
 	"description"	: "Extension of Kdyby/Doctrine with CRUD",
 	"keywords"		: ["doctrine2", "doctrine", "crud", "nette", "ipub", "framework", "tools"],
@@ -19,6 +19,16 @@
 		"issues"	:"https://github.com/iPublikuj/doctrine/issues"
 	},
 
+	"extra": {
+		"ipub"	: {
+			"configuration" : {
+				"extensions" : {
+					"doctrineCrud" : "IPub\\DoctrineCrud\\DI\\DoctrineCrudExtension"
+				}
+			}
+		}
+	},
+
 	"require": {
 		"php"	: ">=7.0.0",
 
@@ -26,7 +36,7 @@
 		"nette/utils"		: "~2.3",
 		"nette/reflection"	: "~2.3",
 
-		"kdyby/doctrine"	: "~3.0"
+		"pds/skeleton"	: "@dev"
 	},
 
 	"require-dev": {
@@ -37,12 +47,14 @@
 		"nette/robot-loader"	: "~2.3",
 		"nette/tester"			: "@dev",
 
-		"tracy/tracy"	: "@dev"
+		"tracy/tracy"	: "@dev",
+
+		"kdyby/doctrine"	: "~3.0"
 	},
 
 	"autoload": {
 		"psr-0": {
-			"IPub\\Doctrine\\": "src/"
+			"IPub\\DoctrineCrud\\": "src/"
 		}
 	}
 }
