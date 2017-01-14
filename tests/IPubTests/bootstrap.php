@@ -10,11 +10,13 @@ if (!class_exists('Tester\Assert')) {
 }
 
 Tester\Environment::setup();
+
 date_default_timezone_set('Europe/Prague');
 
 // Create temporary directory
 define('TEMP_DIR', __DIR__ . DS . '..' . DS . 'tmp' . DS . (isset($_SERVER['argv']) ? md5(serialize($_SERVER['argv'])) : getmypid()));
 Tester\Helpers::purge(TEMP_DIR);
+
 \Tracy\Debugger::$logDirectory = TEMP_DIR;
 
 $_SERVER = array_intersect_key($_SERVER, array_flip(array(
