@@ -64,6 +64,9 @@ class CRUDTest extends Tester\TestCase
 	 */
 	private $manager;
 
+	/**
+	 * {@inheritdoc}
+	 */
 	protected function setUp()
 	{
 		parent::setUp();
@@ -230,6 +233,9 @@ class CRUDTest extends Tester\TestCase
 		], $article->toSimpleArray(), 'ArticleEntity - toSimpleArray()');
 	}
 
+	/**
+	 * @return void
+	 */
 	private function generateDbSchema()
 	{
 		$schema = new ORM\Tools\SchemaTool($this->em);
@@ -239,7 +245,7 @@ class CRUDTest extends Tester\TestCase
 	/**
 	 * @return Nette\DI\Container
 	 */
-	protected function createContainer()
+	protected function createContainer() : Nette\DI\Container
 	{
 		$rootDir = __DIR__ . '/../../';
 

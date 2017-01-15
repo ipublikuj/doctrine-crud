@@ -48,7 +48,7 @@ class ExtensionTest extends Tester\TestCase
 	/**
 	 * @return Nette\DI\Container
 	 */
-	protected function createContainer()
+	protected function createContainer() : Nette\DI\Container
 	{
 		$rootDir = __DIR__ . '/../../';
 

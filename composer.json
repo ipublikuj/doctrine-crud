@@ -3,7 +3,7 @@
 	"type"			: "library",
 	"description"	: "Extension of Kdyby/Doctrine with CRUD",
 	"keywords"		: ["doctrine2", "doctrine", "crud", "nette", "ipub", "framework", "tools"],
-	"homepage"		: "https://github.com/iPublikuj/doctrine",
+	"homepage"		: "https://github.com/iPublikuj/doctrine-crud",
 	"license"		: ["GPL-2.0", "GPL-3.0"],
 
 	"authors": [
@@ -16,7 +16,7 @@
 
 	"support": {
 		"email"		:"support@ipublikuj.eu",
-		"issues"	:"https://github.com/iPublikuj/doctrine/issues"
+		"issues"	:"https://github.com/iPublikuj/doctrine-crud/issues"
 	},
 
 	"extra": {
