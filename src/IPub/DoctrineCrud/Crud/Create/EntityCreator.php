@@ -76,7 +76,7 @@ class EntityCreator extends Crud\CrudManager
 			$rc = new \ReflectionClass($this->entityName);
 
 			if ($constructor = $rc->getConstructor()) {
-				$entity = $rc->newInstanceArgs(Doctrine\Helpers::autowireArguments($constructor, (array) $values));
+				$entity = $rc->newInstanceArgs(DoctrineCrud\Helpers::autowireArguments($constructor, (array) $values));
 
 			} else {
 				$entity = $this->entityManager->getClassMetadata($this->entityName)->newInstance();
