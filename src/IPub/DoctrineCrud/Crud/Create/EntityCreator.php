@@ -70,7 +70,7 @@ class EntityCreator extends Crud\CrudManager
 	 * @throws Exceptions\InvalidArgumentException
 	 * @throws Exceptions\EntityCreationException
 	 */
-	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL)
+	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL) : Entities\IEntity
 	{
 		if (!$entity instanceof Entities\IEntity) {
 			$rc = new \ReflectionClass($this->entityName);

@@ -31,5 +31,5 @@ interface IEntityDeleter
 	 *
 	 * @return EntityDeleter
 	 */
-	function create(string $entityName) : EntityDeleter;
+	public function create(string $entityName) : EntityDeleter;
 }

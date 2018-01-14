@@ -33,8 +33,13 @@ use IPub\DoctrineCrud\Mapping;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
-final class ValidatorProxy extends Nette\Object implements IValidator
+final class ValidatorProxy implements IValidator
 {
+	/**
+	 * Implement nette smart magic
+	 */
+	use Nette\SmartObject;
+
 	/**
 	 * @var IValidator[]
 	 */
@@ -80,7 +85,7 @@ final class ValidatorProxy extends Nette\Object implements IValidator
 	 *
 	 * @return void
 	 */
-	public function registerValidator(IValidator $validator)
+	public function registerValidator(IValidator $validator) : void
 	{
 		$this->validators[get_class($validator)] = $validator;
 	}

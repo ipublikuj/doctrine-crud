@@ -34,8 +34,10 @@ services:
 Now CRUD service for given entity is created and now you can create a manager for this entity:
 
 ```php
-class YourEntityManager extends \Nette\Object
+class YourEntityManager
 {
+    use Nette\SmartObject;
+
     /**
      * @var \IPub\DoctrineCrud\Crud\IEntityCrud
      */

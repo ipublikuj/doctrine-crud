@@ -29,12 +29,12 @@ use IPub\DoctrineCrud\Entities;
 interface IEntityHydrator
 {
 	/**
-	 * @param $values
+	 * @param mixed $values
 	 * @param Entities\IEntity $entity
 	 *
 	 * @return Entities\IEntity
 	 */
-	function hydrate($values, Entities\IEntity $entity);
+	public function hydrate($values, Entities\IEntity $entity) : Entities\IEntity;
 
 	/**
 	 * @param Entities\IEntity $entity
@@ -42,12 +42,12 @@ interface IEntityHydrator
 	 *
 	 * @return array
 	 */
-	function extract(Entities\IEntity $entity, $maxLevel = 1);
+	public function extract(Entities\IEntity $entity, $maxLevel = 1) : array;
 
 	/**
 	 * @param Entities\IEntity $entity
 	 *
 	 * @return array
 	 */
-	function simpleExtract(Entities\IEntity $entity);
+	public function simpleExtract(Entities\IEntity $entity) : array;
 }

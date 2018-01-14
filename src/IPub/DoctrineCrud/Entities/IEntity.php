@@ -31,15 +31,15 @@ interface IEntity
 	 *
 	 * @return array
 	 */
-	function toArray(int $maxLevel = 1) : array;
+	public function toArray(int $maxLevel = 1) : array;
 
 	/**
 	 * @return array
 	 */
-	function toSimpleArray() : array;
+	public function toSimpleArray() : array;
 
 	/**
 	 * @return string
 	 */
-	function __toString();
+	public function __toString();
 }

@@ -47,5 +47,5 @@ interface IEntityMapper
 	 *
 	 * @return Entities\IEntity
 	 */
-	function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, $isNew = FALSE) : Entities\IEntity;
+	public function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, bool $isNew = FALSE) : Entities\IEntity;
 }

@@ -37,10 +37,15 @@ use IPub\DoctrineCrud\Validation;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
-final class EntityMapper extends Nette\Object implements IEntityMapper
+final class EntityMapper implements IEntityMapper
 {
 	/**
-	 * @var Validation\IValidator
+	 * Implement nette smart magic
+	 */
+	use Nette\SmartObject;
+
+	/**
+	 * @var Validation\ValidatorProxy|Validation\IValidator
 	 */
 	private $validators;
 
@@ -114,11 +119,14 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 					if (!$classMetadata->getFieldValue($entity, $fieldName) instanceof Entities\IEntity) {
 						$propertyAnnotations = $this->annotationReader->getPropertyAnnotations($propertyReflection);
 
-						$annotations = array_map((function ($annotation) {
+						$annotations = array_map((function ($annotation) : string {
 							return get_class($annotation);
 						}), $propertyAnnotations);
 
-						if (in_array('Doctrine\ORM\Mapping\OneToOne', $annotations, TRUE)) {
+						if (isset($value['type']) && class_exists($value['type'])) {
+							$className = $value['type'];
+
+						} elseif (in_array('Doctrine\ORM\Mapping\OneToOne', $annotations, TRUE)) {
 							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, 'Doctrine\ORM\Mapping\OneToOne')->targetEntity;
 
 						} elseif (in_array('Doctrine\ORM\Mapping\ManyToOne', $annotations, TRUE)) {
@@ -129,8 +137,13 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 						}
 
 						// Check if class is callable
-						if (class_exists($className)) {
+						if (class_exists($className) && ($value instanceof Utils\ArrayHash || is_array($value))) {
 							$rc = new \ReflectionClass($className);
+
+							if ($rc->isAbstract() && isset($value['entity']) && class_exists($value['entity'])) {
+								$className = $value['entity'];
+								$rc = new \ReflectionClass($value['entity']);
+							}
 
 							if ($constructor = $rc->getConstructor()) {
 								$subEntity = $rc->newInstanceArgs(DoctrineCrud\Helpers::autowireArguments($constructor, array_merge((array) $value, [$entity])));
@@ -151,8 +164,7 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 						$this->setFieldValue($classMetadata, $entity, $fieldName, $this->fillEntity(Utils\ArrayHash::from((array) $value), $fieldValue, $isNew));
 					}
 
-				} elseif ($this->validators->validate($value, $propertyReflection)) {
-
+				} else {
 					$this->setFieldValue($classMetadata, $entity, $fieldName, $value);
 				}
 			}
@@ -169,16 +181,32 @@ final class EntityMapper extends Nette\Object implements IEntityMapper
 	 *
 	 * @return void
 	 */
-	private function setFieldValue(ORM\Mapping\ClassMetadata $classMetadata, Entities\IEntity $entity, $field, $value)
+	private function setFieldValue(ORM\Mapping\ClassMetadata $classMetadata, Entities\IEntity $entity, string $field, $value) : void
 	{
 		$methodName = 'set' . ucfirst($field);
 
-		// Try to call entity setter
-		if (method_exists($entity, $methodName)) {
-			call_user_func_array([$entity, $methodName], [$value]);
+		if ($value instanceof Utils\ArrayHash) {
+			$value = (array) $value;
+		}
 
-		// Fallback for missing setter
-		} else {
+		try {
+			$propertyReflection = new Nette\Reflection\Method(get_class($entity), $methodName);
+
+			//if (!$this->validators->validate($value, $propertyReflection)) {
+			//	// Validation fail
+			//}
+
+			if ($propertyReflection->isPublic()) {
+				// Try to call entity setter
+				call_user_func_array([$entity, $methodName], [$value]);
+
+			} else {
+				// Fallback for missing setter
+				$classMetadata->setFieldValue($entity, $field, $value);
+			}
+
+			// Fallback for missing setter
+		} catch (\ReflectionException $ex) {
 			$classMetadata->setFieldValue($entity, $field, $value);
 		}
 	}

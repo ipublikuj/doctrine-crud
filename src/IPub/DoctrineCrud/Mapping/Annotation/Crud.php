@@ -48,7 +48,7 @@ final class Crud extends Annotation
 	/**
 	 * @return bool
 	 */
-	public function isRequired()
+	public function isRequired() : bool
 	{
 		$is = is_array($this->is) ? $this->is : [$this->is];
 
@@ -58,7 +58,7 @@ final class Crud extends Annotation
 	/**
 	 * @return bool
 	 */
-	public function isWritable()
+	public function isWritable() : bool
 	{
 		$is = is_array($this->is) ? $this->is : [$this->is];
 

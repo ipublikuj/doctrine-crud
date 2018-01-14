@@ -55,13 +55,17 @@ class EntityDeleter extends Crud\CrudManager
 
 		$this->processHooks($this->beforeAction, [$entity]);
 
-		$this->entityManager->remove($entity);
+		$this->entityManager->getConnection()->beginTransaction();
 
-		$this->processHooks($this->afterAction);
+		$this->entityManager->remove($entity);
 
 		if ($this->getFlush() === TRUE) {
 			$this->entityManager->flush();
 		}
+
+		$this->entityManager->getConnection()->commit();
+
+		$this->processHooks($this->afterAction);
 
 		return TRUE;
 	}

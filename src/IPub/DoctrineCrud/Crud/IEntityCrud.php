@@ -32,15 +32,15 @@ interface IEntityCrud
 	/**
 	 * @return Crud\Create\EntityCreator
 	 */
-	function getEntityCreator() : Crud\Create\EntityCreator;
+	public function getEntityCreator() : Crud\Create\EntityCreator;
 
 	/**
 	 * @return Crud\Update\EntityUpdater
 	 */
-	function getEntityUpdater() : Crud\Update\EntityUpdater;
+	public function getEntityUpdater() : Crud\Update\EntityUpdater;
 
 	/**
 	 * @return Crud\Delete\EntityDeleter
 	 */
-	function getEntityDeleter() : Crud\Delete\EntityDeleter;
+	public function getEntityDeleter() : Crud\Delete\EntityDeleter;
 }

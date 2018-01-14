@@ -42,7 +42,7 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 	/**
 	 * @return void
 	 */
-	public function loadConfiguration()
+	public function loadConfiguration() : void
 	{
 		// Get container builder
 		$builder = $this->getContainerBuilder();
@@ -115,7 +115,7 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 	/**
 	 * {@inheritdoc}
 	 */
-	public function beforeCompile()
+	public function beforeCompile() : void
 	{
 		parent::beforeCompile();
 
@@ -137,7 +137,7 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 	 */
 	public static function register(Nette\Configurator $config, string $extensionName = 'doctrineCrud')
 	{
-		$config->onCompile[] = function (Nette\Configurator $config, DI\Compiler $compiler) use ($extensionName) {
+		$config->onCompile[] = function (Nette\Configurator $config, DI\Compiler $compiler) use ($extensionName) : void {
 			$compiler->addExtension($extensionName, new DoctrineCrudExtension());
 		};
 	}

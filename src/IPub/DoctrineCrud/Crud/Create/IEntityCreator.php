@@ -35,5 +35,5 @@ interface IEntityCreator
 	 *
 	 * @return EntityCreator
 	 */
-	function create(string $entityName, Mapping\IEntityMapper $entityMapper) : EntityCreator;
+	public function create(string $entityName, Mapping\IEntityMapper $entityMapper) : EntityCreator;
 }

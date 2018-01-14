@@ -30,8 +30,13 @@ use IPub\DoctrineCrud\Mapping;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
-final class EntityCrud extends Nette\Object implements IEntityCrud
+final class EntityCrud implements IEntityCrud
 {
+	/**
+	 * Implement nette smart magic
+	 */
+	use Nette\SmartObject;
+
 	/**
 	 * @var string
 	 */

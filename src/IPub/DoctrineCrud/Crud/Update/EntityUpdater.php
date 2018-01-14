@@ -69,7 +69,7 @@ class EntityUpdater extends Crud\CrudManager
 	 *
 	 * @throws Exceptions\InvalidArgumentException
 	 */
-	public function update(Utils\ArrayHash $values, $entity)
+	public function update(Utils\ArrayHash $values, $entity) : Entities\IEntity
 	{
 		if (!$entity instanceof Entities\IEntity) {
 			$entity = $this->entityRepository->find($entity);

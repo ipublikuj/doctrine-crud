@@ -42,7 +42,7 @@ class Helpers
 	 * @throws Exceptions\EntityCreationException
 	 * @throws \ReflectionException
 	 */
-	public static function autowireArguments(\ReflectionMethod $method, array $arguments)
+	public static function autowireArguments(\ReflectionMethod $method, array $arguments) : array
 	{
 		$optCount = 0;
 		$num = -1;
@@ -86,7 +86,7 @@ class Helpers
 	 *
 	 * @return string|NULL
 	 */
-	public static function getParameterType(\ReflectionParameter $param)
+	public static function getParameterType(\ReflectionParameter $param) : ?string
 	{
 		if ($param->hasType()) {
 			$type = PHP_VERSION_ID >= 70100 ? $param->getType()->getName() : (string) $param->getType();

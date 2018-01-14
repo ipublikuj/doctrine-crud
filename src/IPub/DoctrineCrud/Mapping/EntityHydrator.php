@@ -31,8 +31,13 @@ use IPub\DoctrineCrud\Entities;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
-final class EntityHydrator extends Nette\Object implements IEntityHydrator
+final class EntityHydrator implements IEntityHydrator
 {
+	/**
+	 * Implement nette smart magic
+	 */
+	use Nette\SmartObject;
+
 	/**
 	 * Property needs to have at least one of these annotations to be serialized
 	 *
@@ -49,7 +54,7 @@ final class EntityHydrator extends Nette\Object implements IEntityHydrator
 	/**
 	 * {@inheritdoc}
 	 */
-	public function hydrate($values, Entities\IEntity $entity)
+	public function hydrate($values, Entities\IEntity $entity) : Entities\IEntity
 	{
 		if (count($values)) {
 			foreach ($values as $name => $value) {
@@ -67,7 +72,7 @@ final class EntityHydrator extends Nette\Object implements IEntityHydrator
 	/**
 	 * {@inheritdoc}
 	 */
-	public function extract(Entities\IEntity $entity, $maxLevel = 1, $level = 1)
+	public function extract(Entities\IEntity $entity, $maxLevel = 1, $level = 1) : array
 	{
 		$values = [];
 
@@ -99,7 +104,7 @@ final class EntityHydrator extends Nette\Object implements IEntityHydrator
 	/**
 	 * {@inheritdoc}
 	 */
-	public function simpleExtract(Entities\IEntity $entity)
+	public function simpleExtract(Entities\IEntity $entity) : array
 	{
 		$values = [];
 
@@ -135,7 +140,7 @@ final class EntityHydrator extends Nette\Object implements IEntityHydrator
 	 *
 	 * @return array
 	 */
-	private function extractor($value, $maxLevel = 1, $level = 1)
+	private function extractor($value, int $maxLevel = 1, int $level = 1) : array
 	{
 		if ($value instanceof Entities\IEntity) {
 			if ($level < $maxLevel) {
@@ -166,7 +171,7 @@ final class EntityHydrator extends Nette\Object implements IEntityHydrator
 	 *
 	 * @return array
 	 */
-	private function simpleExtractor($value)
+	private function simpleExtractor($value) : array
 	{
 		if ($value instanceof DoctrineCrud\Entities\IIdentifiedEntity) {
 			$value = $value->getId();
@@ -191,7 +196,7 @@ final class EntityHydrator extends Nette\Object implements IEntityHydrator
 	 *
 	 * @return Nette\Reflection\Property[]
 	 */
-	private function getEntityProperties(Entities\IEntity $entity)
+	private function getEntityProperties(Entities\IEntity $entity) : array
 	{
 		$entityReflection = new \ReflectionClass(get_class($entity));
 
@@ -203,7 +208,7 @@ final class EntityHydrator extends Nette\Object implements IEntityHydrator
 	 *
 	 * @return Common\Annotations\AnnotationReader
 	 */
-	private function getDefaultAnnotationReader()
+	private function getDefaultAnnotationReader() : Common\Annotations\AnnotationReader
 	{
 		$reader = new Common\Annotations\AnnotationReader;
 

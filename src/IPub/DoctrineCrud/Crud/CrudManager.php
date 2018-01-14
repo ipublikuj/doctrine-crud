@@ -30,8 +30,13 @@ use IPub\DoctrineCrud\Exceptions;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  */
-abstract class CrudManager extends Nette\Object
+abstract class CrudManager
 {
+	/**
+	 * Implement nette smart magic
+	 */
+	use Nette\SmartObject;
+
 	/**
 	 * @var array
 	 */
@@ -81,7 +86,7 @@ abstract class CrudManager extends Nette\Object
 	 *
 	 * @return void
 	 */
-	public function setFlush(bool $flush)
+	public function setFlush(bool $flush) : void
 	{
 		$this->flush = $flush;
 	}
@@ -102,7 +107,7 @@ abstract class CrudManager extends Nette\Object
 	 *
 	 * @throws Exceptions\InvalidStateException
 	 */
-	protected function processHooks($hooks, array $args = [])
+	protected function processHooks($hooks, array $args = []) : void
 	{
 		if (!is_array($hooks)) {
 			throw new Exceptions\InvalidStateException('Hooks configuration must be in array');

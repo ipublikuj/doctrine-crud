@@ -35,5 +35,5 @@ interface IEntityUpdater
 	 *
 	 * @return EntityUpdater
 	 */
-	function create(string $entityName, Mapping\IEntityMapper $entityMapper) : EntityUpdater;
+	public function create(string $entityName, Mapping\IEntityMapper $entityMapper) : EntityUpdater;
 }

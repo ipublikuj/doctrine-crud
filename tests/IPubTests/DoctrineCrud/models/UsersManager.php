@@ -22,8 +22,13 @@ use IPub;
 use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Crud;
 
-class UsersManager extends Nette\Object
+class UsersManager
 {
+	/**
+	 * Implement nette smart magic
+	 */
+	use Nette\SmartObject;
+
 	/**
 	 * @var Crud\IEntityCrud
 	 */
@@ -32,7 +37,7 @@ class UsersManager extends Nette\Object
 	/**
 	 * @param Crud\IEntityCrud $entityCrud
 	 */
-	function __construct(
+	public function __construct(
 		Crud\IEntityCrud $entityCrud
 	) {
 		// Entity CRUD for handling entities

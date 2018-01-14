@@ -29,10 +29,10 @@ interface IIdentifiedEntity extends IEntity
 	/**
 	 * @return mixed
 	 */
-	function getId();
+	public function getId();
 
 	/**
 	 * @return mixed
 	 */
-	function getRawId();
+	public function getRawId();
 }
