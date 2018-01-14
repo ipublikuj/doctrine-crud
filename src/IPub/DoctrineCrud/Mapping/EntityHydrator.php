@@ -138,7 +138,7 @@ final class EntityHydrator implements IEntityHydrator
 	 * @param int $maxLevel
 	 * @param int $level
 	 *
-	 * @return mixed
+	 * @return mixed|mixed[]
 	 */
 	private function extractor($value, int $maxLevel = 1, int $level = 1)
 	{
@@ -169,9 +169,9 @@ final class EntityHydrator implements IEntityHydrator
 	/**
 	 * @param $value
 	 *
-	 * @return array
+	 * @return mixed|mixed[]
 	 */
-	private function simpleExtractor($value) : array
+	private function simpleExtractor($value)
 	{
 		if ($value instanceof DoctrineCrud\Entities\IIdentifiedEntity) {
 			$value = $value->getId();
