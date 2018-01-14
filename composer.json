@@ -49,7 +49,7 @@
 
 		"tracy/tracy"	: "~2.4",
 
-		"kdyby/doctrine"	: "~3.0",
+		"kdyby/doctrine"	: "@dev",
 
 		"pds/skeleton"	: "~1.0"
 	},
