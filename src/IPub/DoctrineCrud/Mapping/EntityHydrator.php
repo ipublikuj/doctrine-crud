@@ -173,7 +173,6 @@ final class EntityHydrator implements IEntityHydrator
 	 */
 	private function simpleExtractor($value)
 	{
-
 		if ($value instanceof DoctrineCrud\Entities\IIdentifiedEntity) {
 			$value = $value->getId();
 
