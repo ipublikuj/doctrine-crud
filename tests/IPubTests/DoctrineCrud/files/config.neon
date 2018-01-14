@@ -6,7 +6,6 @@ extensions:
 	doctrineCrud: IPub\DoctrineCrud\DI\DoctrineCrudExtension
 	annotations: Kdyby\Annotations\DI\AnnotationsExtension
 	console: Kdyby\Console\DI\ConsoleExtension
-	events: Kdyby\Events\DI\EventsExtension
 
 services:
 	cacheStorage:

@@ -50,7 +50,6 @@
 		"tracy/tracy"	: "~2.4",
 
 		"kdyby/doctrine"	: "@dev",
-		"kdyby/events"		: "@dev",
 
 		"pds/skeleton"	: "~1.0"
 	},
