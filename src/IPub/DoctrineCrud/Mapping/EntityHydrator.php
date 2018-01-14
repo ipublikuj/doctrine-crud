@@ -138,9 +138,9 @@ final class EntityHydrator implements IEntityHydrator
 	 * @param int $maxLevel
 	 * @param int $level
 	 *
-	 * @return array
+	 * @return mixed
 	 */
-	private function extractor($value, int $maxLevel = 1, int $level = 1) : array
+	private function extractor($value, int $maxLevel = 1, int $level = 1)
 	{
 		if ($value instanceof Entities\IEntity) {
 			if ($level < $maxLevel) {
