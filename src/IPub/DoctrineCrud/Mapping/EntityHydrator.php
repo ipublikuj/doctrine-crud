@@ -206,9 +206,9 @@ final class EntityHydrator implements IEntityHydrator
 	/**
 	 * Create default annotation reader for extensions
 	 *
-	 * @return Common\Annotations\AnnotationReader
+	 * @return Common\Annotations\CachedReader
 	 */
-	private function getDefaultAnnotationReader() : Common\Annotations\AnnotationReader
+	private function getDefaultAnnotationReader() : Common\Annotations\CachedReader
 	{
 		$reader = new Common\Annotations\AnnotationReader;
 
