@@ -77,7 +77,7 @@ final class EntityMapper implements IEntityMapper
 	/**
 	 * {@inheritdoc}
 	 */
-	public function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, $isNew = FALSE) : Entities\IEntity
+	public function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, bool $isNew = FALSE) : Entities\IEntity
 	{
 		$reflectionClass = new Reflection\ClassType(get_class($entity));
 
