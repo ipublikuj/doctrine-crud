@@ -37,10 +37,11 @@ interface IEntityHydrator
 	/**
 	 * @param Entities\IEntity $entity
 	 * @param int $maxLevel
+	 * @param int $level
 	 *
 	 * @return array
 	 */
-	public function extract(Entities\IEntity $entity, $maxLevel = 1) : array;
+	public function extract(Entities\IEntity $entity, int $maxLevel = 1, int $level = 1) : array;
 
 	/**
 	 * @param Entities\IEntity $entity
