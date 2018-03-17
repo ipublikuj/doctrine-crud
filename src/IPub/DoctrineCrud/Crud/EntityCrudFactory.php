@@ -18,7 +18,6 @@ namespace IPub\DoctrineCrud\Crud;
 
 use Nette;
 
-use IPub;
 use IPub\DoctrineCrud\Crud;
 use IPub\DoctrineCrud\Mapping;
 

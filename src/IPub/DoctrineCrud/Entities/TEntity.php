@@ -16,8 +16,6 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Entities;
 
-use IPub;
-use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Mapping;
 
 /**

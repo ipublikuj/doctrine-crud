@@ -60,12 +60,12 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 		 */
 
 		$builder->addDefinition($this->prefix('entity.validator'))
-			->setClass(DoctrineCrud\Validation\ValidatorProxy::class)
+			->setType(DoctrineCrud\Validation\ValidatorProxy::class)
 			->setArguments([$annotationReader])
 			->setAutowired(FALSE);
 
 		$builder->addDefinition($this->prefix('entity.mapper'))
-			->setClass(Mapping\EntityMapper::class)
+			->setType(Mapping\EntityMapper::class)
 			->setArguments(['@' . $this->prefix('entity.validator'), $annotationReader])
 			->setAutowired(FALSE);
 
@@ -74,22 +74,22 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 		 */
 
 		$builder->addDefinition($this->prefix('entity.creator'))
-			->setClass(Crud\Create\EntityCreator::class)
+			->setType(Crud\Create\EntityCreator::class)
 			->setImplement(Crud\Create\IEntityCreator::class)
 			->setAutowired(FALSE);
 
 		$builder->addDefinition($this->prefix('entity.updater'))
-			->setClass(Crud\Update\EntityUpdater::class)
+			->setType(Crud\Update\EntityUpdater::class)
 			->setImplement(Crud\Update\IEntityUpdater::class)
 			->setAutowired(FALSE);
 
 		$builder->addDefinition($this->prefix('entity.deleter'))
-			->setClass(Crud\Delete\EntityDeleter::class)
+			->setType(Crud\Delete\EntityDeleter::class)
 			->setImplement(Crud\Delete\IEntityDeleter::class)
 			->setAutowired(FALSE);
 
 		$builder->addDefinition($this->prefix('entity.crudFactory'))
-			->setClass(Crud\EntityCrudFactory::class)
+			->setType(Crud\EntityCrudFactory::class)
 			->setArguments([
 				'@' . $this->prefix('entity.mapper'),
 				'@' . $this->prefix('entity.creator'),
@@ -99,7 +99,7 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 
 		// Syntax sugar for config
 		$builder->addDefinition($this->prefix('crud'))
-			->setClass(Crud\EntityCrud::class)
+			->setType(Crud\EntityCrud::class)
 			->setFactory('@IPub\DoctrineCrud\Crud\EntityCrudFactory::create', [new PhpGenerator\PhpLiteral('$entityName')])
 			->setParameters(['entityName'])
 			->setAutowired(FALSE);
@@ -134,8 +134,10 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 	/**
 	 * @param Nette\Configurator $config
 	 * @param string $extensionName
+	 *
+	 * @return void
 	 */
-	public static function register(Nette\Configurator $config, string $extensionName = 'doctrineCrud')
+	public static function register(Nette\Configurator $config, string $extensionName = 'doctrineCrud') : void
 	{
 		$config->onCompile[] = function (Nette\Configurator $config, DI\Compiler $compiler) use ($extensionName) : void {
 			$compiler->addExtension($extensionName, new DoctrineCrudExtension());

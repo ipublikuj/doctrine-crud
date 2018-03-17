@@ -14,7 +14,6 @@
 
 namespace IPub\DoctrineCrud\StringFunctions;
 
-use Doctrine;
 use Doctrine\ORM\Query;
 
 class DateFormat extends Query\AST\Functions\FunctionNode
@@ -38,7 +37,7 @@ class DateFormat extends Query\AST\Functions\FunctionNode
 	 *
 	 * @return string
 	 */
-	public function getSql(Query\SqlWalker $sqlWalker)
+	public function getSql(Query\SqlWalker $sqlWalker) : string
 	{
 		return 'DATE_FORMAT(' .
 		$sqlWalker->walkArithmeticExpression($this->dateExpression) .
@@ -52,7 +51,7 @@ class DateFormat extends Query\AST\Functions\FunctionNode
 	 *
 	 * @return void
 	 */
-	public function parse(Query\Parser $parser)
+	public function parse(Query\Parser $parser) : void
 	{
 		$parser->match(Query\Lexer::T_IDENTIFIER);
 		$parser->match(Query\Lexer::T_OPEN_PARENTHESIS);

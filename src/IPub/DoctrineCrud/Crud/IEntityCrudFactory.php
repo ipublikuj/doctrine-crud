@@ -16,11 +16,6 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Crud;
 
-use Nette;
-
-use IPub;
-use IPub\DoctrineCrud\Crud;
-
 /**
  * Doctrine CRUD factory
  *

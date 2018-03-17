@@ -18,7 +18,6 @@ namespace IPub\DoctrineCrud\Crud\Delete;
 
 use Doctrine\Common\Persistence;
 
-use IPub;
 use IPub\DoctrineCrud\Crud;
 use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Exceptions;

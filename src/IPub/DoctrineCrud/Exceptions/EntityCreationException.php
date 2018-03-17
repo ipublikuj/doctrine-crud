@@ -16,8 +16,6 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Exceptions;
 
-use Nette;
-
-class EntityCreationException extends Nette\InvalidStateException implements IException
+class EntityCreationException extends \RuntimeException implements IException
 {
 }

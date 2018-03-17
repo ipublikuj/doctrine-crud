@@ -14,8 +14,6 @@
 
 namespace IPub\DoctrineCrud\Mapping;
 
-use IPub;
-use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Entities;
 
 /**

@@ -18,8 +18,6 @@ namespace IPub\DoctrineCrud\Mapping\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
 
-use IPub;
-use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Mapping;
 
 /**

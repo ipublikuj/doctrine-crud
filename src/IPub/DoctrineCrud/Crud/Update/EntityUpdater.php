@@ -18,10 +18,8 @@ namespace IPub\DoctrineCrud\Crud\Update;
 
 use Doctrine\Common\Persistence;
 
-use Nette;
 use Nette\Utils;
 
-use IPub;
 use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Crud;
 use IPub\DoctrineCrud\Entities;

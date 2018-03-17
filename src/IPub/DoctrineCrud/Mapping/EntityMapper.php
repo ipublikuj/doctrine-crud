@@ -23,10 +23,10 @@ use Nette;
 use Nette\Reflection;
 use Nette\Utils;
 
-use IPub;
-use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Exceptions;
+use IPub\DoctrineCrud\Helpers;
+use IPub\DoctrineCrud\Mapping;
 use IPub\DoctrineCrud\Validation;
 
 /**
@@ -93,7 +93,20 @@ final class EntityMapper implements IEntityMapper
 		/** @var ORM\Mapping\ClassMetadata $classMetadata */
 		$classMetadata = $this->managerRegistry->getManagerForClass($entityClass)->getClassMetadata($entityClass);
 
-		foreach (array_merge($classMetadata->getFieldNames(), $classMetadata->getAssociationNames()) as $fieldName) {
+		$reflectionProperties = [];
+
+		try {
+			$ref = new \ReflectionClass($entityClass);
+
+			foreach ($ref->getProperties() as $reflectionProperty) {
+				$reflectionProperties[] = $reflectionProperty->getName();
+			}
+
+		} catch (\ReflectionException $ex) {
+			// Nothing to do here
+		}
+
+		foreach (array_merge($reflectionProperties, $classMetadata->getFieldNames(), $classMetadata->getAssociationNames()) as $fieldName) {
 
 			try {
 				$propertyReflection = new Nette\Reflection\Property($entityClass, $fieldName);
@@ -103,8 +116,8 @@ final class EntityMapper implements IEntityMapper
 				continue;
 			}
 
-			/** @var DoctrineCrud\Mapping\Annotation\Crud $crud */
-			if ($crud = $this->annotationReader->getPropertyAnnotation($propertyReflection, DoctrineCrud\Mapping\Annotation\Crud::class)) {
+			/** @var Mapping\Annotation\Crud $crud */
+			if ($crud = $this->annotationReader->getPropertyAnnotation($propertyReflection, Mapping\Annotation\Crud::class)) {
 				if ($isNew && $crud->isRequired() && !$values->offsetExists($fieldName)) {
 					throw new Exceptions\MissingRequiredFieldException($entity, $fieldName, sprintf('Missing required key "%s"', $fieldName));
 				}
@@ -126,18 +139,58 @@ final class EntityMapper implements IEntityMapper
 						if (isset($value['type']) && class_exists($value['type'])) {
 							$className = $value['type'];
 
-						} elseif (in_array('Doctrine\ORM\Mapping\OneToOne', $annotations, TRUE)) {
-							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, 'Doctrine\ORM\Mapping\OneToOne')->targetEntity;
+						} elseif (in_array(ORM\Mapping\OneToOne::class, $annotations, TRUE)) {
+							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, ORM\Mapping\OneToOne::class)->targetEntity;
 
-						} elseif (in_array('Doctrine\ORM\Mapping\ManyToOne', $annotations, TRUE)) {
-							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, 'Doctrine\ORM\Mapping\ManyToOne')->targetEntity;
+						} elseif (in_array(ORM\Mapping\OneToMany::class, $annotations, TRUE)) {
+							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, ORM\Mapping\OneToMany::class)->targetEntity;
+
+							$items = [];
+
+							if (is_string($className) && class_exists($className) && ($value instanceof Utils\ArrayHash || is_array($value))) {
+								foreach ($value as $item) {
+									$rc = new \ReflectionClass($className);
+
+									if ($rc->isAbstract() && isset($item['entity']) && class_exists($item['entity'])) {
+										$className = $item['entity'];
+
+										$rc = new \ReflectionClass($className);
+									}
+
+									if ($constructor = $rc->getConstructor()) {
+										$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $item, [$entity])));
+
+									} else {
+										$subEntity = new $className;
+									}
+
+									$items[] = $subEntity;
+								}
+
+								$this->setFieldValue($classMetadata, $entity, $fieldName, $items);
+							}
+
+							continue;
+
+						} elseif (in_array(ORM\Mapping\ManyToOne::class, $annotations, TRUE)) {
+							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, ORM\Mapping\ManyToOne::class)->targetEntity;
 
 						} else {
-							$className = $propertyReflection->getAnnotation('var');
+							$varAnnotation = $propertyReflection->getAnnotation('var');
+
+							$className = NULL;
+
+							if (strpos($varAnnotation, '|') !== FALSE) {
+								foreach (explode('|', $varAnnotation) as $varAnnotationItem) {
+									if (is_string($varAnnotationItem) && class_exists($varAnnotationItem)) {
+										$className = $varAnnotationItem;
+									}
+								}
+							}
 						}
 
 						// Check if class is callable
-						if (class_exists($className) && ($value instanceof Utils\ArrayHash || is_array($value))) {
+						if (is_string($className) && class_exists($className) && ($value instanceof Utils\ArrayHash || is_array($value))) {
 							$rc = new \ReflectionClass($className);
 
 							if ($rc->isAbstract() && isset($value['entity']) && class_exists($value['entity'])) {
@@ -146,7 +199,7 @@ final class EntityMapper implements IEntityMapper
 							}
 
 							if ($constructor = $rc->getConstructor()) {
-								$subEntity = $rc->newInstanceArgs(DoctrineCrud\Helpers::autowireArguments($constructor, array_merge((array) $value, [$entity])));
+								$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $value, [$entity])));
 
 								$this->setFieldValue($classMetadata, $entity, $fieldName, $subEntity);
 

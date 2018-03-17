@@ -21,7 +21,6 @@ use Doctrine\Common;
 use Nette;
 use Nette\Reflection;
 
-use IPub;
 use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Mapping;
 

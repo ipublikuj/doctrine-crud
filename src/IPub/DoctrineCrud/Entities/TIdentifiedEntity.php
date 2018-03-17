@@ -16,7 +16,6 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Entities;
 
-use Doctrine;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

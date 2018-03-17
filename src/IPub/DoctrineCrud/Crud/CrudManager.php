@@ -18,7 +18,6 @@ use Doctrine\Common\Persistence;
 
 use Nette;
 
-use IPub;
 use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Exceptions;
 

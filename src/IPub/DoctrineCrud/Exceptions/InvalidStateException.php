@@ -16,6 +16,6 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Exceptions;
 
-class InvalidStateException extends \Nette\InvalidStateException implements IException
+class InvalidStateException extends \RuntimeException implements IException
 {
 }

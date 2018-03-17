@@ -16,7 +16,6 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Exceptions;
 
-use IPub;
 use IPub\DoctrineCrud\Entities;
 
 class MissingRequiredFieldException extends InvalidStateException
