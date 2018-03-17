@@ -57,21 +57,21 @@ class UserEntity implements Entities\IIdentifiedEntity
 	private $name;
 
 	/**
-	 * @var string
+	 * @var string|NULL
 	 *
 	 * @ORM\Column(type="string", nullable=TRUE)
 	 */
 	private $notWritable;
 
 	/**
-	 * @var \DateTimeInterface
+	 * @var \DateTimeInterface|NULL
 	 *
 	 * @ORM\Column(type="datetime", nullable=TRUE)
 	 */
 	private $createdAt;
 
 	/**
-	 * @var \DateTimeInterface
+	 * @var \DateTimeInterface|NULL
 	 *
 	 * @ORM\Column(type="datetime", nullable=TRUE)
 	 */
@@ -121,9 +121,9 @@ class UserEntity implements Entities\IIdentifiedEntity
 	}
 
 	/**
-	 * @return \DateTimeInterface
+	 * @return \DateTimeInterface|NULL
 	 */
-	public function getCreatedAt() : \DateTimeInterface
+	public function getCreatedAt() : ?\DateTimeInterface
 	{
 		return $this->createdAt;
 	}
@@ -139,9 +139,9 @@ class UserEntity implements Entities\IIdentifiedEntity
 	}
 
 	/**
-	 * @return \DateTimeInterface
+	 * @return \DateTimeInterface|NULL
 	 */
-	public function getUpdatedAt() : \DateTimeInterface
+	public function getUpdatedAt() : ?\DateTimeInterface
 	{
 		return $this->updatedAt;
 	}

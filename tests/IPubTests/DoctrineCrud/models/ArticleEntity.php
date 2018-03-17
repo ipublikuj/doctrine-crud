@@ -39,7 +39,7 @@ class ArticleEntity implements Entities\IEntity
 	private $identifier;
 
 	/**
-	 * @var string
+	 * @var string|NULL
 	 *
 	 * @ORM\Column(type="string", nullable=true)
 	 * @IPubDoctrine\Crud(is={"required", "writable"})
@@ -63,9 +63,9 @@ class ArticleEntity implements Entities\IEntity
 	}
 
 	/**
-	 * @return string
+	 * @return string|NULL
 	 */
-	public function getTitle() : string
+	public function getTitle() : ?string
 	{
 		return $this->title;
 	}
