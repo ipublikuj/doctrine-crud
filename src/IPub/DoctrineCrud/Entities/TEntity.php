@@ -50,7 +50,7 @@ trait TEntity
 	 */
 	public function toArray(int $maxLevel = 1) : array
 	{
-		return $this->getHydrator()->extract($this, $maxLevel);
+		return $this->getHydrator()->extract($this, $maxLevel, 1);
 	}
 
 	/**
