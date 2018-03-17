@@ -18,7 +18,6 @@ namespace IPubTests\DoctrineCrud\Models;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use IPub;
 use IPub\DoctrineCrud\Entities;
 
 use IPub\DoctrineCrud\Mapping\Annotation as IPubDoctrine;
