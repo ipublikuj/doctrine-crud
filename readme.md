@@ -29,4 +29,4 @@ extensions:
 Learn how to register and work with blameable behavior in [documentation](https://github.com/iPublikuj/doctrine-crud/blob/master/docs/en/index.md).
 
 ***
-Homepage [http://www.ipublikuj.eu](http://www.ipublikuj.eu) and repository [http://github.com/iPublikuj/doctrine-crud](http://github.com/iPublikuj/doctrine-crud).
+Homepage [https://www.ipublikuj.eu](https://www.ipublikuj.eu) and repository [http://github.com/iPublikuj/doctrine-crud](http://github.com/iPublikuj/doctrine-crud).
