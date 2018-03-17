@@ -67,7 +67,7 @@ class CRUDTest extends Tester\TestCase
 	/**
 	 * {@inheritdoc}
 	 */
-	protected function setUp()
+	protected function setUp() : void
 	{
 		parent::setUp();
 
@@ -76,7 +76,7 @@ class CRUDTest extends Tester\TestCase
 		$this->manager = $this->container->getByType('IPubTests\DoctrineCrud\Models\UsersManager');
 	}
 
-	public function testCreateEntity()
+	public function testCreateEntity() : void
 	{
 		$this->generateDbSchema();
 
@@ -94,13 +94,13 @@ class CRUDTest extends Tester\TestCase
 
 		$this->em->clear();
 
-		$reloadedEntity = $this->em->getRepository('IPubTests\DoctrineCrud\Models\UserEntity')->find($entity->getId());
+		$reloadedEntity = $this->em->getRepository(Models\UserEntity::class)->find($entity->getId());
 
 		Assert::true($reloadedEntity instanceof Models\UserEntity);
 		Assert::true($entity->getUsername() === $reloadedEntity->getUsername());
 	}
 
-	public function testCreateEntityWithEntity()
+	public function testCreateEntityWithEntity() : void
 	{
 		$this->generateDbSchema();
 
@@ -122,7 +122,7 @@ class CRUDTest extends Tester\TestCase
 		Assert::same('Dark side', $entity->getNotWritable());
 	}
 
-	public function testUpdateEntity()
+	public function testUpdateEntity() : void
 	{
 		$this->generateDbSchema();
 
@@ -148,7 +148,7 @@ class CRUDTest extends Tester\TestCase
 		Assert::same('White side', $entity->getNotWritable());
 	}
 
-	public function testDeleteEntity()
+	public function testDeleteEntity() : void
 	{
 		$this->generateDbSchema();
 
@@ -162,18 +162,18 @@ class CRUDTest extends Tester\TestCase
 
 		$id = $entity->getId();
 
-		$entity = $this->em->getRepository('IPubTests\DoctrineCrud\Models\UserEntity')->find($id);
+		$entity = $this->em->getRepository(Models\UserEntity::class)->find($id);
 
 		Assert::true($entity instanceof Models\UserEntity);
 
 		$this->manager->delete($entity);
 
-		$entity = $this->em->getRepository('IPubTests\DoctrineCrud\Models\UserEntity')->find($id);
+		$entity = $this->em->getRepository(Models\UserEntity::class)->find($id);
 
 		Assert::null($entity);
 	}
 
-	public function testEntityTraits()
+	public function testEntityTraits() : void
 	{
 		$this->generateDbSchema();
 
@@ -236,7 +236,7 @@ class CRUDTest extends Tester\TestCase
 	/**
 	 * @return void
 	 */
-	private function generateDbSchema()
+	private function generateDbSchema() : void
 	{
 		$schema = new ORM\Tools\SchemaTool($this->em);
 		$schema->createSchema($this->em->getMetadataFactory()->getAllMetadata());

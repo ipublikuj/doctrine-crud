@@ -31,6 +31,7 @@ class ArticleEntity implements Entities\IEntity
 
 	/**
 	 * @var int
+	 *
 	 * @ORM\Id
 	 * @ORM\Column(type="integer")
 	 * @ORM\GeneratedValue(strategy="AUTO")
@@ -39,12 +40,15 @@ class ArticleEntity implements Entities\IEntity
 
 	/**
 	 * @var string
+	 *
 	 * @ORM\Column(type="string", nullable=true)
 	 * @IPubDoctrine\Crud(is={"required", "writable"})
 	 */
 	private $title;
 
 	/**
+	 * @var UserEntity|NULL
+	 *
 	 * @ORM\ManyToOne(targetEntity="UserEntity")
 	 * @IPubDoctrine\Crud(is={"required", "writable"})
 	 */
@@ -53,7 +57,7 @@ class ArticleEntity implements Entities\IEntity
 	/**
 	 * @return int
 	 */
-	public function getId()
+	public function getId() : int
 	{
 		return $this->identifier;
 	}
@@ -61,15 +65,17 @@ class ArticleEntity implements Entities\IEntity
 	/**
 	 * @return string
 	 */
-	public function getTitle()
+	public function getTitle() : string
 	{
 		return $this->title;
 	}
 
 	/**
 	 * @param string $title
+	 *
+	 * @return void
 	 */
-	public function setTitle($title)
+	public function setTitle(string $title) : void
 	{
 		$this->title = $title;
 	}
@@ -77,15 +83,17 @@ class ArticleEntity implements Entities\IEntity
 	/**
 	 * @return UserEntity|NULL
 	 */
-	public function getOwner()
+	public function getOwner() : ?UserEntity
 	{
 		return $this->owner;
 	}
 
 	/**
 	 * @param UserEntity $user
+	 *
+	 * @return void
 	 */
-	public function setOwner(UserEntity $user)
+	public function setOwner(UserEntity $user) : void
 	{
 		$this->owner = $user;
 	}

@@ -50,7 +50,7 @@ class UsersManager
 	 *
 	 * @return UserEntity
 	 */
-	public function create(Utils\ArrayHash $values, $entity = NULL)
+	public function create(Utils\ArrayHash $values, ?UserEntity $entity = NULL) : UserEntity
 	{
 		// Get entity creator
 		$creator = $this->entityCrud->getEntityCreator();
@@ -74,7 +74,7 @@ class UsersManager
 	 *
 	 * @return UserEntity
 	 */
-	public function update($entity, Utils\ArrayHash $values)
+	public function update(UserEntity $entity, Utils\ArrayHash $values) : UserEntity
 	{
 		// Get entity updater
 		$updater = $this->entityCrud->getEntityUpdater();
@@ -97,7 +97,7 @@ class UsersManager
 	 *
 	 * @return bool
 	 */
-	public function delete($entity)
+	public function delete(UserEntity $entity) : bool
 	{
 		// Get entity deleter
 		$deleter = $this->entityCrud->getEntityDeleter();
@@ -117,7 +117,7 @@ class UsersManager
 	/**
 	 * @return Crud\IEntityCrud
 	 */
-	public function getEntityCrud()
+	public function getEntityCrud() : Crud\IEntityCrud
 	{
 		return $this->entityCrud;
 	}

@@ -15,6 +15,7 @@
 
 namespace IPubTests\DoctrineCrud\Models;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use IPub;
@@ -32,6 +33,7 @@ class UserEntity implements Entities\IIdentifiedEntity
 
 	/**
 	 * @var int
+	 *
 	 * @ORM\Id
 	 * @ORM\Column(type="integer")
 	 * @ORM\GeneratedValue(strategy="AUTO")
@@ -40,6 +42,7 @@ class UserEntity implements Entities\IIdentifiedEntity
 
 	/**
 	 * @var string
+	 *
 	 * @ORM\Column(type="string")
 	 * @IPubDoctrine\Crud(is={"required"})
 	 */
@@ -47,6 +50,7 @@ class UserEntity implements Entities\IIdentifiedEntity
 
 	/**
 	 * @var string
+	 *
 	 * @ORM\Column(type="string")
 	 * @IPubDoctrine\Crud(is={"required", "writable"})
 	 */
@@ -54,23 +58,28 @@ class UserEntity implements Entities\IIdentifiedEntity
 
 	/**
 	 * @var string
+	 *
 	 * @ORM\Column(type="string", nullable=TRUE)
 	 */
 	private $notWritable;
 
 	/**
-	 * @var \DateTime
+	 * @var \DateTimeInterface
+	 *
 	 * @ORM\Column(type="datetime", nullable=TRUE)
 	 */
 	private $createdAt;
 
 	/**
-	 * @var \DateTime
+	 * @var \DateTimeInterface
+	 *
 	 * @ORM\Column(type="datetime", nullable=TRUE)
 	 */
 	private $updatedAt;
 
 	/**
+	 * @var Collection
+	 *
 	 * @ORM\OneToMany(targetEntity="ArticleEntity", mappedBy="type")
 	 */
 	private $articles;
@@ -78,15 +87,17 @@ class UserEntity implements Entities\IIdentifiedEntity
 	/**
 	 * @return string
 	 */
-	public function getUsername()
+	public function getUsername() : string
 	{
 		return $this->username;
 	}
 
 	/**
 	 * @param string $username
+	 *
+	 * @return void
 	 */
-	public function setUsername($username)
+	public function setUsername(string $username) : void
 	{
 		$this->username = $username;
 	}
@@ -94,63 +105,71 @@ class UserEntity implements Entities\IIdentifiedEntity
 	/**
 	 * @return string
 	 */
-	public function getName()
+	public function getName() : string
 	{
 		return $this->name;
 	}
 
 	/**
 	 * @param string $name
+	 *
+	 * @return void
 	 */
-	public function setName($name)
+	public function setName(string $name) : void
 	{
 		$this->name = $name;
 	}
 
 	/**
-	 * @return \DateTime
+	 * @return \DateTimeInterface
 	 */
-	public function getCreatedAt()
+	public function getCreatedAt() : \DateTimeInterface
 	{
 		return $this->createdAt;
 	}
 
 	/**
-	 * @param \DateTime $createdAt
+	 * @param \DateTimeInterface $createdAt
+	 *
+	 * @return void
 	 */
-	public function setCreatedAt(\DateTime $createdAt)
+	public function setCreatedAt(\DateTimeInterface $createdAt) : void
 	{
 		$this->createdAt = $createdAt;
 	}
 
 	/**
-	 * @return \DateTime
+	 * @return \DateTimeInterface
 	 */
-	public function getUpdatedAt()
+	public function getUpdatedAt() : \DateTimeInterface
 	{
 		return $this->updatedAt;
 	}
 
 	/**
-	 * @param \DateTime $updatedAt
+	 * @param \DateTimeInterface $updatedAt
+	 *
+	 * @return void
 	 */
-	public function setUpdatedAt(\DateTime $updatedAt)
+	public function setUpdatedAt(\DateTimeInterface $updatedAt) : void
 	{
 		$this->updatedAt = $updatedAt;
 	}
 
 	/**
 	 * @param $text
+	 *
+	 * @return void
 	 */
-	public function setNotWritable($text)
+	public function setNotWritable(string $text) : void
 	{
 		$this->notWritable = $text;
 	}
 
 	/**
-	 * @return string
+	 * @return string|NULL
 	 */
-	public function getNotWritable()
+	public function getNotWritable() : ?string
 	{
 		return $this->notWritable;
 	}

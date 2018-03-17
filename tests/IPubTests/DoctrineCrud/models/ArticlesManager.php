@@ -50,7 +50,7 @@ class ArticlesManager
 	 *
 	 * @return ArticleEntity
 	 */
-	public function create(Utils\ArrayHash $values, $entity = NULL)
+	public function create(Utils\ArrayHash $values, ?ArticleEntity $entity = NULL) : ArticleEntity
 	{
 		// Get entity creator
 		$creator = $this->entityCrud->getEntityCreator();
@@ -73,7 +73,7 @@ class ArticlesManager
 	 *
 	 * @return ArticleEntity
 	 */
-	public function update($entity, Utils\ArrayHash $values)
+	public function update(ArticleEntity $entity, Utils\ArrayHash $values) : ArticleEntity
 	{
 		// Get entity updater
 		$updater = $this->entityCrud->getEntityUpdater();
@@ -95,7 +95,7 @@ class ArticlesManager
 	 *
 	 * @return bool
 	 */
-	public function delete($entity)
+	public function delete(ArticleEntity $entity) : bool
 	{
 		// Get entity deleter
 		$deleter = $this->entityCrud->getEntityDeleter();
@@ -115,7 +115,7 @@ class ArticlesManager
 	/**
 	 * @return Crud\IEntityCrud
 	 */
-	public function getEntityCrud()
+	public function getEntityCrud() : Crud\IEntityCrud
 	{
 		return $this->entityCrud;
 	}
