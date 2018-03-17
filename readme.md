@@ -6,7 +6,6 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/ipub/doctrine-crud.svg?style=flat-square)](https://packagist.org/packages/ipub/doctrine-crud)
 [![Composer Downloads](https://img.shields.io/packagist/dt/ipub/doctrine-crud.svg?style=flat-square)](https://packagist.org/packages/ipub/doctrine-crud)
 [![License](https://img.shields.io/packagist/l/ipub/doctrine-crud.svg?style=flat-square)](https://packagist.org/packages/ipub/doctrine-crud)
-[![Dependency Status](https://img.shields.io/versioneye/d/user/projects/5696d0cbaf789b0027001cb5.svg?style=flat-square)](https://www.versioneye.com/user/projects/5696d0cbaf789b0027001cb5)
 
 Doctrine extension is here to extend [Kdyby/Doctrine](https://github.com/Kdyby/Doctrine) with CRUD system.
 
