@@ -43,11 +43,11 @@ final class EntityHydrator implements IEntityHydrator
 	 * @var array
 	 */
 	public static $mappedPropertyAnnotations = [
-		Doctrine\ORM\Mapping\Column::class,
-		Doctrine\ORM\Mapping\OneToMany::class,
-		Doctrine\ORM\Mapping\OneToOne::class,
-		Doctrine\ORM\Mapping\ManyToOne::class,
-		Doctrine\ORM\Mapping\ManyToMany::class,
+		ORM\Mapping\Column::class,
+		ORM\Mapping\OneToMany::class,
+		ORM\Mapping\OneToOne::class,
+		ORM\Mapping\ManyToOne::class,
+		ORM\Mapping\ManyToMany::class,
 	];
 
 	/**
@@ -71,7 +71,7 @@ final class EntityHydrator implements IEntityHydrator
 	/**
 	 * {@inheritdoc}
 	 */
-	public function extract(Entities\IEntity $entity, $maxLevel = 1, $level = 1) : array
+	public function extract(Entities\IEntity $entity, int $maxLevel = 1, int $level = 1) : array
 	{
 		$values = [];
 
