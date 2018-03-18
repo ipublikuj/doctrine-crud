@@ -22,7 +22,6 @@ use Nette;
 use Tester;
 use Tester\Assert;
 
-use IPub;
 use IPub\DoctrineCrud;
 
 require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'bootstrap.php';

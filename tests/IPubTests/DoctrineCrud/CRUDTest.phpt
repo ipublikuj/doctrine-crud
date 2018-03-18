@@ -25,11 +25,7 @@ use Kdyby;
 use Tester;
 use Tester\Assert;
 
-use Doctrine;
 use Doctrine\ORM;
-use Doctrine\Common;
-
-use IPub;
 
 use IPubTests\DoctrineCrud\Models;
 

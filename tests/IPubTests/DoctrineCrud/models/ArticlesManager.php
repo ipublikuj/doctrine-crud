@@ -18,7 +18,6 @@ namespace IPubTests\DoctrineCrud\Models;
 use Nette;
 use Nette\Utils;
 
-use IPub;
 use IPub\DoctrineCrud\Crud;
 
 class ArticlesManager
