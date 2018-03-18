@@ -4,7 +4,7 @@
  *
  * @copyright      More in license.md
  * @license        https://www.ipublikuj.eu
- * @author         Adam Kadlec https://www.ipublikuj.eu
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Mapping
  * @since          1.0.0
@@ -194,6 +194,8 @@ final class EntityHydrator implements IEntityHydrator
 	 * @param Entities\IEntity $entity
 	 *
 	 * @return Nette\Reflection\Property[]
+	 *
+	 * @throws \ReflectionException
 	 */
 	private function getEntityProperties(Entities\IEntity $entity) : array
 	{
@@ -206,6 +208,8 @@ final class EntityHydrator implements IEntityHydrator
 	 * Create default annotation reader for extensions
 	 *
 	 * @return Common\Annotations\CachedReader
+	 *
+	 * @throws Common\Annotations\AnnotationException
 	 */
 	private function getDefaultAnnotationReader() : Common\Annotations\CachedReader
 	{

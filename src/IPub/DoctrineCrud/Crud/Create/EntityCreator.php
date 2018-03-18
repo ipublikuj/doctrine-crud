@@ -4,7 +4,7 @@
  *
  * @copyright      More in license.md
  * @license        https://www.ipublikuj.eu
- * @author         Adam Kadlec https://www.ipublikuj.eu
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  * @since          1.0.0
@@ -64,9 +64,8 @@ class EntityCreator extends Crud\CrudManager
 	 * @param Entities\IEntity|NULL $entity
 	 *
 	 * @return Entities\IEntity
-	 * 
-	 * @throws Exceptions\InvalidArgumentException
-	 * @throws Exceptions\EntityCreationException
+	 *
+	 * @throws \ReflectionException
 	 */
 	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL) : Entities\IEntity
 	{

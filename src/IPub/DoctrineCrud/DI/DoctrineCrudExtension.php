@@ -4,7 +4,7 @@
  *
  * @copyright      More in license.md
  * @license        https://www.ipublikuj.eu
- * @author         Adam Kadlec https://www.ipublikuj.eu
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     DI
  * @since          1.0.0
@@ -41,6 +41,8 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 
 	/**
 	 * @return void
+	 *
+	 * @throws Common\Annotations\AnnotationException
 	 */
 	public function loadConfiguration() : void
 	{

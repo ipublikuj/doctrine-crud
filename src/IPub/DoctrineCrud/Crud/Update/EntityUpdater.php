@@ -4,7 +4,7 @@
  *
  * @copyright      More in license.md
  * @license        https://www.ipublikuj.eu
- * @author         Adam Kadlec https://www.ipublikuj.eu
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  * @since          1.0.0
@@ -20,7 +20,6 @@ use Doctrine\Common\Persistence;
 
 use Nette\Utils;
 
-use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Crud;
 use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Exceptions;

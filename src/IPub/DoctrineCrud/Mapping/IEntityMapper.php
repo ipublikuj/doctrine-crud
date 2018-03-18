@@ -4,7 +4,7 @@
  *
  * @copyright      More in license.md
  * @license        https://www.ipublikuj.eu
- * @author         Adam Kadlec https://www.ipublikuj.eu
+ * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Mapping
  * @since          1.0.0
@@ -16,11 +16,8 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Mapping;
 
-use Nette;
 use Nette\Utils;
 
-use IPub;
-use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Entities;
 
 /**
