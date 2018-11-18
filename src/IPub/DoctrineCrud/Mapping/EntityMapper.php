@@ -106,7 +106,7 @@ final class EntityMapper implements IEntityMapper
 			// Nothing to do here
 		}
 
-		foreach (array_merge($reflectionProperties, $classMetadata->getFieldNames(), $classMetadata->getAssociationNames()) as $fieldName) {
+		foreach (array_unique(array_merge($reflectionProperties, $classMetadata->getFieldNames(), $classMetadata->getAssociationNames())) as $fieldName) {
 
 			try {
 				$propertyReflection = new Nette\Reflection\Property($entityClass, $fieldName);
@@ -128,7 +128,7 @@ final class EntityMapper implements IEntityMapper
 
 				$value = $values->offsetGet($fieldName);
 
-				if ($value instanceof Utils\ArrayHash || is_array($value)) {
+				if (($value instanceof Utils\ArrayHash || is_array($value)) && isset($classMetadata->reflFields[$fieldName])) {
 					if (!$classMetadata->getFieldValue($entity, $fieldName) instanceof Entities\IEntity) {
 						$propertyAnnotations = $this->annotationReader->getPropertyAnnotations($propertyReflection);
 
@@ -148,20 +148,56 @@ final class EntityMapper implements IEntityMapper
 							$items = [];
 
 							if (is_string($className) && class_exists($className) && ($value instanceof Utils\ArrayHash || is_array($value))) {
+								$rc = new \ReflectionClass($className);
+
+								$subClassIdProperty = NULL;
+
+								foreach ($rc->getProperties() as $subClassProperty) {
+									$subClassPropertyAnnotations = $this->annotationReader->getPropertyAnnotations($subClassProperty);
+
+									$subClassAnnotations = array_map((function ($annotation) : string {
+										return get_class($annotation);
+									}), $subClassPropertyAnnotations);
+
+									if (in_array(ORM\Mapping\Id::class, $subClassAnnotations, TRUE)) {
+										$subClassIdProperty = $subClassProperty->getName();
+
+										break;
+									}
+								}
+
+								/** @var Utils\ArrayHash $item */
 								foreach ($value as $item) {
+									$subEntity = NULL;
+
+									$subClassName = $className;
+
 									$rc = new \ReflectionClass($className);
 
 									if ($rc->isAbstract() && isset($item['entity']) && class_exists($item['entity'])) {
-										$className = $item['entity'];
+										$subClassName = $item['entity'];
 
-										$rc = new \ReflectionClass($className);
+										$rc = new \ReflectionClass($subClassName);
 									}
 
-									if ($constructor = $rc->getConstructor()) {
-										$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $item, [$entity])));
+									if ($subClassIdProperty !== NULL && $item->offsetExists($subClassIdProperty)) {
+										$subEntity = $this->managerRegistry
+											->getManagerForClass($subClassName)
+											->getRepository($subClassName)
+											->find($item->offsetGet($subClassIdProperty));
 
-									} else {
-										$subEntity = new $className;
+										if ($subEntity !== NULL) {
+											$subEntity = $this->fillEntity($item, $subEntity);
+										}
+									}
+
+									if ($subEntity === NULL) {
+										if ($constructor = $rc->getConstructor()) {
+											$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $item, [$entity])));
+
+										} else {
+											$subEntity = new $subClassName;
+										}
 									}
 
 									$items[] = $subEntity;
@@ -253,7 +289,7 @@ final class EntityMapper implements IEntityMapper
 				// Try to call entity setter
 				call_user_func_array([$entity, $methodName], [$value]);
 
-			} else {
+			} elseif (isset($classMetadata->reflFields[$field])) {
 				// Fallback for missing setter
 				$classMetadata->setFieldValue($entity, $field, $value);
 			}
