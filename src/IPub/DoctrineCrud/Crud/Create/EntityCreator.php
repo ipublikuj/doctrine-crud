@@ -64,19 +64,22 @@ class EntityCreator extends Crud\CrudManager
 	 * @param Entities\IEntity|NULL $entity
 	 *
 	 * @return Entities\IEntity
-	 *
-	 * @throws \ReflectionException
 	 */
 	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL) : Entities\IEntity
 	{
 		if (!$entity instanceof Entities\IEntity) {
-			$rc = new \ReflectionClass($this->entityName);
+			try {
+				$rc = new \ReflectionClass($this->entityName);
 
-			if ($constructor = $rc->getConstructor()) {
-				$entity = $rc->newInstanceArgs(DoctrineCrud\Helpers::autowireArguments($constructor, (array) $values));
+				if ($constructor = $rc->getConstructor()) {
+					$entity = $rc->newInstanceArgs(DoctrineCrud\Helpers::autowireArguments($constructor, (array) $values));
 
-			} else {
-				$entity = $this->entityManager->getClassMetadata($this->entityName)->newInstance();
+				} else {
+					$entity = $this->entityManager->getClassMetadata($this->entityName)->newInstance();
+				}
+
+			} catch (\ReflectionException $ex) {
+				// Class could not be parsed
 			}
 		}
 

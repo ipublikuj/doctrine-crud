@@ -63,6 +63,20 @@ class Helpers
 				$optCount++;
 
 			} else {
+				if (($class = self::getParameterType($parameter)) && $class) {
+					foreach ($arguments as $key => $argument) {
+						if (is_object($argument)) {
+							if (is_object($argument) && is_subclass_of($argument, $class)) {
+								$res[$num] = $argument;
+								unset($arguments[$key]);
+								$optCount = 0;
+
+								continue 2;
+							}
+						}
+					}
+				}
+
 				throw new Exceptions\EntityCreationException("Parameter \${$parameter->getName()} in $methodName has no class type hint or default value, so its value must be specified.");
 			}
 		}

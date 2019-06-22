@@ -28,6 +28,7 @@ use IPub\DoctrineCrud\Exceptions;
 use IPub\DoctrineCrud\Helpers;
 use IPub\DoctrineCrud\Mapping;
 use IPub\DoctrineCrud\Validation;
+use Tracy\Debugger;
 
 /**
  * Doctrine CRUD entity mapper
@@ -136,8 +137,8 @@ final class EntityMapper implements IEntityMapper
 							return get_class($annotation);
 						}), $propertyAnnotations);
 
-						if (isset($value['type']) && class_exists($value['type'])) {
-							$className = $value['type'];
+						if (isset($value['entity']) && class_exists($value['entity'])) {
+							$className = $value['entity'];
 
 						} elseif (in_array(ORM\Mapping\OneToOne::class, $annotations, TRUE)) {
 							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, ORM\Mapping\OneToOne::class)->targetEntity;
@@ -193,11 +194,13 @@ final class EntityMapper implements IEntityMapper
 
 									if ($subEntity === NULL) {
 										if ($constructor = $rc->getConstructor()) {
-											$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $item, [$entity])));
+											$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $item, ['parent_entity' => $entity])));
 
 										} else {
 											$subEntity = new $subClassName;
 										}
+
+										$subEntity = $this->fillEntity(Utils\ArrayHash::from(array_merge((array) $item, [$this->findAttributeName($entity, $subClassName) => $entity])), $subEntity, TRUE);
 									}
 
 									$items[] = $subEntity;
@@ -226,7 +229,11 @@ final class EntityMapper implements IEntityMapper
 						}
 
 						// Check if class is callable
-						if (is_string($className) && class_exists($className) && ($value instanceof Utils\ArrayHash || is_array($value))) {
+						if (
+							is_string($className)
+							&& class_exists($className)
+							&& ($value instanceof Utils\ArrayHash || is_array($value))
+						) {
 							$rc = new \ReflectionClass($className);
 
 							if ($rc->isAbstract() && isset($value['entity']) && class_exists($value['entity'])) {
@@ -235,7 +242,7 @@ final class EntityMapper implements IEntityMapper
 							}
 
 							if ($constructor = $rc->getConstructor()) {
-								$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $value, [$entity])));
+								$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $value, ['parent_entity' => $entity])));
 
 								$this->setFieldValue($classMetadata, $entity, $fieldName, $subEntity);
 
@@ -254,7 +261,60 @@ final class EntityMapper implements IEntityMapper
 					}
 
 				} else {
-					$this->setFieldValue($classMetadata, $entity, $fieldName, $value);
+					$varAnnotation = $propertyReflection->getAnnotation('var');
+
+					$className = $varAnnotation;
+
+					if (strpos($varAnnotation, '|') !== FALSE) {
+						foreach (explode('|', $varAnnotation) as $varAnnotationItem) {
+							if (is_string($varAnnotationItem) && class_exists($varAnnotationItem)) {
+								$className = $varAnnotationItem;
+							}
+						}
+					}
+
+					// Check if class is callable
+					if (
+						is_string($className)
+						&& ($value instanceof Utils\ArrayHash || is_array($value))
+					) {
+						if (class_exists($className)) {
+							$rc = new \ReflectionClass($className);
+
+							if ($rc->isAbstract() && isset($value['entity']) && class_exists($value['entity'])) {
+								$className = $value['entity'];
+								$rc = new \ReflectionClass($value['entity']);
+							}
+
+							if ($constructor = $rc->getConstructor()) {
+								$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $value, ['parent_entity' => $entity])));
+
+								$this->setFieldValue($classMetadata, $entity, $fieldName, $subEntity);
+
+							} else {
+								$this->setFieldValue($classMetadata, $entity, $fieldName, new $className);
+							}
+
+						} elseif (isset($value['entity']) && class_exists($value['entity'])) {
+							$className = $value['entity'];
+							$rc = new \ReflectionClass($value['entity']);
+
+							if ($constructor = $rc->getConstructor()) {
+								$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $value, ['parent_entity' => $entity])));
+
+								$this->setFieldValue($classMetadata, $entity, $fieldName, $subEntity);
+
+							} else {
+								$this->setFieldValue($classMetadata, $entity, $fieldName, new $className);
+							}
+
+						} else {
+							$this->setFieldValue($classMetadata, $entity, $fieldName, $value);
+						}
+
+					} else {
+						$this->setFieldValue($classMetadata, $entity, $fieldName, $value);
+					}
 				}
 			}
 		}
@@ -298,5 +358,42 @@ final class EntityMapper implements IEntityMapper
 		} catch (\ReflectionException $ex) {
 			$classMetadata->setFieldValue($entity, $field, $value);
 		}
+	}
+
+	/**
+	 * @param Entities\IEntity $entity
+	 * @param string $className
+	 *
+	 * @return string
+	 */
+	private function findAttributeName(Entities\IEntity $entity, string $className) : string
+	{
+		$rc = new \ReflectionClass($className);
+
+		foreach ($rc->getProperties() as $property) {
+			$propertyAnnotations = $this->annotationReader->getPropertyAnnotations($property);
+
+			$annotations = array_map((function ($annotation) : string {
+				return get_class($annotation);
+			}), $propertyAnnotations);
+
+			$propertyClassName = NULL;
+
+			if (in_array(ORM\Mapping\OneToOne::class, $annotations, TRUE)) {
+				$propertyClassName = $this->annotationReader->getPropertyAnnotation($property, ORM\Mapping\OneToOne::class)->targetEntity;
+
+			} elseif (in_array(ORM\Mapping\OneToMany::class, $annotations, TRUE)) {
+				$propertyClassName = $this->annotationReader->getPropertyAnnotation($property, ORM\Mapping\OneToMany::class)->targetEntity;
+
+			} elseif (in_array(ORM\Mapping\ManyToOne::class, $annotations, TRUE)) {
+				$propertyClassName = $this->annotationReader->getPropertyAnnotation($property, ORM\Mapping\ManyToOne::class)->targetEntity;
+			}
+
+			if (is_string($propertyClassName) && $entity instanceof $propertyClassName) {
+				return $property->getName();
+			}
+		}
+
+		return 'parent_entity';
 	}
 }
