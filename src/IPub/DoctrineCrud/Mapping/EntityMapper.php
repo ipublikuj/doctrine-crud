@@ -302,11 +302,12 @@ final class EntityMapper implements IEntityMapper
 							if ($constructor = $rc->getConstructor()) {
 								$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $value, ['parent_entity' => $entity])));
 
-								$this->setFieldValue($classMetadata, $entity, $fieldName, $subEntity);
 
 							} else {
-								$this->setFieldValue($classMetadata, $entity, $fieldName, new $className);
+								$subEntity = new $className;
 							}
+
+							$this->setFieldValue($classMetadata, $entity, $fieldName, $this->fillEntity(Utils\ArrayHash::from(array_merge((array) $value, [$this->findAttributeName($entity, $className) => $entity])), $subEntity, TRUE));
 
 						} else {
 							$this->setFieldValue($classMetadata, $entity, $fieldName, $value);
