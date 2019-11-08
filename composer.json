@@ -1,62 +1,74 @@
 {
-	"name"			: "ipub/doctrine-crud",
-	"type"			: "library",
-	"description"	: "Extension of Kdyby/Doctrine with CRUD",
-	"keywords"		: ["doctrine2", "doctrine", "crud", "nette", "ipub", "framework", "tools"],
-	"homepage"		: "https://github.com/iPublikuj/doctrine-crud",
-	"license"		: ["GPL-2.0", "GPL-3.0"],
+  "name" : "ipub/doctrine-crud",
+  "type" : "library",
+  "description" : "Extension of Kdyby/Doctrine with CRUD",
+  "keywords" : [
+    "doctrine2",
+    "doctrine",
+    "crud",
+    "nette",
+    "ipub",
+    "framework",
+    "tools"
+  ],
+  "homepage" : "https://github.com/iPublikuj/doctrine-crud",
+  "license" : [
+    "GPL-2.0",
+    "GPL-3.0"
+  ],
 
-	"authors": [
-		{
-			"name"		: "iPublikuj:cms",
-			"email"		: "info@ipublikuj.eu",
-			"homepage"	: "https://www.ipublikuj.eu/"
-		}
-	],
+  "authors" : [
+    {
+      "name" : "iPublikuj:cms",
+      "email" : "info@ipublikuj.eu",
+      "homepage" : "https://www.ipublikuj.eu/"
+    }
+  ],
 
-	"support": {
-		"email"		:"support@ipublikuj.eu",
-		"issues"	:"https://github.com/iPublikuj/doctrine-crud/issues"
-	},
+  "support" : {
+    "email" : "support@ipublikuj.eu",
+    "issues" : "https://github.com/iPublikuj/doctrine-crud/issues"
+  },
 
-	"extra": {
-		"ipub"	: {
-			"configuration" : {
-				"extensions" : {
-					"doctrineCrud" : "IPub\\DoctrineCrud\\DI\\DoctrineCrudExtension"
-				}
-			}
-		}
-	},
+  "extra" : {
+    "ipub" : {
+      "configuration" : {
+        "extensions" : {
+          "doctrineCrud" : "IPub\\DoctrineCrud\\DI\\DoctrineCrudExtension"
+        }
+      }
+    }
+  },
 
-	"require": {
-		"php"	: ">=7.1.0",
+  "require" : {
+    "php" : ">=7.2.0",
 
-		"doctrine/orm"	: "~2.5",
+    "doctrine/orm" : "~2.5",
 
-		"nette/di"			: "~2.4",
-		"nette/utils"		: "~2.4",
-		"nette/reflection"	: "~2.4"
-	},
+    "nette/di" : "~2.4 || ~3.0",
+    "nette/utils" : "~2.5 || ~3.0",
+    "nette/reflection" : "~2.4"
+  },
 
-	"require-dev": {
-		"nette/bootstrap"		: "~2.4",
-		"nette/http"			: "~2.4",
-		"nette/mail"			: "~2.4",
-		"nette/robot-loader"	: "~2.4",
-		"nette/safe-stream"		: "~2.3",
-		"nette/tester"			: "~2.0",
+  "require-dev" : {
+    "nette/bootstrap" : "~2.4 || ~3.0",
+    "nette/mail" : "~2.4 || ~3.0",
+    "nette/robot-loader" : "~2.4 || ~3.0",
+    "nette/safe-stream" : "~2.3",
+    "nette/tester" : "~2.3",
 
-		"tracy/tracy"	: "~2.4",
+    "nette/http" : "~2.4",
 
-		"kdyby/doctrine"	: "@dev",
+    "tracy/tracy" : "~2.4",
 
-		"pds/skeleton"	: "~1.0"
-	},
+    "pds/skeleton" : "~1.0",
 
-	"autoload": {
-		"psr-0": {
-			"IPub\\DoctrineCrud\\": "src/"
-		}
-	}
+    "kdyby/doctrine" : "^3.3"
+  },
+
+  "autoload" : {
+    "psr-0" : {
+      "IPub\\DoctrineCrud\\" : "src/"
+    }
+  }
 }
