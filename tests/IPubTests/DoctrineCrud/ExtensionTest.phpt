@@ -40,8 +40,8 @@ class ExtensionTest extends Tester\TestCase
 	{
 		$dic = $this->createContainer();
 
-		$crudFactory = $dic->getByType('IPub\DoctrineCrud\Crud\EntityCrudFactory');
-		Assert::true($crudFactory instanceof DoctrineCrud\Crud\EntityCrudFactory);
+		$crudFactory = $dic->getByType(DoctrineCrud\Crud\IEntityCrudFactory::class);
+		Assert::true($crudFactory instanceof DoctrineCrud\Crud\IEntityCrudFactory);
 	}
 
 	/**

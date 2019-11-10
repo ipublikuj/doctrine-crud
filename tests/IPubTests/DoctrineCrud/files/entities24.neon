@@ -6,10 +6,10 @@ services:
 		factory: @doctrineCrud.crud::create(IPubTests\DoctrineCrud\Models\ArticleEntity)
 
 	usersManager:
-		factory: IPubTests\DoctrineCrud\Models\UsersManager(@userCrud)
+		class: IPubTests\DoctrineCrud\Models\UsersManager(@userCrud)
 
 	articlesManager:
-		factory: IPubTests\DoctrineCrud\Models\ArticlesManager(@articleCrud)
+		class: IPubTests\DoctrineCrud\Models\ArticlesManager(@articleCrud)
 
 orm.annotations:
 	paths:

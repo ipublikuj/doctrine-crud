@@ -1,7 +1,7 @@
 {
   "name" : "ipub/doctrine-crud",
   "type" : "library",
-  "description" : "Extension of Kdyby/Doctrine with CRUD",
+  "description" : "CRUD methods for Doctrine2 ORM",
   "keywords" : [
     "doctrine2",
     "doctrine",
@@ -11,7 +11,9 @@
     "framework",
     "tools"
   ],
+
   "homepage" : "https://github.com/iPublikuj/doctrine-crud",
+
   "license" : [
     "GPL-2.0",
     "GPL-3.0"
@@ -57,13 +59,11 @@
     "nette/safe-stream" : "~2.3",
     "nette/tester" : "~2.3",
 
-    "nette/http" : "~2.4",
-
     "tracy/tracy" : "~2.4",
 
     "pds/skeleton" : "~1.0",
 
-    "kdyby/doctrine" : "^3.3"
+    "nettrine/orm" : "~0.3"
   },
 
   "autoload" : {

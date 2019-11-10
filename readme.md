@@ -1,4 +1,4 @@
-# Doctrine
+# Doctrine CRUD
 
 [![Build Status](https://img.shields.io/travis/iPublikuj/doctrine-crud.svg?style=flat-square)](https://travis-ci.org/iPublikuj/doctrine-crud)
 [![Scrutinizer Code Coverage](https://img.shields.io/scrutinizer/coverage/g/iPublikuj/doctrine-crud.svg?style=flat-square)](https://scrutinizer-ci.com/g/iPublikuj/doctrine-crud/?branch=master)
@@ -7,7 +7,7 @@
 [![Composer Downloads](https://img.shields.io/packagist/dt/ipub/doctrine-crud.svg?style=flat-square)](https://packagist.org/packages/ipub/doctrine-crud)
 [![License](https://img.shields.io/packagist/l/ipub/doctrine-crud.svg?style=flat-square)](https://packagist.org/packages/ipub/doctrine-crud)
 
-Doctrine extension is here to extend [Kdyby/Doctrine](https://github.com/Kdyby/Doctrine) with CRUD system.
+Implementation of CRUD system into [Doctrine3](https://github.com/doctrine/orm) with CRUD system.
 
 ## Installation
 

@@ -47,26 +47,26 @@ final class EntityCrud implements IEntityCrud
 	private $entityMapper;
 
 	/**
-	 * @var Create\IEntityCreator
+	 * @var Crud\Create\IEntityCreator
 	 */
 	private $entityCreatorFactory;
 
 	/**
-	 * @var Update\IEntityUpdater
+	 * @var Crud\Update\IEntityUpdater
 	 */
 	private $entityUpdaterFactory;
 
 	/**
-	 * @var Delete\IEntityDeleter
+	 * @var Crud\Delete\IEntityDeleter
 	 */
 	private $entityDeleterFactory;
 
 	/**
 	 * @param string $entityName
 	 * @param Mapping\IEntityMapper $entityMapper
-	 * @param Create\IEntityCreator $entityCreatorFactory
-	 * @param Update\IEntityUpdater $entityUpdaterFactory
-	 * @param Delete\IEntityDeleter $entityDeleterFactory
+	 * @param Crud\Create\IEntityCreator $entityCreatorFactory
+	 * @param Crud\Update\IEntityUpdater $entityUpdaterFactory
+	 * @param Crud\Delete\IEntityDeleter $entityDeleterFactory
 	 */
 	public function __construct(
 		string $entityName,
