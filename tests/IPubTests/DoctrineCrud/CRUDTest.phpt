@@ -20,12 +20,12 @@ namespace IPubTests\DoctrineCrud;
 use Nette;
 use Nette\Utils;
 
-use Kdyby;
+use Doctrine\ORM;
+
+use Nettrine;
 
 use Tester;
 use Tester\Assert;
-
-use Doctrine\ORM;
 
 use IPubTests\DoctrineCrud\Models;
 
@@ -51,7 +51,7 @@ class CRUDTest extends Tester\TestCase
 	private $container;
 
 	/**
-	 * @var Kdyby\Doctrine\EntityManager
+	 * @var ORM\EntityManager
 	 */
 	private $em;
 
@@ -68,8 +68,8 @@ class CRUDTest extends Tester\TestCase
 		parent::setUp();
 
 		$this->container = $this->createContainer();
-		$this->em = $this->container->getByType('Kdyby\Doctrine\EntityManager');
-		$this->manager = $this->container->getByType('IPubTests\DoctrineCrud\Models\UsersManager');
+		$this->em = $this->container->getByType(Nettrine\ORM\EntityManagerDecorator::class);
+		$this->manager = $this->container->getByType(Models\UsersManager::class);
 	}
 
 	public function testCreateEntity() : void
@@ -252,7 +252,13 @@ class CRUDTest extends Tester\TestCase
 		$config->addParameters(['appDir' => $rootDir, 'wwwDir' => $rootDir]);
 
 		$config->addConfig(__DIR__ . DS . 'files' . DS . 'config.neon');
-		$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities.neon');
+
+		if (getenv('NETTE') === 'default') {
+			$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities.neon');
+
+		} else {
+			$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities24.neon');
+		}
 
 		return $config->createContainer();
 	}

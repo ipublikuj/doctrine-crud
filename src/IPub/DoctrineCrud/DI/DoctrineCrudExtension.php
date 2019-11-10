@@ -75,43 +75,69 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 		 * CRUD factories
 		 */
 
-		$builder->addDefinition($this->prefix('entity.creator'))
-			->setType(Crud\Create\EntityCreator::class)
-			->setImplement(Crud\Create\IEntityCreator::class)
-			->setAutowired(FALSE);
+		// NETTE 3.x
+		if (method_exists($builder, 'addFactoryDefinition')) {
+			$builder->addFactoryDefinition($this->prefix('entity.creator'))
+				->setImplement(Crud\Create\IEntityCreator::class)
+				->setAutowired(FALSE)
+				->getResultDefinition()
+					->setType(Crud\Create\EntityCreator::class);
 
-		$builder->addDefinition($this->prefix('entity.updater'))
-			->setType(Crud\Update\EntityUpdater::class)
-			->setImplement(Crud\Update\IEntityUpdater::class)
-			->setAutowired(FALSE);
+			$builder->addFactoryDefinition($this->prefix('entity.updater'))
+				->setImplement(Crud\Update\IEntityUpdater::class)
+				->setAutowired(FALSE)
+				->getResultDefinition()
+					->setFactory(Crud\Update\EntityUpdater::class);
 
-		$builder->addDefinition($this->prefix('entity.deleter'))
-			->setType(Crud\Delete\EntityDeleter::class)
-			->setImplement(Crud\Delete\IEntityDeleter::class)
-			->setAutowired(FALSE);
+			$builder->addFactoryDefinition($this->prefix('entity.deleter'))
+				->setImplement(Crud\Delete\IEntityDeleter::class)
+				->setAutowired(FALSE)
+				->getResultDefinition()
+					->setFactory(Crud\Delete\EntityDeleter::class);
 
-		$builder->addDefinition($this->prefix('entity.crudFactory'))
-			->setType(Crud\EntityCrudFactory::class)
-			->setArguments([
-				'@' . $this->prefix('entity.mapper'),
-				'@' . $this->prefix('entity.creator'),
-				'@' . $this->prefix('entity.updater'),
-				'@' . $this->prefix('entity.deleter'),
-			]);
+			// Syntax sugar for config
+			$builder->addFactoryDefinition($this->prefix('crud'))
+				->setImplement(Crud\IEntityCrudFactory::class)
+				->setParameters(['entityName'])
+				->getResultDefinition()
+					->setType(Crud\EntityCrud::class)
+					->setArguments([
+						new PhpGenerator\PhpLiteral('$entityName'),
+						'@' . $this->prefix('entity.mapper'),
+						'@' . $this->prefix('entity.creator'),
+						'@' . $this->prefix('entity.updater'),
+						'@' . $this->prefix('entity.deleter'),
+					]);
 
-		// Syntax sugar for config
-		$builder->addDefinition($this->prefix('crud'))
-			->setType(Crud\EntityCrud::class)
-			->setFactory('@IPub\DoctrineCrud\Crud\EntityCrudFactory::create', [new PhpGenerator\PhpLiteral('$entityName')])
-			->setParameters(['entityName'])
-			->setAutowired(FALSE);
+		// NETTE 2.4+
+		} else {
+			$builder->addDefinition($this->prefix('entity.creator'))
+				->setType(Crud\Create\EntityCreator::class)
+				->setImplement(Crud\Create\IEntityCreator::class)
+				->setAutowired(FALSE);
 
-		/**
-		 *
-		 */
+			$builder->addDefinition($this->prefix('entity.updater'))
+				->setType(Crud\Update\EntityUpdater::class)
+				->setImplement(Crud\Update\IEntityUpdater::class)
+				->setAutowired(FALSE);
 
-		$configuration = $builder->getDefinition('doctrine.default.ormConfiguration');
-		$configuration->addSetup('addCustomStringFunction', ['DATE_FORMAT', DoctrineCrud\StringFunctions\DateFormat::class]);
+			$builder->addDefinition($this->prefix('entity.deleter'))
+				->setType(Crud\Delete\EntityDeleter::class)
+				->setImplement(Crud\Delete\IEntityDeleter::class)
+				->setAutowired(FALSE);
+
+			$builder->addDefinition($this->prefix('crud'))
+				->setType(Crud\EntityCrud::class)
+				->setImplement(Crud\IEntityCrudFactory::class)
+				->setParameters(['entityName'])
+				->setArguments([
+					new PhpGenerator\PhpLiteral('$entityName'),
+					'@' . $this->prefix('entity.mapper'),
+					'@' . $this->prefix('entity.creator'),
+					'@' . $this->prefix('entity.updater'),
+					'@' . $this->prefix('entity.deleter'),
+				]);
+		}
 	}
 
 	/**
@@ -131,6 +157,9 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 			// Register validator to proxy validator
 			$validator->addSetup('registerValidator', ['@' . $serviceName, $serviceName]);
 		}
+
+		$builder->getDefinition($builder->getByType('Doctrine\ORM\EntityManagerInterface', TRUE))
+			->addSetup('?->getConfiguration()->addCustomStringFunction(?, ?)', ['@self', 'DATE_FORMAT', DoctrineCrud\StringFunctions\DateFormat::class]);
 	}
 
 	/**

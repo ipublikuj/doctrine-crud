@@ -4,7 +4,7 @@ This Doctrine CRUD extension brings you easier way how to **C**reate, **R**ead, 
 
 > NOTE: reading is not implemented, because it depends on project what you are programming.
 
-> WARGING: This extension does not implement Doctrine functions into your project. You have to install some third-party extension like [Kdyby/Doctrine](https://github.com/kdyby/doctrine) or write your own implementation od Doctrine database system
+> WARGING: This extension does not implement Doctrine functions into your project. You have to install some third-party extension or write your own implementation od Doctrine database system
 
 ## Installation
 

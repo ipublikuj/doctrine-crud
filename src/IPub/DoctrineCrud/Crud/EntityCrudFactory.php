@@ -79,9 +79,9 @@ final class EntityCrudFactory
 	/**
 	 * @param string $entityName
 	 *
-	 * @return IEntityCrud
+	 * @return EntityCrud
 	 */
-	public function create(string $entityName) : IEntityCrud
+	public function create(string $entityName) : EntityCrud
 	{
 		return new EntityCrud(
 			$entityName,

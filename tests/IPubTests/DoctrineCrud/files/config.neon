@@ -2,32 +2,20 @@ php:
 	date.timezone: Europe/Prague
 
 extensions:
-	doctrine: Kdyby\Doctrine\DI\OrmExtension
+	dbal: Nettrine\DBAL\DI\DbalExtension
+	orm: Nettrine\ORM\DI\OrmExtension
+	orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
+	orm.cache: Nettrine\ORM\DI\OrmCacheExtension
 	doctrineCrud: IPub\DoctrineCrud\DI\DoctrineCrudExtension
-	annotations: Kdyby\Annotations\DI\AnnotationsExtension
-	console: Kdyby\Console\DI\ConsoleExtension
-	events: Kdyby\Events\DI\EventsExtension
 
-services:
-	cacheStorage:
-		class: Nette\Caching\Storages\MemoryStorage
+dbal:
+	connection:
+		host: 127.0.0.1
+		driver: pdo_sqlite
+		memory: true
 
-annotations:
-	cache: array
+orm.annotations:
+	defaultCache: array
 
-console:
-	url: http://example.com
-
-doctrine:
-	metadataCache: array
-	queryCache: array
-	resultCache: array
-	hydrationCache: array
-	driver: pdo_sqlite
-	memory: true
-
-http:
-	frames: null
-
-session:
-	autoStart: false
+orm.cache:
+	defaultDriver: array
