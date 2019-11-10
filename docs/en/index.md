@@ -28,7 +28,7 @@ At first you have to create CRUD service for given entity. It can be easily crea
 ```neon
 services:
     yourEntityCrud:
-        factory: @doctrine.crud(Your\Cool\NameSpace\YourEntity)
+        factory: @doctrine.crud::create(Your\Cool\NameSpace\YourEntity)
 ```
 
 Now CRUD service for given entity is created and now you can create a manager for this entity:
