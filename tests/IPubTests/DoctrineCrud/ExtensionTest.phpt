@@ -1,6 +1,7 @@
 <?php
 /**
  * Test: IPub\DoctrineCrud\Extension
+ *
  * @testCase
  *
  * @copyright      More in license.md

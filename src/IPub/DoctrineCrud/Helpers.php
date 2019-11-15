@@ -30,7 +30,7 @@ class Helpers
 {
 	/**
 	 * This method was inspired same method in Nette framework
-	 * 
+	 *
 	 * @param \ReflectionMethod $method
 	 * @param array $arguments
 	 *
@@ -100,6 +100,7 @@ class Helpers
 	{
 		if ($param->hasType()) {
 			$type = PHP_VERSION_ID >= 70100 ? $param->getType()->getName() : (string) $param->getType();
+
 			return strtolower($type) === 'self' ? $param->getDeclaringClass()->getName() : $type;
 		}
 

@@ -81,35 +81,35 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 				->setImplement(Crud\Create\IEntityCreator::class)
 				->setAutowired(FALSE)
 				->getResultDefinition()
-					->setType(Crud\Create\EntityCreator::class);
+				->setType(Crud\Create\EntityCreator::class);
 
 			$builder->addFactoryDefinition($this->prefix('entity.updater'))
 				->setImplement(Crud\Update\IEntityUpdater::class)
 				->setAutowired(FALSE)
 				->getResultDefinition()
-					->setFactory(Crud\Update\EntityUpdater::class);
+				->setFactory(Crud\Update\EntityUpdater::class);
 
 			$builder->addFactoryDefinition($this->prefix('entity.deleter'))
 				->setImplement(Crud\Delete\IEntityDeleter::class)
 				->setAutowired(FALSE)
 				->getResultDefinition()
-					->setFactory(Crud\Delete\EntityDeleter::class);
+				->setFactory(Crud\Delete\EntityDeleter::class);
 
 			// Syntax sugar for config
 			$builder->addFactoryDefinition($this->prefix('crud'))
 				->setImplement(Crud\IEntityCrudFactory::class)
 				->setParameters(['entityName'])
 				->getResultDefinition()
-					->setType(Crud\EntityCrud::class)
-					->setArguments([
-						new PhpGenerator\PhpLiteral('$entityName'),
-						'@' . $this->prefix('entity.mapper'),
-						'@' . $this->prefix('entity.creator'),
-						'@' . $this->prefix('entity.updater'),
-						'@' . $this->prefix('entity.deleter'),
-					]);
+				->setType(Crud\EntityCrud::class)
+				->setArguments([
+					new PhpGenerator\PhpLiteral('$entityName'),
+					'@' . $this->prefix('entity.mapper'),
+					'@' . $this->prefix('entity.creator'),
+					'@' . $this->prefix('entity.updater'),
+					'@' . $this->prefix('entity.deleter'),
+				]);
 
-		// NETTE 2.4+
+			// NETTE 2.4+
 		} else {
 			$builder->addDefinition($this->prefix('entity.creator'))
 				->setType(Crud\Create\EntityCreator::class)

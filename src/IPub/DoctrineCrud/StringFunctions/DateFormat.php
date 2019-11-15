@@ -40,10 +40,10 @@ class DateFormat extends Query\AST\Functions\FunctionNode
 	public function getSql(Query\SqlWalker $sqlWalker) : string
 	{
 		return 'DATE_FORMAT(' .
-		$sqlWalker->walkArithmeticExpression($this->dateExpression) .
-		',' .
-		$sqlWalker->walkStringPrimary($this->formatChar) .
-		')';
+			$sqlWalker->walkArithmeticExpression($this->dateExpression) .
+			',' .
+			$sqlWalker->walkStringPrimary($this->formatChar) .
+			')';
 	}
 
 	/**
