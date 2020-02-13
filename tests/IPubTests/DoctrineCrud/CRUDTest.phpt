@@ -253,13 +253,7 @@ class CRUDTest extends Tester\TestCase
 		$config->addParameters(['appDir' => $rootDir, 'wwwDir' => $rootDir]);
 
 		$config->addConfig(__DIR__ . DS . 'files' . DS . 'config.neon');
-
-		if (getenv('NETTE') === 'default') {
-			$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities.neon');
-
-		} else {
-			$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities24.neon');
-		}
+		$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities.neon');
 
 		return $config->createContainer();
 	}
