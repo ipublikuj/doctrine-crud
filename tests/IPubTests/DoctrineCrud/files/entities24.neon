@@ -11,6 +11,6 @@ services:
 	articlesManager:
 		class: IPubTests\DoctrineCrud\Models\ArticlesManager(@articleCrud)
 
-orm.annotations:
+nettrineOrmAnnotations:
 	paths:
 		- %appDir%IPubTests/DoctrineCrud/models

@@ -16,11 +16,15 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Mapping;
 
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionProperty;
+
 use Doctrine\Common;
 use Doctrine\ORM;
 
 use Nette;
-use Nette\Reflection;
 use Nette\Utils;
 
 use IPub\DoctrineCrud\Entities;
@@ -28,7 +32,6 @@ use IPub\DoctrineCrud\Exceptions;
 use IPub\DoctrineCrud\Helpers;
 use IPub\DoctrineCrud\Mapping;
 use IPub\DoctrineCrud\Validation;
-use Tracy\Debugger;
 
 /**
  * Doctrine CRUD entity mapper
@@ -77,10 +80,12 @@ final class EntityMapper implements IEntityMapper
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @throws ReflectionException
 	 */
 	public function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, bool $isNew = FALSE) : Entities\IEntity
 	{
-		$reflectionClass = new Reflection\ClassType(get_class($entity));
+		$reflectionClass = new ReflectionClass(get_class($entity));
 
 		// Hack for proxy classes...
 		if ($reflectionClass->implementsInterface(Common\Proxy\Proxy::class)) {
@@ -97,22 +102,22 @@ final class EntityMapper implements IEntityMapper
 		$reflectionProperties = [];
 
 		try {
-			$ref = new \ReflectionClass($entityClass);
+			$ref = new ReflectionClass($entityClass);
 
 			foreach ($ref->getProperties() as $reflectionProperty) {
 				$reflectionProperties[] = $reflectionProperty->getName();
 			}
 
-		} catch (\ReflectionException $ex) {
+		} catch (ReflectionException $ex) {
 			// Nothing to do here
 		}
 
 		foreach (array_unique(array_merge($reflectionProperties, $classMetadata->getFieldNames(), $classMetadata->getAssociationNames())) as $fieldName) {
 
 			try {
-				$propertyReflection = new Nette\Reflection\Property($entityClass, $fieldName);
+				$propertyReflection = new ReflectionProperty($entityClass, $fieldName);
 
-			} catch (\ReflectionException $ex) {
+			} catch (ReflectionException $ex) {
 				// Entity property is readonly
 				continue;
 			}
@@ -149,7 +154,7 @@ final class EntityMapper implements IEntityMapper
 							$items = [];
 
 							if (is_string($className) && class_exists($className) && ($value instanceof Utils\ArrayHash || is_array($value))) {
-								$rc = new \ReflectionClass($className);
+								$rc = new ReflectionClass($className);
 
 								$subClassIdProperty = NULL;
 
@@ -173,12 +178,12 @@ final class EntityMapper implements IEntityMapper
 
 									$subClassName = $className;
 
-									$rc = new \ReflectionClass($className);
+									$rc = new ReflectionClass($className);
 
 									if ($rc->isAbstract() && isset($item['entity']) && class_exists($item['entity'])) {
 										$subClassName = $item['entity'];
 
-										$rc = new \ReflectionClass($subClassName);
+										$rc = new ReflectionClass($subClassName);
 									}
 
 									if ($subClassIdProperty !== NULL && $item->offsetExists($subClassIdProperty)) {
@@ -234,11 +239,11 @@ final class EntityMapper implements IEntityMapper
 							&& class_exists($className)
 							&& ($value instanceof Utils\ArrayHash || is_array($value))
 						) {
-							$rc = new \ReflectionClass($className);
+							$rc = new ReflectionClass($className);
 
 							if ($rc->isAbstract() && isset($value['entity']) && class_exists($value['entity'])) {
 								$className = $value['entity'];
-								$rc = new \ReflectionClass($value['entity']);
+								$rc = new ReflectionClass($value['entity']);
 							}
 
 							if ($constructor = $rc->getConstructor()) {
@@ -279,11 +284,11 @@ final class EntityMapper implements IEntityMapper
 						&& ($value instanceof Utils\ArrayHash || is_array($value))
 					) {
 						if (class_exists($className)) {
-							$rc = new \ReflectionClass($className);
+							$rc = new ReflectionClass($className);
 
 							if ($rc->isAbstract() && isset($value['entity']) && class_exists($value['entity'])) {
 								$className = $value['entity'];
-								$rc = new \ReflectionClass($value['entity']);
+								$rc = new ReflectionClass($value['entity']);
 							}
 
 							if ($constructor = $rc->getConstructor()) {
@@ -297,7 +302,7 @@ final class EntityMapper implements IEntityMapper
 
 						} elseif (isset($value['entity']) && class_exists($value['entity'])) {
 							$className = $value['entity'];
-							$rc = new \ReflectionClass($value['entity']);
+							$rc = new ReflectionClass($value['entity']);
 
 							if ($constructor = $rc->getConstructor()) {
 								$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $value, ['parent_entity' => $entity])));
@@ -340,7 +345,7 @@ final class EntityMapper implements IEntityMapper
 		}
 
 		try {
-			$propertyReflection = new Nette\Reflection\Method(get_class($entity), $methodName);
+			$propertyReflection = new ReflectionMethod(get_class($entity), $methodName);
 
 			//if (!$this->validators->validate($value, $propertyReflection)) {
 			//	// Validation fail
@@ -356,7 +361,7 @@ final class EntityMapper implements IEntityMapper
 			}
 
 			// Fallback for missing setter
-		} catch (\ReflectionException $ex) {
+		} catch (ReflectionException $ex) {
 			$classMetadata->setFieldValue($entity, $field, $value);
 		}
 	}
@@ -366,10 +371,12 @@ final class EntityMapper implements IEntityMapper
 	 * @param string $className
 	 *
 	 * @return string
+	 *
+	 * @throws ReflectionException
 	 */
 	private function findAttributeName(Entities\IEntity $entity, string $className) : string
 	{
-		$rc = new \ReflectionClass($className);
+		$rc = new ReflectionClass($className);
 
 		foreach ($rc->getProperties() as $property) {
 			$propertyAnnotations = $this->annotationReader->getPropertyAnnotations($property);

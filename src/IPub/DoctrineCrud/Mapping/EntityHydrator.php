@@ -14,6 +14,8 @@
 
 namespace IPub\DoctrineCrud\Mapping;
 
+use ReflectionException;
+
 use Doctrine\Common;
 use Doctrine\ORM;
 
@@ -70,6 +72,9 @@ final class EntityHydrator implements IEntityHydrator
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @throws Common\Annotations\AnnotationException
+	 * @throws ReflectionException
 	 */
 	public function extract(Entities\IEntity $entity, int $maxLevel = 1, int $level = 1) : array
 	{
@@ -102,6 +107,9 @@ final class EntityHydrator implements IEntityHydrator
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @throws Common\Annotations\AnnotationException
+	 * @throws ReflectionException
 	 */
 	public function simpleExtract(Entities\IEntity $entity) : array
 	{
@@ -138,6 +146,9 @@ final class EntityHydrator implements IEntityHydrator
 	 * @param int $level
 	 *
 	 * @return mixed|mixed[]
+	 *
+	 * @throws Common\Annotations\AnnotationException
+	 * @throws ReflectionException
 	 */
 	private function extractor($value, int $maxLevel = 1, int $level = 1)
 	{
@@ -195,7 +206,7 @@ final class EntityHydrator implements IEntityHydrator
 	 *
 	 * @return Nette\Reflection\Property[]
 	 *
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	private function getEntityProperties(Entities\IEntity $entity) : array
 	{

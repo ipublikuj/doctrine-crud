@@ -35,27 +35,25 @@
   "extra" : {
     "ipub" : {
       "configuration" : {
-        "extensions" : {
-          "doctrineCrud" : "IPub\\DoctrineCrud\\DI\\DoctrineCrudExtension"
-        }
+        "extension" : "IPub\\DoctrineCrud\\DI\\DoctrineCrudExtension"
       }
     }
   },
 
   "require" : {
-    "php" : ">=7.2.0",
+    "php" : ">=7.3.0",
 
     "doctrine/orm" : "~2.5",
 
-    "nette/di" : "~2.4 || ~3.0",
-    "nette/utils" : "~2.5 || ~3.0",
-    "nette/reflection" : "~2.4"
+    "nette/di" : "~3.0",
+    "nette/utils" : "~3.0"
   },
 
   "require-dev" : {
-    "nette/bootstrap" : "~2.4 || ~3.0",
-    "nette/mail" : "~2.4 || ~3.0",
-    "nette/robot-loader" : "~2.4 || ~3.0",
+    "nette/bootstrap" : "~3.0",
+    "nette/http" : "~3.0",
+    "nette/mail" : "~3.0",
+    "nette/robot-loader" : "~3.0",
     "nette/safe-stream" : "~2.3",
     "nette/tester" : "~2.3",
 
@@ -63,7 +61,8 @@
 
     "pds/skeleton" : "~1.0",
 
-    "nettrine/orm" : "~0.3"
+    "nettrine/orm" : "~0.3",
+    "contributte/console" : "~0.7"
   },
 
   "autoload" : {
