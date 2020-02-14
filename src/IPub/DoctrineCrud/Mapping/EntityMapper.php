@@ -222,7 +222,7 @@ final class EntityMapper implements IEntityMapper
 
 						} else {
 							$varAnnotation = $this->parseAnnotation($propertyReflection, 'var');
-							$varAnnotation = is_array($varAnnotation) ? end($result) : $varAnnotation;
+							$varAnnotation = $varAnnotation ? (is_array($varAnnotation) ? end($result) : $varAnnotation) : NULL;
 
 							$className = NULL;
 
@@ -269,7 +269,7 @@ final class EntityMapper implements IEntityMapper
 
 				} else {
 					$varAnnotation = $this->parseAnnotation($propertyReflection, 'var');
-					$varAnnotation = is_array($varAnnotation) ? end($result) : $varAnnotation;
+					$varAnnotation = $varAnnotation ? (is_array($varAnnotation) ? end($result) : $varAnnotation) : NULL;
 
 					$className = $varAnnotation;
 
