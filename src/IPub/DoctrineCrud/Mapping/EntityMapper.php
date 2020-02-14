@@ -20,6 +20,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
+use Reflector;
 
 use Doctrine\Common;
 use Doctrine\ORM;
@@ -220,7 +221,8 @@ final class EntityMapper implements IEntityMapper
 							$className = $this->annotationReader->getPropertyAnnotation($propertyReflection, ORM\Mapping\ManyToOne::class)->targetEntity;
 
 						} else {
-							$varAnnotation = $propertyReflection->getAnnotation('var');
+							$varAnnotation = $this->parseAnnotation($propertyReflection, 'var');
+							$varAnnotation = is_array($varAnnotation) ? end($result) : $varAnnotation;
 
 							$className = NULL;
 
@@ -266,7 +268,8 @@ final class EntityMapper implements IEntityMapper
 					}
 
 				} else {
-					$varAnnotation = $propertyReflection->getAnnotation('var');
+					$varAnnotation = $this->parseAnnotation($propertyReflection, 'var');
+					$varAnnotation = is_array($varAnnotation) ? end($result) : $varAnnotation;
 
 					$className = $varAnnotation;
 
@@ -403,5 +406,30 @@ final class EntityMapper implements IEntityMapper
 		}
 
 		return 'parent_entity';
+	}
+
+	/**
+	 * @param Reflector $ref
+	 * @param string $name
+	 *
+	 * @return array|NULL
+	 */
+	private function parseAnnotation(Reflector $ref, string $name) : ?array
+	{
+		if (!preg_match_all('#[\s*]@' . preg_quote($name, '#') . '(?:\(\s*([^)]*)\s*\)|\s|$)#', (string) $ref->getDocComment(), $m)) {
+			return NULL;
+		}
+
+		static $tokens = ['true' => TRUE, 'false' => FALSE, 'null' => NULL];
+
+		$res = [];
+
+		foreach ($m[1] as $s) {
+			foreach (preg_split('#\s*,\s*#', $s, -1, PREG_SPLIT_NO_EMPTY) ?: ['true'] as $item) {
+				$res[] = array_key_exists($tmp = strtolower($item), $tokens) ? $tokens[$tmp] : $item;
+			}
+		}
+
+		return $res;
 	}
 }
