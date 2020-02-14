@@ -16,6 +16,8 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Mapping;
 
+use phpDocumentor;
+
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -222,7 +224,6 @@ final class EntityMapper implements IEntityMapper
 
 						} else {
 							$varAnnotation = $this->parseAnnotation($propertyReflection, 'var');
-							$varAnnotation = $varAnnotation ? (is_array($varAnnotation) ? (count($varAnnotation) ? end($varAnnotation) : NULL) : $varAnnotation) : NULL;
 
 							$className = NULL;
 
@@ -269,7 +270,6 @@ final class EntityMapper implements IEntityMapper
 
 				} else {
 					$varAnnotation = $this->parseAnnotation($propertyReflection, 'var');
-					$varAnnotation = $varAnnotation ? (is_array($varAnnotation) ? (count($varAnnotation) ? end($varAnnotation) : NULL) : $varAnnotation) : NULL;
 
 					$className = $varAnnotation;
 
@@ -412,24 +412,19 @@ final class EntityMapper implements IEntityMapper
 	 * @param Reflector $ref
 	 * @param string $name
 	 *
-	 * @return array|NULL
+	 * @return string|NULL
 	 */
-	private function parseAnnotation(Reflector $ref, string $name) : ?array
+	private function parseAnnotation(Reflector $ref, string $name) : ?string
 	{
-		if (!preg_match_all('#[\s*]@' . preg_quote($name, '#') . '(?:\(\s*([^)]*)\s*\)|\s|$)#', (string) $ref->getDocComment(), $m)) {
-			return NULL;
-		}
+		$factory  = phpDocumentor\Reflection\DocBlockFactory::createInstance();
+		$docblock = $factory->create($ref->getDocComment());
 
-		static $tokens = ['true' => TRUE, 'false' => FALSE, 'null' => NULL];
-
-		$res = [];
-
-		foreach ($m[1] as $s) {
-			foreach (preg_split('#\s*,\s*#', $s, -1, PREG_SPLIT_NO_EMPTY) ?: ['true'] as $item) {
-				$res[] = array_key_exists($tmp = strtolower($item), $tokens) ? $tokens[$tmp] : $item;
+		foreach ($docblock->getTags() as $tag) {
+			if ($tag->getName() === $name) {
+				return trim((string) $tag);
 			}
 		}
 
-		return $res;
+		return NULL;
 	}
 }

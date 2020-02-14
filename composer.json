@@ -45,6 +45,8 @@
 
     "doctrine/orm" : "~2.5",
 
+    "phpdocumentor/reflection-docblock": "^5.0",
+
     "nette/di" : "~3.0",
     "nette/utils" : "~3.0"
   },
