@@ -16,6 +16,10 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud\Entities;
 
+use ReflectionException;
+
+use Doctrine\Common;
+
 use IPub\DoctrineCrud\Mapping;
 
 /**
@@ -46,7 +50,10 @@ trait TEntity
 	/**
 	 * @param int $maxLevel
 	 *
-	 * @return array
+	 * @return mixed[]
+	 *
+	 * @throws Common\Annotations\AnnotationException
+	 * @throws ReflectionException
 	 */
 	public function toArray(int $maxLevel = 1) : array
 	{
@@ -54,7 +61,10 @@ trait TEntity
 	}
 
 	/**
-	 * @return array
+	 * @return mixed[]
+	 *
+	 * @throws Common\Annotations\AnnotationException
+	 * @throws ReflectionException
 	 */
 	public function toSimpleArray() : array
 	{

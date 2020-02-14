@@ -14,6 +14,8 @@
 
 namespace IPub\DoctrineCrud\Mapping;
 
+use ReflectionClass;
+use ReflectionProperty;
 use ReflectionException;
 
 use Doctrine\Common;
@@ -204,13 +206,13 @@ final class EntityHydrator implements IEntityHydrator
 	/**
 	 * @param Entities\IEntity $entity
 	 *
-	 * @return Nette\Reflection\Property[]
+	 * @return ReflectionProperty[]
 	 *
 	 * @throws ReflectionException
 	 */
 	private function getEntityProperties(Entities\IEntity $entity) : array
 	{
-		$entityReflection = new \ReflectionClass(get_class($entity));
+		$entityReflection = new ReflectionClass(get_class($entity));
 
 		return $entityReflection->getProperties();
 	}

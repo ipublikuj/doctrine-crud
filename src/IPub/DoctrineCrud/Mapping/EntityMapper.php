@@ -195,7 +195,7 @@ final class EntityMapper implements IEntityMapper
 											->getRepository($subClassName)
 											->find($item->offsetGet($subClassIdProperty));
 
-										if ($subEntity !== NULL) {
+										if ($subEntity !== NULL && $subEntity instanceof Entities\IEntity) {
 											$subEntity = $this->fillEntity($item, $subEntity);
 										}
 									}
@@ -208,7 +208,9 @@ final class EntityMapper implements IEntityMapper
 											$subEntity = new $subClassName;
 										}
 
-										$subEntity = $this->fillEntity(Utils\ArrayHash::from(array_merge((array) $item, [$this->findAttributeName($entity, $subClassName) => $entity])), $subEntity, TRUE);
+										if ($subEntity instanceof Entities\IEntity) {
+											$subEntity = $this->fillEntity(Utils\ArrayHash::from(array_merge((array) $item, [$this->findAttributeName($entity, $subClassName) => $entity])), $subEntity, TRUE);
+										}
 									}
 
 									$items[] = $subEntity;
@@ -315,7 +317,9 @@ final class EntityMapper implements IEntityMapper
 								$subEntity = new $className;
 							}
 
-							$this->setFieldValue($classMetadata, $entity, $fieldName, $this->fillEntity(Utils\ArrayHash::from(array_merge((array) $value, [$this->findAttributeName($entity, $className) => $entity])), $subEntity, TRUE));
+							if ($subEntity instanceof Entities\IEntity) {
+								$this->setFieldValue($classMetadata, $entity, $fieldName, $this->fillEntity(Utils\ArrayHash::from(array_merge((array) $value, [$this->findAttributeName($entity, $className) => $entity])), $subEntity, TRUE));
+							}
 
 						} else {
 							$this->setFieldValue($classMetadata, $entity, $fieldName, $value);

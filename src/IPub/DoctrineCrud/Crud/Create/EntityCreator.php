@@ -18,6 +18,9 @@ namespace IPub\DoctrineCrud\Crud\Create;
 
 use Doctrine\Common\Persistence;
 
+use ReflectionClass;
+use ReflectionException;
+
 use Nette\Utils;
 
 use IPub\DoctrineCrud;
@@ -69,7 +72,7 @@ class EntityCreator extends Crud\CrudManager
 	{
 		if (!$entity instanceof Entities\IEntity) {
 			try {
-				$rc = new \ReflectionClass($this->entityName);
+				$rc = new ReflectionClass($this->entityName);
 
 				if ($constructor = $rc->getConstructor()) {
 					$entity = $rc->newInstanceArgs(DoctrineCrud\Helpers::autowireArguments($constructor, (array) $values));
@@ -78,7 +81,7 @@ class EntityCreator extends Crud\CrudManager
 					$entity = $this->entityManager->getClassMetadata($this->entityName)->newInstance();
 				}
 
-			} catch (\ReflectionException $ex) {
+			} catch (ReflectionException $ex) {
 				// Class could not be parsed
 			}
 		}
