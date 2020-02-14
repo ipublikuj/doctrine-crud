@@ -28,6 +28,8 @@ use Nettrine;
 use Tester;
 use Tester\Assert;
 
+use IPub\DoctrineCrud;
+
 use IPubTests\DoctrineCrud\Models;
 
 require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'bootstrap.php';
@@ -253,13 +255,9 @@ class CRUDTest extends Tester\TestCase
 		$config->addParameters(['appDir' => $rootDir, 'wwwDir' => $rootDir]);
 
 		$config->addConfig(__DIR__ . DS . 'files' . DS . 'config.neon');
+		$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities.neon');
 
-		if (getenv('NETTE') === 'default') {
-			$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities.neon');
-
-		} else {
-			$config->addConfig(__DIR__ . DS . 'files' . DS . 'entities24.neon');
-		}
+		DoctrineCrud\DI\DoctrineCrudExtension::register($config);
 
 		return $config->createContainer();
 	}

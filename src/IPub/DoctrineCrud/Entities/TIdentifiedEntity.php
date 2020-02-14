@@ -37,7 +37,7 @@ trait TIdentifiedEntity
 	 */
 	public function getId()
 	{
-		return is_integer($this->id) ? $this->id : $this->id;
+		return $this->id;
 	}
 
 	/**

@@ -60,6 +60,8 @@ class ExtensionTest extends Tester\TestCase
 
 		$config->addConfig(__DIR__ . DS . 'files' . DS . 'config.neon');
 
+		DoctrineCrud\DI\DoctrineCrudExtension::register($config);
+
 		return $config->createContainer();
 	}
 }

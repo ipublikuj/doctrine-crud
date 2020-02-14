@@ -1,7 +1,10 @@
 [PHP]
 extension_dir = "./ext"
-extension = php_xdebug.dll
-extension = php_json.dll
 extension = php_pdo.dll
 extension = php_pdo_sqlite.dll
-extension = php_sqlite..dll
+extension = php_sqlite.dll
+extension = iconv.dll
+extension = tokenizer.dll
+extension = json.dll
+extension = ctype.dll
+extension = xdebug.dll

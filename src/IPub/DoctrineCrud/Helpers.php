@@ -16,6 +16,10 @@ declare(strict_types = 1);
 
 namespace IPub\DoctrineCrud;
 
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionParameter;
+
 use IPub\DoctrineCrud\Exceptions;
 
 /**
@@ -31,14 +35,16 @@ class Helpers
 	/**
 	 * This method was inspired same method in Nette framework
 	 *
-	 * @param \ReflectionMethod $method
+	 * @param ReflectionMethod $method
 	 * @param array $arguments
 	 *
 	 * @return array
 	 *
 	 * @throws Exceptions\EntityCreationException
+	 *
+	 * @throws ReflectionException
 	 */
-	public static function autowireArguments(\ReflectionMethod $method, array $arguments) : array
+	public static function autowireArguments(ReflectionMethod $method, array $arguments) : array
 	{
 		$optCount = 0;
 		$num = -1;
@@ -92,14 +98,14 @@ class Helpers
 	}
 
 	/**
-	 * @param \ReflectionParameter $param
+	 * @param ReflectionParameter $param
 	 *
 	 * @return string|NULL
 	 */
-	public static function getParameterType(\ReflectionParameter $param) : ?string
+	public static function getParameterType(ReflectionParameter $param) : ?string
 	{
 		if ($param->hasType()) {
-			$type = PHP_VERSION_ID >= 70100 ? $param->getType()->getName() : (string) $param->getType();
+			$type = $param->getType()->getName();
 
 			return strtolower($type) === 'self' ? $param->getDeclaringClass()->getName() : $type;
 		}
