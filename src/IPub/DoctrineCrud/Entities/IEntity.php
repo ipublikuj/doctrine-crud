@@ -26,20 +26,5 @@ namespace IPub\DoctrineCrud\Entities;
  */
 interface IEntity
 {
-	/**
-	 * @param int $maxLevel
-	 *
-	 * @return array
-	 */
-	public function toArray(int $maxLevel = 1) : array;
 
-	/**
-	 * @return array
-	 */
-	public function toSimpleArray() : array;
-
-	/**
-	 * @return string
-	 */
-	public function __toString();
 }

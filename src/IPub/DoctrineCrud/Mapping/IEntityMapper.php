@@ -35,7 +35,6 @@ interface IEntityMapper
 	 */
 	public const ANNOTATION_REQUIRED = 'required';
 	public const ANNOTATION_WRITABLE = 'writable';
-	public const ANNOTATION_VALIDATOR = 'validator';
 
 	/**
 	 * @param Utils\ArrayHash $values

@@ -37,9 +37,6 @@ use IPub\DoctrineCrud\Mapping;
  */
 class DoctrineCrudExtension extends DI\CompilerExtension
 {
-	// Define tag string for validator
-	const TAG_VALIDATOR = 'ipub.doctrine.validator';
-
 	/**
 	 * @return void
 	 *
@@ -62,14 +59,9 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 		 * Extensions helpers
 		 */
 
-		$builder->addDefinition($this->prefix('entity.validator'))
-			->setType(DoctrineCrud\Validation\ValidatorProxy::class)
-			->setArguments([$annotationReader])
-			->setAutowired(FALSE);
-
 		$builder->addDefinition($this->prefix('entity.mapper'))
 			->setType(Mapping\EntityMapper::class)
-			->setArguments(['@' . $this->prefix('entity.validator'), $annotationReader])
+			->setArguments([$annotationReader])
 			->setAutowired(FALSE);
 
 		/**
@@ -118,14 +110,6 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 
 		// Get container builder
 		$builder = $this->getContainerBuilder();
-
-		// Get validators service
-		$validator = $builder->getDefinition($this->prefix('entity.validator'));
-
-		foreach (array_keys($builder->findByTag(self::TAG_VALIDATOR)) as $serviceName) {
-			// Register validator to proxy validator
-			$validator->addSetup('registerValidator', ['@' . $serviceName, $serviceName]);
-		}
 
 		$builder->getDefinition($builder->getByType(Doctrine\ORM\EntityManagerInterface::class, TRUE))
 			->addSetup(

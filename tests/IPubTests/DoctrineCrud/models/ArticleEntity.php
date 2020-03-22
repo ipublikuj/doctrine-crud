@@ -27,8 +27,6 @@ use IPub\DoctrineCrud\Mapping\Annotation as IPubDoctrine;
  */
 class ArticleEntity implements Entities\IEntity
 {
-	use Entities\TEntity;
-
 	/**
 	 * @var int
 	 *

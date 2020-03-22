@@ -39,11 +39,6 @@ final class Crud extends Annotation
 	public $is;
 
 	/**
-	 * @var string|array
-	 */
-	public $validator;
-
-	/**
 	 * @return bool
 	 */
 	public function isRequired() : bool

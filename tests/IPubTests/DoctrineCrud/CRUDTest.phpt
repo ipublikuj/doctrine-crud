@@ -172,66 +172,6 @@ class CRUDTest extends Tester\TestCase
 		Assert::null($entity);
 	}
 
-	public function testEntityTraits() : void
-	{
-		$this->generateDbSchema();
-
-		$user = new Models\UserEntity;
-		$user->setUsername('tester');
-		$user->setName('Tester');
-		$user->setNotWritable('White side');
-
-		$this->em->persist($user);
-		$this->em->flush();
-
-		$article = new Models\ArticleEntity();
-		$article->setTitle('Testing article');
-		$article->setOwner($user);
-
-		$this->em->persist($article);
-		$this->em->flush();
-
-		Assert::same((string) $user->getName(), (string) $user, 'UserEntity toString');
-		Assert::same('', (string) $article, 'ArticleEntity toString');
-
-		Assert::same([
-			'id'          => $user->getId(),
-			'username'    => 'tester',
-			'name'        => 'Tester',
-			'notWritable' => 'White side',
-			'createdAt'   => NULL,
-			'updatedAt'   => NULL,
-		], $user->toArray(), 'UserEntity - toArray()');
-		Assert::same([
-			'id'          => $user->getId(),
-			'username'    => 'tester',
-			'name'        => 'Tester',
-			'notWritable' => 'White side',
-			'createdAt'   => NULL,
-			'updatedAt'   => NULL,
-		], $user->toSimpleArray(), 'UserEntity - toSimpleArray()');
-
-		Assert::same([
-			'title' => 'Testing article',
-			'owner' => $user,
-		], $article->toArray(), 'ArticleEntity - toArray()');
-		Assert::same([
-			'title' => 'Testing article',
-			'owner' => [
-				'id'          => $user->getId(),
-				'username'    => 'tester',
-				'name'        => 'Tester',
-				'notWritable' => 'White side',
-				'createdAt'   => NULL,
-				'updatedAt'   => NULL,
-			],
-		], $article->toArray(2), 'ArticleEntity - toArray(2)');
-		Assert::same([
-			'title' => 'Testing article',
-			'owner' => $user->getId(),
-		], $article->toSimpleArray(), 'ArticleEntity - toSimpleArray()');
-	}
-
 	/**
 	 * @return void
 	 */

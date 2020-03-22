@@ -28,7 +28,6 @@ use IPub\DoctrineCrud\Mapping\Annotation as IPubDoctrine;
  */
 class UserEntity implements Entities\IIdentifiedEntity
 {
-	use Entities\TEntity;
 	use Entities\TIdentifiedEntity;
 
 	/**

@@ -68,11 +68,23 @@ class EntityCreator extends Crud\CrudManager
 	 *
 	 * @return Entities\IEntity
 	 */
-	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = NULL) : Entities\IEntity
+	public function create(Utils\ArrayHash $values, Entities\IEntity $entity = null): Entities\IEntity
 	{
 		if (!$entity instanceof Entities\IEntity) {
 			try {
-				$rc = new ReflectionClass($this->entityName);
+				// Entity name is overriden
+				if ($values->offsetExists('entity') && class_exists($values->offsetGet('entity'))) {
+					$entityClass = $values->offsetGet('entity');
+
+				} else {
+					$entityClass = $this->entityName;
+				}
+
+				$rc = new ReflectionClass($entityClass);
+
+				if ($rc->isAbstract()) {
+					throw new Exceptions\InvalidArgumentException(sprintf('Abstract entity "%s" can not be used.', $entityClass));
+				}
 
 				if ($constructor = $rc->getConstructor()) {
 					$entity = $rc->newInstanceArgs(DoctrineCrud\Helpers::autowireArguments($constructor, (array) $values));
@@ -92,7 +104,7 @@ class EntityCreator extends Crud\CrudManager
 
 		$this->processHooks($this->beforeAction, [$entity, $values]);
 
-		$this->entityMapper->fillEntity($values, $entity, TRUE);
+		$this->entityMapper->fillEntity($values, $entity, true);
 
 		$this->entityManager->persist($entity);
 

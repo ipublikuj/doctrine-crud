@@ -34,7 +34,6 @@ use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Exceptions;
 use IPub\DoctrineCrud\Helpers;
 use IPub\DoctrineCrud\Mapping;
-use IPub\DoctrineCrud\Validation;
 
 /**
  * Doctrine CRUD entity mapper
@@ -52,11 +51,6 @@ final class EntityMapper implements IEntityMapper
 	use Nette\SmartObject;
 
 	/**
-	 * @var Validation\ValidatorProxy|Validation\IValidator
-	 */
-	private $validators;
-
-	/**
 	 * @var Common\Persistence\ManagerRegistry
 	 */
 	private $managerRegistry;
@@ -67,16 +61,13 @@ final class EntityMapper implements IEntityMapper
 	private $annotationReader;
 
 	/**
-	 * @param Validation\IValidator $validators
 	 * @param Common\Annotations\Reader $annotationReader
 	 * @param Common\Persistence\ManagerRegistry $managerRegistry
 	 */
 	public function __construct(
-		Validation\IValidator $validators,
 		Common\Annotations\Reader $annotationReader,
 		Common\Persistence\ManagerRegistry $managerRegistry
 	) {
-		$this->validators = $validators;
 		$this->annotationReader = $annotationReader;
 		$this->managerRegistry = $managerRegistry;
 	}
@@ -353,10 +344,6 @@ final class EntityMapper implements IEntityMapper
 
 		try {
 			$propertyReflection = new ReflectionMethod(get_class($entity), $methodName);
-
-			//if (!$this->validators->validate($value, $propertyReflection)) {
-			//	// Validation fail
-			//}
 
 			if ($propertyReflection->isPublic()) {
 				// Try to call entity setter
