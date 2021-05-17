@@ -41,35 +41,45 @@
   },
 
   "require" : {
-    "php" : ">=7.2.0",
-
-    "doctrine/orm" : "~2.5",
-
-    "phpdocumentor/reflection-docblock": "^5.0",
-
-    "nette/di" : "~3.0",
-    "nette/utils" : "~3.0"
+    "php": ">=7.4",
+    "doctrine/orm": "^2.6",
+    "nette/bootstrap": "^3.1",
+    "nette/di": "~3.0",
+    "nette/utils": "~3.0",
+    "phpdocumentor/reflection-docblock": "^5.2"
   },
 
   "require-dev" : {
-    "nette/bootstrap" : "~3.0",
-    "nette/http" : "~3.0",
-    "nette/mail" : "~3.0",
-    "nette/robot-loader" : "~3.0",
-    "nette/safe-stream" : "~2.3",
-    "nette/tester" : "~2.3",
-
-    "tracy/tracy" : "~2.4",
-
-    "pds/skeleton" : "~1.0",
-
-    "nettrine/orm" : "~0.3",
-    "contributte/console" : "~0.7"
+    "contributte/console": "^0.9",
+    "mockery/mockery": "^1.4",
+    "nettrine/cache": "^0.3",
+    "nettrine/orm": "^0.8",
+    "ninjify/nunjuck": "^0.3",
+    "ninjify/qa": "^0.10",
+    "pds/skeleton": "~1.0",
+    "phpstan/extension-installer": "^1.1",
+    "phpstan/phpstan": "^0.12",
+    "phpstan/phpstan-deprecation-rules": "^0.12",
+    "phpstan/phpstan-doctrine": "^0.12",
+    "phpstan/phpstan-nette": "^0.12",
+    "phpstan/phpstan-strict-rules": "^0.12",
+    "tracy/tracy": "^2.8"
   },
 
   "autoload" : {
-    "psr-0" : {
+    "psr-4" : {
       "IPub\\DoctrineCrud\\" : "src/"
     }
+  },
+
+  "autoload-dev" : {
+    "psr-4" : {
+      "Tests\\Cases\\" : "tests/cases",
+      "Tests\\Fixtures\\" : "tests/fixtures"
+    }
+  },
+
+  "config" : {
+    "sort-packages" : true
   }
 }

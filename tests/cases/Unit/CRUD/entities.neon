@@ -1,0 +1,17 @@
+services:
+	userCrud:
+		factory: @doctrineCrud.crud::create(Tests\Cases\Models\UserEntity)
+
+	articleCrud:
+		factory: @doctrineCrud.crud::create(Tests\Cases\Models\ArticleEntity)
+
+	usersManager:
+		factory: Tests\Cases\Models\UsersManager(@userCrud)
+
+	articlesManager:
+		factory: Tests\Cases\Models\ArticlesManager(@articleCrud)
+
+nettrineOrmAnnotations:
+	mapping: [
+		Tests\Cases\Models: %appDir%libs/models
+	]
