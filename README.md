@@ -1,7 +1,7 @@
 # Doctrine CRUD
 
-[![Build Status](https://badgen.net/github/checks/iPublikuj/doctrine-crud/master?cache=300&style=flast-square)](https://github.com/iPublikuj/doctrine-crud/actions)
-[![Code coverage](https://badgen.net/coveralls/c/github/iPublikuj/doctrine-crud?cache=300&style=flast-square)](https://coveralls.io/r/iPublikuj/doctrine-crud)
+[![Build Status](https://badgen.net/github/checks/ipublikuj/doctrine-crud/master?cache=300&style=flast-square)](https://github.com/ipublikuj/doctrine-crud)
+[![Code coverage](https://badgen.net/coveralls/c/github/ipublikuj/doctrine-crud?cache=300&style=flast-square)](https://coveralls.io/github/ipublikuj/doctrine-crud)
 ![PHP](https://badgen.net/packagist/php/ipub/doctrine-crud?cache=300&style=flast-square)
 [![Licence](https://badgen.net/packagist/license/ipub/doctrine-crud?cache=300&style=flast-square)](https://packagist.org/packages/ipub/doctrine-crud)
 [![Downloads total](https://badgen.net/packagist/dt/ipub/doctrine-crud?cache=300&style=flast-square)](https://packagist.org/packages/ipub/doctrine-crud)
