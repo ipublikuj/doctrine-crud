@@ -108,7 +108,6 @@ final class EntityMapper implements IEntityMapper
 		}
 
 		foreach (array_unique(array_merge($reflectionProperties, $classMetadata->getFieldNames(), $classMetadata->getAssociationNames())) as $fieldName) {
-
 			try {
 				$propertyReflection = new ReflectionProperty($entityClass, $fieldName);
 

@@ -16,6 +16,7 @@
 namespace IPub\DoctrineCrud\Crud;
 
 use IPub\DoctrineCrud\Crud;
+use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Mapping;
 use Nette;
 
@@ -27,7 +28,7 @@ use Nette;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  *
- * @phpstan-template TEntityClass of \IPub\DoctrineCrud\Entities\IEntity
+ * @phpstan-template TEntityClass of Entities\IEntity
  */
 final class EntityCrudFactory
 {
@@ -37,20 +38,36 @@ final class EntityCrudFactory
 	/** @var Mapping\IEntityMapper */
 	private Mapping\IEntityMapper $entityMapper;
 
-	/** @var Create\IEntityCreator<TEntityClass> */
+	/**
+	 * @var Create\IEntityCreator
+	 *
+	 * @phpstan-var Create\IEntityCreator<TEntityClass>
+	 */
 	private Create\IEntityCreator $entityCreatorFactory;
 
-	/** @var Update\IEntityUpdater<TEntityClass> */
+	/**
+	 * @var Update\IEntityUpdater
+	 *
+	 * @phpstan-var Update\IEntityUpdater<TEntityClass>
+	 */
 	private Update\IEntityUpdater $entityUpdaterFactory;
 
-	/** @var Delete\IEntityDeleter<TEntityClass> */
+	/**
+	 * @var Delete\IEntityDeleter
+	 *
+	 * @phpstan-var Delete\IEntityDeleter<TEntityClass>
+	 */
 	private Delete\IEntityDeleter $entityDeleterFactory;
 
 	/**
 	 * @param Mapping\IEntityMapper $entityMapper
-	 * @param Create\IEntityCreator<TEntityClass> $entityCreatorFactory
-	 * @param Update\IEntityUpdater<TEntityClass> $entityUpdaterFactory
-	 * @param Delete\IEntityDeleter<TEntityClass> $entityDeleterFactory
+	 * @param Create\IEntityCreator $entityCreatorFactory
+	 * @param Update\IEntityUpdater $entityUpdaterFactory
+	 * @param Delete\IEntityDeleter $entityDeleterFactory
+	 *
+	 * @phpstan-param Create\IEntityCreator<TEntityClass> $entityCreatorFactory
+	 * @phpstan-param Update\IEntityUpdater<TEntityClass> $entityUpdaterFactory
+	 * @phpstan-param Delete\IEntityDeleter<TEntityClass> $entityDeleterFactory
 	 */
 	public function __construct(
 		Mapping\IEntityMapper $entityMapper,

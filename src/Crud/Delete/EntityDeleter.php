@@ -30,7 +30,7 @@ use IPub\DoctrineCrud\Exceptions;
  * @method beforeAction(Entities\IEntity $entity)
  * @method afterAction()
  *
- * @phpstan-template   TEntityClass of \IPub\DoctrineCrud\Entities\IEntity
+ * @phpstan-template   TEntityClass of Entities\IEntity
  * @phpstan-extends    Crud\CrudManager<TEntityClass>
  */
 class EntityDeleter extends Crud\CrudManager

@@ -12,14 +12,9 @@ class UsersManager
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var Crud\IEntityCrud
-	 */
+	/** @var Crud\IEntityCrud */
 	private Crud\IEntityCrud $entityCrud;
 
-	/**
-	 * @param Crud\IEntityCrud $entityCrud
-	 */
 	public function __construct(
 		Crud\IEntityCrud $entityCrud
 	) {

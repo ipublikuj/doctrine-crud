@@ -21,9 +21,7 @@ use Throwable;
 class EntityCreationException extends RuntimeException implements IException
 {
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private string $field;
 
 	/**

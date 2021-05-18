@@ -83,7 +83,7 @@ class Helpers
 						}
 					}
 
-					throw new Exceptions\EntityCreationException($parameter->getName(), sprintf('Parameter %s in $methodName has no class type hint or default value, so its value must be specified.', $parameter->getName()));
+					throw new Exceptions\EntityCreationException($parameter->getName(), sprintf('Parameter %s in %s has no class type hint or default value, so its value must be specified.', $methodName, $parameter->getName()));
 				}
 			}
 		}

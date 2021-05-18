@@ -36,15 +36,13 @@ use ReflectionException;
  * @method beforeAction(Entities\IEntity $entity, Utils\ArrayHash $values)
  * @method afterAction(Entities\IEntity $entity, Utils\ArrayHash $values)
  *
- * @phpstan-template   TEntityClass of \IPub\DoctrineCrud\Entities\IEntity
+ * @phpstan-template   TEntityClass of Entities\IEntity
  * @phpstan-extends    Crud\CrudManager<TEntityClass>
  */
 class EntityCreator extends Crud\CrudManager
 {
 
-	/**
-	 * @var Mapping\IEntityMapper
-	 */
+	/** @var Mapping\IEntityMapper */
 	private Mapping\IEntityMapper $entityMapper;
 
 	/**

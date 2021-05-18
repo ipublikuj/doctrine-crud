@@ -15,6 +15,8 @@
 
 namespace IPub\DoctrineCrud\Crud;
 
+use IPub\DoctrineCrud\Entities;
+
 /**
  * Doctrine CRUD factory
  *
@@ -23,7 +25,7 @@ namespace IPub\DoctrineCrud\Crud;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  *
- * @phpstan-template TEntityClass of \IPub\DoctrineCrud\Entities\IEntity
+ * @phpstan-template TEntityClass of Entities\IEntity
  */
 interface IEntityCrudFactory
 {

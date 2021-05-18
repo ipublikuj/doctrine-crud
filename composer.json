@@ -44,8 +44,8 @@
     "php": ">=7.4",
     "doctrine/orm": "^2.6",
     "nette/bootstrap": "^3.1",
-    "nette/di": "~3.0",
-    "nette/utils": "~3.0",
+    "nette/di": "^3.0",
+    "nette/utils": "^3.2",
     "phpdocumentor/reflection-docblock": "^5.2"
   },
 
@@ -55,7 +55,7 @@
     "nettrine/cache": "^0.3",
     "nettrine/orm": "^0.8",
     "ninjify/nunjuck": "^0.3",
-    "ninjify/qa": "^0.10",
+    "ninjify/qa": "^0.12",
     "pds/skeleton": "~1.0",
     "phpstan/extension-installer": "^1.1",
     "phpstan/phpstan": "^0.12",

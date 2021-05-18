@@ -15,6 +15,7 @@
 
 namespace IPub\DoctrineCrud\Crud\Create;
 
+use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Mapping;
 
 /**
@@ -25,7 +26,7 @@ use IPub\DoctrineCrud\Mapping;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  *
- * @phpstan-template TEntityClass of \IPub\DoctrineCrud\Entities\IEntity
+ * @phpstan-template TEntityClass of Entities\IEntity
  */
 interface IEntityCreator
 {

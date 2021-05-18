@@ -16,6 +16,7 @@
 namespace IPub\DoctrineCrud\Crud;
 
 use IPub\DoctrineCrud\Crud;
+use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Mapping;
 use Nette;
 
@@ -27,7 +28,7 @@ use Nette;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  *
- * @phpstan-template    TEntityClass of \IPub\DoctrineCrud\Entities\IEntity
+ * @phpstan-template    TEntityClass of Entities\IEntity
  * @phpstan-implements  IEntityCrud<TEntityClass>
  */
 final class EntityCrud implements IEntityCrud
@@ -37,6 +38,7 @@ final class EntityCrud implements IEntityCrud
 
 	/**
 	 * @var string
+	 *
 	 * @phpstan-var class-string<TEntityClass>
 	 */
 	private string $entityName;
@@ -44,23 +46,38 @@ final class EntityCrud implements IEntityCrud
 	/** @var Mapping\IEntityMapper */
 	private Mapping\IEntityMapper $entityMapper;
 
-	/** @var Create\IEntityCreator<TEntityClass> */
+	/**
+	 * @var Create\IEntityCreator
+	 *
+	 * @phpstan-var Create\IEntityCreator<TEntityClass>
+	 */
 	private Crud\Create\IEntityCreator $entityCreatorFactory;
 
-	/** @var Update\IEntityUpdater<TEntityClass> */
+	/**
+	 * @var Update\IEntityUpdater
+	 *
+	 * @phpstan-var Update\IEntityUpdater<TEntityClass>
+	 */
 	private Crud\Update\IEntityUpdater $entityUpdaterFactory;
 
-	/** @var Delete\IEntityDeleter<TEntityClass> */
+	/**
+	 * @var Delete\IEntityDeleter
+	 *
+	 * @phpstan-var Delete\IEntityDeleter<TEntityClass>
+	 */
 	private Crud\Delete\IEntityDeleter $entityDeleterFactory;
 
 	/**
 	 * @param string $entityName
 	 * @param Mapping\IEntityMapper $entityMapper
-	 * @param Crud\Create\IEntityCreator<TEntityClass> $entityCreatorFactory
-	 * @param Crud\Update\IEntityUpdater<TEntityClass> $entityUpdaterFactory
-	 * @param Crud\Delete\IEntityDeleter<TEntityClass> $entityDeleterFactory
+	 * @param Crud\Create\IEntityCreator $entityCreatorFactory
+	 * @param Crud\Update\IEntityUpdater $entityUpdaterFactory
+	 * @param Crud\Delete\IEntityDeleter $entityDeleterFactory
 	 *
 	 * @phpstan-param class-string<TEntityClass> $entityName
+	 * @phpstan-param Crud\Create\IEntityCreator<TEntityClass> $entityCreatorFactory
+	 * @phpstan-param Crud\Update\IEntityUpdater<TEntityClass> $entityUpdaterFactory
+	 * @phpstan-param Crud\Delete\IEntityDeleter<TEntityClass> $entityDeleterFactory
 	 */
 	public function __construct(
 		string $entityName,

@@ -18,6 +18,7 @@ namespace IPub\DoctrineCrud\Crud;
 use Closure;
 use Doctrine\ORM;
 use Doctrine\Persistence;
+use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Exceptions;
 use Nette;
 
@@ -29,7 +30,7 @@ use Nette;
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
  *
- * @phpstan-template TEntityClass of \IPub\DoctrineCrud\Entities\IEntity
+ * @phpstan-template TEntityClass of Entities\IEntity
  */
 abstract class CrudManager
 {
@@ -45,7 +46,11 @@ abstract class CrudManager
 	/** @var string */
 	protected string $entityName;
 
-	/** @var Persistence\ObjectRepository<TEntityClass> */
+	/**
+	 * @var Persistence\ObjectRepository
+	 *
+	 * @phpstan-var Persistence\ObjectRepository<TEntityClass>
+	 */
 	protected Persistence\ObjectRepository $entityRepository;
 
 	/** @var ORM\EntityManagerInterface */

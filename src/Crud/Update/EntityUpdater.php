@@ -33,7 +33,7 @@ use Nette\Utils;
  * @method beforeAction(Entities\IEntity $entity, Utils\ArrayHash $values)
  * @method afterAction(Entities\IEntity $entity, Utils\ArrayHash $values)
  *
- * @phpstan-template   TEntityClass of \IPub\DoctrineCrud\Entities\IEntity
+ * @phpstan-template   TEntityClass of Entities\IEntity
  * @phpstan-extends    Crud\CrudManager<TEntityClass>
  */
 class EntityUpdater extends Crud\CrudManager
