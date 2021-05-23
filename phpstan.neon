@@ -1,5 +1,2 @@
 parameters:
 	level: max
-	stubFiles:
-		- tests/PHPStan/stubs/Doctrine/ORM/Query.php
-		- tests/PHPStan/stubs/Doctrine/ORM/QueryBuilder.php

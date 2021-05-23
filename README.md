@@ -12,17 +12,17 @@ Implementation of CRUD system into [Doctrine3](https://github.com/doctrine/orm) 
 
 ## Installation
 
-The best way to install ipub/doctrine-crud is using [Composer](http://getcomposer.org/):
+The best way to install **ipub/doctrine-crud** is using [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require ipub/doctrine-crud
+composer require ipub/doctrine-crud
 ```
 
-After that you have to register extension in config.neon.
+After that, you have to register extension in config.neon.
 
 ```neon
 extensions:
-	doctrineCrud: IPub\DoctrineCrud\DI\DoctrineCrudExtension
+    doctrineCrud: IPub\DoctrineCrud\DI\DoctrineCrudExtension
 ```
 
 ## Documentation

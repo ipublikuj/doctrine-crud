@@ -91,7 +91,7 @@ final class EntityMapper implements IEntityMapper
 			throw new Exceptions\InvalidStateException(sprintf('Entity manager for entity %s could not be loaded', $entityClass));
 		}
 
-		/** @var ORM\Mapping\ClassMetadata $classMetadata */
+		/** @phpstan-var ORM\Mapping\ClassMetadataInfo<object> $classMetadata */
 		$classMetadata = $entityClassManager->getClassMetadata($entityClass);
 
 		$reflectionProperties = [];
@@ -384,15 +384,17 @@ final class EntityMapper implements IEntityMapper
 	}
 
 	/**
-	 * @param ORM\Mapping\ClassMetadata $classMetadata
+	 * @param ORM\Mapping\ClassMetadataInfo $classMetadata
 	 * @param Entities\IEntity $entity
 	 * @param string $field
 	 * @param mixed $value
 	 *
 	 * @return void
+	 *
+	 * @phpstan-param ORM\Mapping\ClassMetadataInfo<object> $classMetadata
 	 */
 	private function setFieldValue(
-		ORM\Mapping\ClassMetadata $classMetadata,
+		ORM\Mapping\ClassMetadataInfo $classMetadata,
 		Entities\IEntity $entity,
 		string $field,
 		$value

@@ -8,10 +8,10 @@ This Doctrine CRUD extension brings you easier way how to **C**reate, **R**ead, 
 
 ## Installation
 
-The best way to install ipub/doctrine is using [Composer](http://getcomposer.org/):
+The best way to install **ipub/doctrine-crud** is using [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require ipub/doctrine-crud
+composer require ipub/doctrine-crud
 ```
 
 After that you have to register extension in config.neon.
