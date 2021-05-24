@@ -70,7 +70,7 @@ class Helpers
 					$optCount++;
 
 				} else {
-					if ($class !== null && class_exists($class)) {
+					if ($class !== null && (class_exists($class) || interface_exists($class))) {
 						foreach ($arguments as $key => $argument) {
 							/** @phpstan-ignore-next-line */
 							if (is_object($argument) && is_subclass_of($argument, $class)) {
