@@ -73,7 +73,7 @@ class Helpers
 					if ($class !== null && (class_exists($class) || interface_exists($class))) {
 						foreach ($arguments as $key => $argument) {
 							/** @phpstan-ignore-next-line */
-							if (is_object($argument) && is_subclass_of($argument, $class)) {
+							if (is_object($argument) && (is_subclass_of($argument, $class) || get_class($argument) === $class)) {
 								$res[$subNum] = $argument;
 								unset($arguments[$key]);
 								$optCount = 0;
