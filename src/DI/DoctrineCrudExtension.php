@@ -93,7 +93,6 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 		// Syntax sugar for config
 		$builder->addFactoryDefinition($this->prefix('crud'))
 			->setImplement(Crud\IEntityCrudFactory::class)
-			->setParameters(['entityName'])
 			->getResultDefinition()
 			->setType(Crud\EntityCrud::class)
 			->setArguments([
