@@ -103,7 +103,7 @@ final class EntityMapper implements IEntityMapper
 				$reflectionProperties[] = $reflectionProperty->getName();
 			}
 
-		} catch (ReflectionException $ex) {
+		} catch (ReflectionException) {
 			// Nothing to do here
 		}
 
@@ -111,13 +111,18 @@ final class EntityMapper implements IEntityMapper
 			try {
 				$propertyReflection = new ReflectionProperty($entityClass, $fieldName);
 
-			} catch (ReflectionException $ex) {
+			} catch (ReflectionException) {
 				// Entity property is readonly
 				continue;
 			}
 
 			/** @var Mapping\Annotation\Crud|null $crud */
 			$crud = $this->annotationReader->getPropertyAnnotation($propertyReflection, Mapping\Annotation\Crud::class);
+
+			if ($crud === null) {
+				/** @var Mapping\Attribute\Crud|null $crud */
+				$crud = $propertyReflection->getAttributes(Mapping\Attribute\Crud::class);
+			}
 
 			if ($crud !== null) {
 				if ($isNew && $crud->isRequired() && !$values->offsetExists($fieldName)) {
@@ -187,8 +192,8 @@ final class EntityMapper implements IEntityMapper
 									if ($subClassIdProperty !== null && $item->offsetExists($subClassIdProperty)) {
 										$entityClassManager = $this->managerRegistry->getManagerForClass($subClassName);
 
-										$subEntity = $entityClassManager === null ? null : $entityClassManager
-											->getRepository($subClassName)
+										$subEntity = $entityClassManager
+											?->getRepository($subClassName)
 											->find($item->offsetGet($subClassIdProperty));
 
 										if ($subEntity !== null && $subEntity instanceof Entities\IEntity) {
