@@ -25,9 +25,6 @@ use Doctrine\ORM\Mapping as ORMMapping;
  * @subpackage     Annotation
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @Annotation
- * @Target({"PROPERTY"})
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class Crud implements ORMMapping\MappingAttribute

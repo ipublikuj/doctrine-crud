@@ -120,8 +120,9 @@ final class EntityMapper implements IEntityMapper
 			$crud = $this->annotationReader->getPropertyAnnotation($propertyReflection, Mapping\Annotation\Crud::class);
 
 			if ($crud === null) {
-				/** @var Mapping\Attribute\Crud|null $crud */
-				$crud = $propertyReflection->getAttributes(Mapping\Attribute\Crud::class);
+				$attributes = $propertyReflection->getAttributes(Mapping\Attribute\Crud::class);
+
+				$crud = $attributes !== [] ? $attributes[0]->newInstance() : null;
 			}
 
 			if ($crud !== null) {
@@ -442,7 +443,10 @@ final class EntityMapper implements IEntityMapper
 	{
 		$factory = phpDocumentor\Reflection\DocBlockFactory::createInstance();
 
-		if (!method_exists($ref, 'getDocComment')) {
+		if (
+			!method_exists($ref, 'getDocComment')
+			|| !is_string($ref->getDocComment())
+		) {
 			return null;
 		}
 
