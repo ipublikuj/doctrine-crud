@@ -252,15 +252,33 @@ final class EntityMapper implements IEntityMapper
 								$rc = new ReflectionClass($value['entity']);
 							}
 
-							$constructor = $rc->getConstructor();
+							$subEntityValue = $isNew ? null : $this->getFieldValue($classMetadata, $entity, $fieldName);
 
-							if ($constructor !== null) {
-								$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array) $value, ['parent_entity' => $entity])));
+							if (
+								$subEntityValue instanceof $className
+								&& $subEntityValue instanceof Entities\IEntity
+							) {
+								$this->setFieldValue(
+									$classMetadata,
+									$entity,
+									$fieldName,
+									$this->fillEntity(
+										$value instanceof Utils\ArrayHash ? $value : Utils\ArrayHash::from($value),
+										$subEntityValue,
+									),
+								);
 
-								$this->setFieldValue($classMetadata, $entity, $fieldName, $subEntity);
+							} elseif ($subEntityValue === null) {
+								$constructor = $rc->getConstructor();
 
-							} else {
-								$this->setFieldValue($classMetadata, $entity, $fieldName, new $className());
+								if ($constructor !== null) {
+									$subEntity = $rc->newInstanceArgs(Helpers::autowireArguments($constructor, array_merge((array)$value, ['parent_entity' => $entity])));
+
+									$this->setFieldValue($classMetadata, $entity, $fieldName, $subEntity);
+
+								} else {
+									$this->setFieldValue($classMetadata, $entity, $fieldName, new $className());
+								}
 							}
 
 						} else {
@@ -431,6 +449,46 @@ final class EntityMapper implements IEntityMapper
 		} catch (ReflectionException $ex) {
 			$classMetadata->setFieldValue($entity, $field, $value);
 		}
+	}
+
+	/**
+	 * @param ORM\Mapping\ClassMetadataInfo $classMetadata
+	 * @param Entities\IEntity $entity
+	 * @param string $field
+	 *
+	 * @return mixed
+	 *
+	 * @phpstan-param ORM\Mapping\ClassMetadataInfo<object> $classMetadata
+	 */
+	private function getFieldValue(
+		ORM\Mapping\ClassMetadataInfo $classMetadata,
+		Entities\IEntity $entity,
+		string $field,
+	): mixed {
+		$methodName = 'get' . ucfirst($field);
+
+		try {
+			$propertyReflection = new ReflectionMethod(get_class($entity), $methodName);
+
+			if ($propertyReflection->isPublic()) {
+				$callback = [$entity, $methodName];
+
+				// Try to call state setter
+				if (is_callable($callback)) {
+					return call_user_func($callback);
+				}
+
+			} elseif (isset($classMetadata->reflFields[$field])) {
+				// Fallback for missing setter
+				return $classMetadata->getFieldValue($entity, $field);
+			}
+
+			// Fallback for missing setter
+		} catch (ReflectionException $ex) {
+			return $classMetadata->getFieldValue($entity, $field);
+		}
+
+		return null;
 	}
 
 	/**
