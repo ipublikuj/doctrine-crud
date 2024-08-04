@@ -57,9 +57,8 @@ class EntityUpdater extends Crud\CrudManager
 	}
 
 	/**
-	 * @throws DBAL\Exception\UniqueConstraintViolationException
 	 * @throws Exceptions\InvalidArgument
-	 * @throws ORM\Exception\ORMException
+	 * @throws Exceptions\InvalidState
 	 */
 	public function update(Utils\ArrayHash $values, Entities\IEntity|int|string $entity): Entities\IEntity
 	{
@@ -80,7 +79,11 @@ class EntityUpdater extends Crud\CrudManager
 		Utils\Arrays::invoke($this->afterAction, $entity, $values);
 
 		if ($this->getFlush() === true) {
-			$this->entityManager->flush();
+			try {
+				$this->entityManager->flush();
+			} catch (DBAL\Exception\UniqueConstraintViolationException | ORM\Exception\ORMException $ex) {
+				throw new Exceptions\InvalidState('Entity could not be updated', $ex->getCode(), $ex);
+			}
 		}
 
 		return $entity;
