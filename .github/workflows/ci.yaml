@@ -255,7 +255,14 @@ jobs:
         run: "${{ env.composer-install }}"
 
       - name: "Tests"
-        run: "make coverage"
+        run: "make coverage-clover"
+
+      - name: "Upload logs"
+        uses: "actions/upload-artifact@v3"
+        with:
+          name: "Logs - Tests (${{ runner.os }}, ${{ matrix.php-version }})"
+          path: "var/log"
+          if-no-files-found: "ignore"
 
       - name: "Coveralls.io"
         env:
@@ -263,5 +270,5 @@ jobs:
           CI: true
           COVERALLS_REPO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
-          wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
-          php php-coveralls.phar --verbose --config tests/.coveralls.yml
+          wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.5.3/php-coveralls.phar
+          php php-coveralls.phar --verbose --config tools/.coveralls.yml
