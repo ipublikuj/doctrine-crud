@@ -23,13 +23,13 @@ use Nette;
 /**
  * Doctrine CRUD
  *
+ * @template    T of Entities\IEntity
+ * @implements  IEntityCrud<T>
+ *
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @phpstan-template    TEntityClass of Entities\IEntity
- * @phpstan-implements  IEntityCrud<TEntityClass>
  */
 final class EntityCrud implements IEntityCrud
 {
@@ -37,84 +37,32 @@ final class EntityCrud implements IEntityCrud
 	use Nette\SmartObject;
 
 	/**
-	 * @var string
-	 *
-	 * @phpstan-var class-string<TEntityClass>
-	 */
-	private string $entityName;
-
-	/** @var Mapping\IEntityMapper */
-	private Mapping\IEntityMapper $entityMapper;
-
-	/**
-	 * @var Create\IEntityCreator
-	 *
-	 * @phpstan-var Create\IEntityCreator<TEntityClass>
-	 */
-	private Crud\Create\IEntityCreator $entityCreatorFactory;
-
-	/**
-	 * @var Update\IEntityUpdater
-	 *
-	 * @phpstan-var Update\IEntityUpdater<TEntityClass>
-	 */
-	private Crud\Update\IEntityUpdater $entityUpdaterFactory;
-
-	/**
-	 * @var Delete\IEntityDeleter
-	 *
-	 * @phpstan-var Delete\IEntityDeleter<TEntityClass>
-	 */
-	private Crud\Delete\IEntityDeleter $entityDeleterFactory;
-
-	/**
-	 * @param string $entityName
-	 * @param Mapping\IEntityMapper $entityMapper
-	 * @param Crud\Create\IEntityCreator $entityCreatorFactory
-	 * @param Crud\Update\IEntityUpdater $entityUpdaterFactory
-	 * @param Crud\Delete\IEntityDeleter $entityDeleterFactory
-	 *
-	 * @phpstan-param class-string<TEntityClass> $entityName
-	 * @phpstan-param Crud\Create\IEntityCreator<TEntityClass> $entityCreatorFactory
-	 * @phpstan-param Crud\Update\IEntityUpdater<TEntityClass> $entityUpdaterFactory
-	 * @phpstan-param Crud\Delete\IEntityDeleter<TEntityClass> $entityDeleterFactory
+	 * @param class-string<T> $entityName
+	 * @param Crud\Create\IEntityCreator<T> $entityCreatorFactory
+	 * @param Crud\Update\IEntityUpdater<T> $entityUpdaterFactory
+	 * @param Crud\Delete\IEntityDeleter<T> $entityDeleterFactory
 	 */
 	public function __construct(
-		string $entityName,
-		Mapping\IEntityMapper $entityMapper,
-		Crud\Create\IEntityCreator $entityCreatorFactory,
-		Crud\Update\IEntityUpdater $entityUpdaterFactory,
-		Crud\Delete\IEntityDeleter $entityDeleterFactory
-	) {
-		$this->entityName = $entityName;
-
-		$this->entityMapper = $entityMapper;
-
+		private string $entityName,
+		private Mapping\IEntityMapper $entityMapper,
+		private Crud\Create\IEntityCreator $entityCreatorFactory,
+		private Crud\Update\IEntityUpdater $entityUpdaterFactory,
+		private Crud\Delete\IEntityDeleter $entityDeleterFactory,
+	)
+	{
 		// CRUD factories
-		$this->entityCreatorFactory = $entityCreatorFactory;
-		$this->entityUpdaterFactory = $entityUpdaterFactory;
-		$this->entityDeleterFactory = $entityDeleterFactory;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function getEntityCreator(): Crud\Create\EntityCreator
 	{
 		return $this->entityCreatorFactory->create($this->entityName, $this->entityMapper);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function getEntityUpdater(): Crud\Update\EntityUpdater
 	{
 		return $this->entityUpdaterFactory->create($this->entityName, $this->entityMapper);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function getEntityDeleter(): Crud\Delete\EntityDeleter
 	{
 		return $this->entityDeleterFactory->create($this->entityName);

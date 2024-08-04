@@ -1,0 +1,27 @@
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../vendor/squizlabs/php_codesniffer/phpcs.xsd">
+    <!-- Show only relevant part of path -->
+    <arg name="basepath" value="./.."/>
+
+    <!-- Configure cache -->
+    <arg name="cache" value="./../var/tools/PHP_CodeSniffer/cache.dat"/>
+
+    <!-- Import coding-standard -->
+    <rule ref="./vendor/orisai/coding-standard/src/ruleset-8.1.xml">
+        <exclude name="SlevomatCodingStandard.Commenting.ForbiddenAnnotations.AnnotationForbidden"/>
+
+        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectLinesCountBetweenDifferentAnnotationsTypes"/>
+        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectAnnotationsGroup"/>
+    </rule>
+
+    <!-- Configure PSR-4 rule -->
+    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+        <properties>
+            <property name="rootNamespaces" type="array">
+                <element key="src" value="IPub\DoctrineCrud"/>
+                <element key="tests/cases/unit" value="IPub\DoctrineCrud\Tests\Cases\Unit"/>
+                <element key="tests/fixtures" value="IPub\DoctrineCrud\Tests\Fixtures"/>
+                <element key="tests/fixtures/dummy" value="IPub\DoctrineCrud\Tests\Fixtures\Dummy"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

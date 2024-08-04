@@ -1,29 +1,27 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases;
+namespace IPub\DoctrineCrud\Tests\Cases\Unit;
 
 use Doctrine\ORM;
 use IPub\DoctrineCrud;
 use Nette;
 use Nette\DI;
 use Nettrine;
-use Ninjify\Nunjuck\TestCase\BaseMockeryTestCase;
+use PHPUnit\Framework\TestCase;
+use function file_exists;
+use function md5;
+use function time;
 
-abstract class BaseTestCase extends BaseMockeryTestCase
+abstract class BaseTestCase extends TestCase
 {
 
-	/** @var string[] */
+	/** @var array<string> */
 	protected array $additionalConfigs = [];
 
-	/** @var DI\Container */
-	private DI\Container $container;
+	protected DI\Container $container;
 
-	/** @var ORM\EntityManagerInterface|null */
-	private ?ORM\EntityManagerInterface $em = null;
+	protected ORM\EntityManagerInterface|null $em = null;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	protected function setUp(): void
 	{
 		parent::setUp();
@@ -31,31 +29,26 @@ abstract class BaseTestCase extends BaseMockeryTestCase
 		$this->container = $this->createContainer($this->additionalConfigs);
 	}
 
-	/**
-	 * @return DI\Container
-	 */
 	protected function getContainer(): DI\Container
 	{
 		return $this->container;
 	}
 
 	/**
-	 * @return ORM\EntityManagerInterface
+	 * @throws DI\MissingServiceException
 	 */
 	protected function getEntityManager(): ORM\EntityManagerInterface
 	{
 		if ($this->em === null) {
-			/** @var ORM\EntityManagerInterface $em */
-			$em = $this->getContainer()->getByType(Nettrine\ORM\EntityManagerDecorator::class);
-
-			$this->em = $em;
+			$this->em = $this->getContainer()->getByType(Nettrine\ORM\EntityManagerDecorator::class);
 		}
 
 		return $this->em;
 	}
 
 	/**
-	 * @return void
+	 * @throws ORM\Tools\ToolsException
+	 * @throws DI\MissingServiceException
 	 */
 	protected function generateDbSchema(): void
 	{
@@ -65,24 +58,22 @@ abstract class BaseTestCase extends BaseMockeryTestCase
 	}
 
 	/**
-	 * @param string[] $additionalConfigs
-	 *
-	 * @return Nette\DI\Container
+	 * @param array<string> $additionalConfigs
 	 */
 	protected function createContainer(array $additionalConfigs = []): Nette\DI\Container
 	{
 		$rootDir = __DIR__ . '/../../';
 
-		$config = new Nette\Configurator();
+		$config = new Nette\Bootstrap\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 
-		$config->addParameters(['container' => ['class' => 'SystemContainer_' . md5((string) time())]]);
-		$config->addParameters(['appDir' => $rootDir, 'wwwDir' => $rootDir]);
+		$config->addStaticParameters(['container' => ['class' => 'SystemContainer_' . md5((string) time())]]);
+		$config->addStaticParameters(['appDir' => $rootDir, 'wwwDir' => $rootDir]);
 
 		$config->addConfig(__DIR__ . '/../../common.neon');
 
 		foreach ($additionalConfigs as $additionalConfig) {
-			if ($additionalConfig && file_exists($additionalConfig)) {
+			if (file_exists($additionalConfig)) {
 				$config->addConfig($additionalConfig);
 			}
 		}
@@ -92,16 +83,11 @@ abstract class BaseTestCase extends BaseMockeryTestCase
 		return $config->createContainer();
 	}
 
-	/**
-	 * @param string $serviceType
-	 * @param object $serviceMock
-	 *
-	 * @return void
-	 */
 	protected function mockContainerService(
 		string $serviceType,
-		object $serviceMock
-	): void {
+		object $serviceMock,
+	): void
+	{
 		$foundServiceNames = $this->getContainer()->findByType($serviceType);
 
 		foreach ($foundServiceNames as $serviceName) {
@@ -109,12 +95,6 @@ abstract class BaseTestCase extends BaseMockeryTestCase
 		}
 	}
 
-	/**
-	 * @param string $serviceName
-	 * @param object $service
-	 *
-	 * @return void
-	 */
 	private function replaceContainerService(string $serviceName, object $service): void
 	{
 		$this->getContainer()->removeService($serviceName);

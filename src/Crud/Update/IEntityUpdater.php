@@ -21,25 +21,20 @@ use IPub\DoctrineCrud\Mapping;
 /**
  * Doctrine CRUD entity updater factory
  *
+ * @template T of Entities\IEntity
+ *
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @phpstan-template TEntityClass of Entities\IEntity
  */
 interface IEntityUpdater
 {
 
 	/**
-	 * @param string $entityName
-	 * @param Mapping\IEntityMapper $entityMapper
+	 * @param class-string<T> $entityName
 	 *
-	 * @return EntityUpdater
-	 *
-	 * @phpstan-param class-string<TEntityClass> $entityName
-	 *
-	 * @phpstan-return EntityUpdater<TEntityClass>
+	 * @return EntityUpdater<T>
 	 */
 	public function create(string $entityName, Mapping\IEntityMapper $entityMapper): EntityUpdater;
 

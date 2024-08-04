@@ -15,6 +15,8 @@
 
 namespace IPub\DoctrineCrud\Crud\Update;
 
+use Doctrine\DBAL;
+use Doctrine\ORM;
 use Doctrine\Persistence;
 use IPub\DoctrineCrud\Crud;
 use IPub\DoctrineCrud\Entities;
@@ -25,65 +27,57 @@ use Nette\Utils;
 /**
  * Doctrine CRUD entity updater
  *
+ * @template   T of Entities\IEntity
+ * @extends    Crud\CrudManager<T>
+ *
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @method beforeAction(Entities\IEntity $entity, Utils\ArrayHash $values)
- * @method afterAction(Entities\IEntity $entity, Utils\ArrayHash $values)
- *
- * @phpstan-template   TEntityClass of Entities\IEntity
- * @phpstan-extends    Crud\CrudManager<TEntityClass>
  */
 class EntityUpdater extends Crud\CrudManager
 {
 
-	/** @var Mapping\IEntityMapper */
-	private Mapping\IEntityMapper $entityMapper;
+	/** @var array<callable(Entities\IEntity, Utils\ArrayHash): void> */
+	public array $beforeAction = [];
+
+	/** @var array<callable(Entities\IEntity, Utils\ArrayHash): void> */
+	public array $afterAction = [];
 
 	/**
-	 * @param string $entityName
-	 * @param Mapping\IEntityMapper $entityMapper
-	 * @param Persistence\ManagerRegistry $managerRegistry
-	 *
-	 * @phpstan-param class-string<TEntityClass> $entityName
+	 * @param class-string<T> $entityName
 	 */
 	public function __construct(
 		string $entityName,
-		Mapping\IEntityMapper $entityMapper,
-		Persistence\ManagerRegistry $managerRegistry
-	) {
+		private readonly Mapping\IEntityMapper $entityMapper,
+		Persistence\ManagerRegistry $managerRegistry,
+	)
+	{
 		parent::__construct($entityName, $managerRegistry);
-
-		$this->entityMapper = $entityMapper;
 	}
 
 	/**
-	 * @param Utils\ArrayHash $values
-	 * @param Entities\IEntity|int|string $entity
-	 *
-	 * @return Entities\IEntity
-	 *
-	 * @throws Exceptions\InvalidArgumentException
+	 * @throws DBAL\Exception\UniqueConstraintViolationException
+	 * @throws Exceptions\InvalidArgument
+	 * @throws ORM\Exception\ORMException
 	 */
-	public function update(Utils\ArrayHash $values, $entity): Entities\IEntity
+	public function update(Utils\ArrayHash $values, Entities\IEntity|int|string $entity): Entities\IEntity
 	{
 		if (!$entity instanceof Entities\IEntity) {
 			$entity = $this->entityRepository->find($entity);
 		}
 
 		if (!$entity instanceof Entities\IEntity) {
-			throw new Exceptions\InvalidArgumentException('Entity not found.');
+			throw new Exceptions\InvalidArgument('Entity not found.');
 		}
 
-		$this->processHooks($this->beforeAction, [$entity, $values]);
+		Utils\Arrays::invoke($this->beforeAction, $entity, $values);
 
 		$this->entityMapper->fillEntity($values, $entity, false);
 
 		$this->entityManager->persist($entity);
 
-		$this->processHooks($this->afterAction, [$entity, $values]);
+		Utils\Arrays::invoke($this->afterAction, $entity, $values);
 
 		if ($this->getFlush() === true) {
 			$this->entityManager->flush();

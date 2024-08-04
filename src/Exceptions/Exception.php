@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
 /**
- * InvalidArgumentException.php
+ * Exception.php
  *
  * @copyright      More in LICENSE.md
  * @license        https://www.ipublikuj.eu
@@ -15,7 +15,7 @@
 
 namespace IPub\DoctrineCrud\Exceptions;
 
-class InvalidArgumentException extends \InvalidArgumentException implements IException
+interface Exception
 {
 
 }

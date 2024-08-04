@@ -23,60 +23,39 @@ use Nette;
 /**
  * Doctrine CRUD factory
  *
+ * @template T of Entities\IEntity
+ *
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @phpstan-template TEntityClass of Entities\IEntity
  */
 final class EntityCrudFactory
 {
 
 	use Nette\SmartObject;
 
-	/** @var Mapping\IEntityMapper */
-	private Mapping\IEntityMapper $entityMapper;
-
-	/**
-	 * @var Create\IEntityCreator
-	 *
-	 * @phpstan-var Create\IEntityCreator<TEntityClass>
-	 */
+	/** @var Create\IEntityCreator<T> */
 	private Create\IEntityCreator $entityCreatorFactory;
 
-	/**
-	 * @var Update\IEntityUpdater
-	 *
-	 * @phpstan-var Update\IEntityUpdater<TEntityClass>
-	 */
+	/** @var Update\IEntityUpdater<T> */
 	private Update\IEntityUpdater $entityUpdaterFactory;
 
-	/**
-	 * @var Delete\IEntityDeleter
-	 *
-	 * @phpstan-var Delete\IEntityDeleter<TEntityClass>
-	 */
+	/** @var Delete\IEntityDeleter<T> */
 	private Delete\IEntityDeleter $entityDeleterFactory;
 
 	/**
-	 * @param Mapping\IEntityMapper $entityMapper
-	 * @param Create\IEntityCreator $entityCreatorFactory
-	 * @param Update\IEntityUpdater $entityUpdaterFactory
-	 * @param Delete\IEntityDeleter $entityDeleterFactory
-	 *
-	 * @phpstan-param Create\IEntityCreator<TEntityClass> $entityCreatorFactory
-	 * @phpstan-param Update\IEntityUpdater<TEntityClass> $entityUpdaterFactory
-	 * @phpstan-param Delete\IEntityDeleter<TEntityClass> $entityDeleterFactory
+	 * @param Create\IEntityCreator<T> $entityCreatorFactory
+	 * @param Update\IEntityUpdater<T> $entityUpdaterFactory
+	 * @param Delete\IEntityDeleter<T> $entityDeleterFactory
 	 */
 	public function __construct(
-		Mapping\IEntityMapper $entityMapper,
+		private Mapping\IEntityMapper $entityMapper,
 		Crud\Create\IEntityCreator $entityCreatorFactory,
 		Crud\Update\IEntityUpdater $entityUpdaterFactory,
-		Crud\Delete\IEntityDeleter $entityDeleterFactory
-	) {
-		$this->entityMapper = $entityMapper;
-
+		Crud\Delete\IEntityDeleter $entityDeleterFactory,
+	)
+	{
 		// CRUD factories
 		$this->entityCreatorFactory = $entityCreatorFactory;
 		$this->entityUpdaterFactory = $entityUpdaterFactory;
@@ -84,13 +63,9 @@ final class EntityCrudFactory
 	}
 
 	/**
-	 * @param string $entityName
+	 * @param class-string<T> $entityName
 	 *
-	 * @return EntityCrud
-	 *
-	 * @phpstan-param class-string<TEntityClass> $entityName
-	 *
-	 * @phpstan-return EntityCrud<TEntityClass>
+	 * @return EntityCrud<T>
 	 */
 	public function create(string $entityName): EntityCrud
 	{
@@ -99,7 +74,7 @@ final class EntityCrudFactory
 			$this->entityMapper,
 			$this->entityCreatorFactory,
 			$this->entityUpdaterFactory,
-			$this->entityDeleterFactory
+			$this->entityDeleterFactory,
 		);
 	}
 

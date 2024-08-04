@@ -1,27 +1,74 @@
-.PHONY: qa lint cs csf phpstan tests coverage
+_: list
 
-all:
-	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs
+# Config
 
-vendor: composer.json composer.lock
-	composer install
+PHPCS_CONFIG=tools/phpcs.xml
+PHPSTAN_SRC_CONFIG=tools/phpstan.src.neon
+PHPSTAN_TESTS_CONFIG=tools/phpstan.tests.neon
+PHPUNIT_CONFIG=tools/phpunit.xml
+INFECTION_CONFIG=tools/infection.json
 
-qa: lint phpstan cs
+# QA
 
-lint: vendor
-	vendor/bin/linter src tests
+qa: ## Check code quality - coding style and static analysis
+	make cs & make phpstan
 
-cs: vendor
-	vendor/bin/codesniffer src tests
+cs: ## Check PHP files coding style
+	mkdir -p var/tools/PHP_CodeSniffer
+	$(PRE_PHP) "vendor/bin/phpcs" src tests --standard=$(PHPCS_CONFIG) --parallel=$(LOGICAL_CORES) $(ARGS)
 
-csf: vendor
-	vendor/bin/codefixer src tests
+csf: ## Fix PHP files coding style
+	mkdir -p var/tools/PHP_CodeSniffer
+	$(PRE_PHP) "vendor/bin/phpcbf" src tests --standard=$(PHPCS_CONFIG) --parallel=$(LOGICAL_CORES) $(ARGS)
 
-phpstan: vendor
-	vendor/bin/phpstan analyse -c phpstan.neon src
+lint:
+	$(PRE_PHP) "vendor/bin/parallel-lint" src tests --exclude .git --exclude vendor
 
-tests: vendor
-	vendor/bin/tester -s -p php --colors 1 -C tests/cases
+phpstan: ## Analyse code with PHPStan
+	mkdir -p var/tools
+	$(PRE_PHP) "vendor/bin/phpstan" analyse -c $(PHPSTAN_SRC_CONFIG) $(ARGS)
+	$(PRE_PHP) "vendor/bin/phpstan" analyse -c $(PHPSTAN_TESTS_CONFIG) $(ARGS)
 
-coverage: vendor
-	vendor/bin/tester -s -p phpdbg --colors 1 -C --coverage ./coverage.xml --coverage-src ./src ./tests/cases
+# Tests
+
+.PHONY: tests
+tests: ## Run all tests
+	$(PRE_PHP) $(PHPUNIT_COMMAND) $(ARGS)
+
+coverage-clover: ## Generate code coverage in XML format
+	$(PRE_PHP) $(PHPUNIT_COVERAGE) --coverage-clover=var/coverage/clover.xml $(ARGS)
+
+coverage-html: ## Generate code coverage in HTML format
+	$(PRE_PHP) $(PHPUNIT_COVERAGE) --coverage-html=var/coverage/html $(ARGS)
+
+mutations: ## Check code for mutants
+	make mutations-tests
+	make mutations-infection
+
+mutations-tests:
+	mkdir -p var/coverage
+	$(PRE_PHP) $(PHPUNIT_COVERAGE) --coverage-xml=var/coverage/xml --log-junit=var/coverage/junit.xml
+
+mutations-infection:
+	$(PRE_PHP) vendor/bin/infection \
+		--configuration=$(INFECTION_CONFIG) \
+		--threads=$(LOGICAL_CORES) \
+		--coverage=../var/coverage \
+		--skip-initial-tests \
+		$(ARGS)
+
+# Utilities
+
+.SILENT: $(shell grep -h -E '^[a-zA-Z_-]+:.*?$$' $(MAKEFILE_LIST) | sort -u | awk 'BEGIN {FS = ":.*?"}; {printf "%s ", $$1}')
+
+LIST_PAD=20
+list:
+	awk 'BEGIN {FS = ":.*##"; printf "Usage:\n  make \033[36m<target>\033[0m\n\nTargets:\n"}'
+	grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort -u | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-$(LIST_PAD)s\033[0m %s\n", $$1, $$2}'
+
+PRE_PHP=XDEBUG_MODE=off
+
+PHPUNIT_COMMAND="vendor/bin/paratest" -c $(PHPUNIT_CONFIG) --runner=WrapperRunner -p$(LOGICAL_CORES)
+PHPUNIT_COVERAGE=php -d pcov.enabled=1 -d pcov.directory=./src $(PHPUNIT_COMMAND)
+
+LOGICAL_CORES=$(shell nproc || sysctl -n hw.logicalcpu || echo 4)

@@ -33,15 +33,13 @@ interface IEntityMapper
 	 * Annotation strings
 	 */
 	public const ANNOTATION_REQUIRED = 'required';
+
 	public const ANNOTATION_WRITABLE = 'writable';
 
-	/**
-	 * @param Utils\ArrayHash $values
-	 * @param Entities\IEntity $entity
-	 * @param bool $isNew
-	 *
-	 * @return Entities\IEntity
-	 */
-	public function fillEntity(Utils\ArrayHash $values, Entities\IEntity $entity, bool $isNew = false): Entities\IEntity;
+	public function fillEntity(
+		Utils\ArrayHash $values,
+		Entities\IEntity $entity,
+		bool $isNew = false,
+	): Entities\IEntity;
 
 }

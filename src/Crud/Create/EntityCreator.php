@@ -15,6 +15,8 @@
 
 namespace IPub\DoctrineCrud\Crud\Create;
 
+use Doctrine\DBAL;
+use Doctrine\ORM;
 use Doctrine\Persistence;
 use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Crud;
@@ -24,104 +26,99 @@ use IPub\DoctrineCrud\Mapping;
 use Nette\Utils;
 use ReflectionClass;
 use ReflectionException;
+use function class_exists;
+use function is_string;
+use function sprintf;
 
 /**
  * Doctrine CRUD entity creator
+ *
+ * @template   T of Entities\IEntity
+ * @extends    Crud\CrudManager<T>
  *
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @method beforeAction(Entities\IEntity $entity, Utils\ArrayHash $values)
- * @method afterAction(Entities\IEntity $entity, Utils\ArrayHash $values)
- *
- * @phpstan-template   TEntityClass of Entities\IEntity
- * @phpstan-extends    Crud\CrudManager<TEntityClass>
  */
 class EntityCreator extends Crud\CrudManager
 {
 
-	/** @var Mapping\IEntityMapper */
-	private Mapping\IEntityMapper $entityMapper;
+	/** @var array<callable(Entities\IEntity, Utils\ArrayHash): void> */
+	public array $beforeAction = [];
+
+	/** @var array<callable(Entities\IEntity, Utils\ArrayHash): void> */
+	public array $afterAction = [];
 
 	/**
-	 * @param string $entityName
-	 * @param Mapping\IEntityMapper $entityMapper
-	 * @param Persistence\ManagerRegistry $managerRegistry
-	 *
-	 * @phpstan-param class-string<TEntityClass> $entityName
+	 * @param class-string<T> $entityName
 	 */
 	public function __construct(
 		string $entityName,
-		Mapping\IEntityMapper $entityMapper,
-		Persistence\ManagerRegistry $managerRegistry
-	) {
+		private readonly Mapping\IEntityMapper $entityMapper,
+		Persistence\ManagerRegistry $managerRegistry,
+	)
+	{
 		parent::__construct($entityName, $managerRegistry);
-
-		$this->entityMapper = $entityMapper;
 	}
 
 	/**
-	 * @param Utils\ArrayHash $values
-	 * @param Entities\IEntity|null $entity
-	 *
-	 * @return Entities\IEntity
+	 * @throws DBAL\Exception\UniqueConstraintViolationException
+	 * @throws Exceptions\EntityCreation
+	 * @throws Exceptions\InvalidArgument
+	 * @throws Exceptions\InvalidState
+	 * @throws ORM\Exception\ORMException
 	 */
-	public function create(Utils\ArrayHash $values, ?Entities\IEntity $entity = null): Entities\IEntity
+	public function create(Utils\ArrayHash $values, Entities\IEntity|null $entity = null): Entities\IEntity
 	{
 		if (!$entity instanceof Entities\IEntity) {
 			try {
-				// Entity name is overriden
-				if ($values->offsetExists('entity') && class_exists($values->offsetGet('entity'))) {
-					$entityClass = $values->offsetGet('entity');
-
-				} else {
-					$entityClass = $this->entityName;
-				}
+				// Entity name is override
+				$entityClass = $values->offsetExists('entity')
+					&& is_string($values->offsetGet('entity'))
+					&& class_exists($values->offsetGet('entity'))
+						? $values->offsetGet('entity')
+						: $this->entityName;
 
 				try {
 					if (class_exists($entityClass)) {
 						$rc = new ReflectionClass($entityClass);
 
 					} else {
-						throw new Exceptions\InvalidStateException('Entity could not be parsed');
+						throw new Exceptions\InvalidState('Entity could not be parsed');
 					}
-
-				} catch (ReflectionException $ex) {
-					throw new Exceptions\InvalidStateException('Entity could not be parsed');
+				} catch (ReflectionException) {
+					throw new Exceptions\InvalidState('Entity could not be parsed');
 				}
 
 				if ($rc->isAbstract()) {
-					throw new Exceptions\InvalidArgumentException(sprintf('Abstract entity "%s" can not be used.', $entityClass));
+					throw new Exceptions\InvalidArgument(
+						sprintf('Abstract entity "%s" can not be used.', $entityClass),
+					);
 				}
 
 				$constructor = $rc->getConstructor();
 
-				if ($constructor !== null) {
-					$entity = $rc->newInstanceArgs(DoctrineCrud\Helpers::autowireArguments($constructor, (array) $values));
-
-				} else {
-					$entity = $this->entityManager->getClassMetadata($this->entityName)
-						->newInstance();
-				}
-
-			} catch (ReflectionException $ex) {
+				$entity = $constructor !== null ? $rc->newInstanceArgs(
+					DoctrineCrud\Helpers::autowireArguments($constructor, (array) $values),
+				) : $this->entityManager->getClassMetadata($this->entityName)
+					->newInstance();
+			} catch (ReflectionException) {
 				// Class could not be parsed
 			}
 		}
 
 		if ($entity === null || !$entity instanceof Entities\IEntity) {
-			throw new Exceptions\InvalidArgumentException('Entity could not be created.');
+			throw new Exceptions\InvalidArgument('Entity could not be created.');
 		}
 
-		$this->processHooks($this->beforeAction, [$entity, $values]);
+		Utils\Arrays::invoke($this->beforeAction, $entity, $values);
 
 		$this->entityMapper->fillEntity($values, $entity, true);
 
 		$this->entityManager->persist($entity);
 
-		$this->processHooks($this->afterAction, [$entity, $values]);
+		Utils\Arrays::invoke($this->afterAction, $entity, $values);
 
 		if ($this->getFlush()) {
 			$this->entityManager->flush();

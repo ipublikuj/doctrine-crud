@@ -20,24 +20,20 @@ use IPub\DoctrineCrud\Entities;
 /**
  * Doctrine CRUD factory
  *
+ * @template T of Entities\IEntity
+ *
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @phpstan-template TEntityClass of Entities\IEntity
  */
 interface IEntityCrudFactory
 {
 
 	/**
-	 * @param string $entityName
-	 *
-	 * @return EntityCrud
-	 *
-	 * @phpstan-param class-string<TEntityClass> $entityName
+	 * @param class-string<T> $entityName
 
-	 * @phpstan-return  EntityCrud<TEntityClass>
+	 * @return  EntityCrud<T>
 	 */
 	public function create(string $entityName): EntityCrud;
 

@@ -15,45 +15,49 @@
 
 namespace IPub\DoctrineCrud\Crud\Delete;
 
+use Doctrine\DBAL;
+use Doctrine\ORM;
 use IPub\DoctrineCrud\Crud;
 use IPub\DoctrineCrud\Entities;
 use IPub\DoctrineCrud\Exceptions;
+use Nette\Utils;
 
 /**
  * Doctrine CRUD entity deleter
+ *
+ * @template   T of Entities\IEntity
+ * @extends    Crud\CrudManager<T>
  *
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @method beforeAction(Entities\IEntity $entity)
- * @method afterAction()
- *
- * @phpstan-template   TEntityClass of Entities\IEntity
- * @phpstan-extends    Crud\CrudManager<TEntityClass>
  */
 class EntityDeleter extends Crud\CrudManager
 {
 
+	/** @var array<callable(Entities\IEntity): void> */
+	public array $beforeAction = [];
+
+	/** @var array<callable(): void> */
+	public array $afterAction = [];
+
 	/**
-	 * @param Entities\IEntity|int|string $entity
-	 *
-	 * @return bool
-	 *
-	 * @throws Exceptions\InvalidArgumentException
+	 * @throws DBAL\Exception
+	 * @throws Exceptions\InvalidArgument
+	 * @throws ORM\Exception\ORMException
 	 */
-	public function delete($entity): bool
+	public function delete(Entities\IEntity|int|string $entity): bool
 	{
 		if (!$entity instanceof Entities\IEntity) {
 			$entity = $this->entityRepository->find($entity);
 		}
 
 		if (!$entity instanceof Entities\IEntity) {
-			throw new Exceptions\InvalidArgumentException('Entity not found.');
+			throw new Exceptions\InvalidArgument('Entity not found.');
 		}
 
-		$this->processHooks($this->beforeAction, [$entity]);
+		Utils\Arrays::invoke($this->beforeAction, $entity);
 
 		$this->entityManager->getConnection()->beginTransaction();
 
@@ -65,7 +69,7 @@ class EntityDeleter extends Crud\CrudManager
 
 		$this->entityManager->getConnection()->commit();
 
-		$this->processHooks($this->afterAction);
+		Utils\Arrays::invoke($this->afterAction);
 
 		return true;
 	}
