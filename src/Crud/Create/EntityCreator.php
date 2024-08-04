@@ -63,11 +63,9 @@ class EntityCreator extends Crud\CrudManager
 	}
 
 	/**
-	 * @throws DBAL\Exception\UniqueConstraintViolationException
 	 * @throws Exceptions\EntityCreation
 	 * @throws Exceptions\InvalidArgument
 	 * @throws Exceptions\InvalidState
-	 * @throws ORM\Exception\ORMException
 	 */
 	public function create(Utils\ArrayHash $values, Entities\IEntity|null $entity = null): Entities\IEntity
 	{
@@ -121,7 +119,11 @@ class EntityCreator extends Crud\CrudManager
 		Utils\Arrays::invoke($this->afterAction, $entity, $values);
 
 		if ($this->getFlush()) {
-			$this->entityManager->flush();
+			try {
+				$this->entityManager->flush();
+			} catch (DBAL\Exception\UniqueConstraintViolationException | ORM\Exception\ORMException $ex) {
+				throw new Exceptions\InvalidState('Entity could not be created', $ex->getCode(), $ex);
+			}
 		}
 
 		return $entity;

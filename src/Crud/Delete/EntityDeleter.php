@@ -43,9 +43,8 @@ class EntityDeleter extends Crud\CrudManager
 	public array $afterAction = [];
 
 	/**
-	 * @throws DBAL\Exception
 	 * @throws Exceptions\InvalidArgument
-	 * @throws ORM\Exception\ORMException
+	 * @throws Exceptions\InvalidState
 	 */
 	public function delete(Entities\IEntity|int|string $entity): bool
 	{
@@ -59,15 +58,19 @@ class EntityDeleter extends Crud\CrudManager
 
 		Utils\Arrays::invoke($this->beforeAction, $entity);
 
-		$this->entityManager->getConnection()->beginTransaction();
+		try {
+			$this->entityManager->getConnection()->beginTransaction();
 
-		$this->entityManager->remove($entity);
+			$this->entityManager->remove($entity);
 
-		if ($this->getFlush() === true) {
-			$this->entityManager->flush();
+			if ($this->getFlush() === true) {
+				$this->entityManager->flush();
+			}
+
+			$this->entityManager->getConnection()->commit();
+		} catch (ORM\Exception\ORMException | DBAL\Exception $ex) {
+			throw new Exceptions\InvalidState('Entity could not be deleted', $ex->getCode(), $ex);
 		}
-
-		$this->entityManager->getConnection()->commit();
 
 		Utils\Arrays::invoke($this->afterAction);
 
