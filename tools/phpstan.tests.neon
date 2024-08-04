@@ -1,0 +1,16 @@
+includes:
+    - phpstan.base.neon
+
+parameters:
+    level: max
+
+    paths:
+        - ../tests/cases/
+
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+
+    scanDirectories:
+        - ../src
+
+    resultCachePath: %currentWorkingDirectory%/var/tools/PHPStan/resultCache.tests.php

@@ -1,0 +1,17 @@
+services:
+    userCrud:
+        factory: @doctrineCrud.crud::create(IPub\DoctrineCrud\Tests\Fixtures\Dummy\UserEntity)
+
+    articleCrud:
+        factory: @doctrineCrud.crud::create(IPub\DoctrineCrud\Tests\Fixtures\Dummy\ArticleEntity)
+
+    usersManager:
+        factory: IPub\DoctrineCrud\Tests\Fixtures\Dummy\UsersManager(@userCrud)
+
+    articlesManager:
+        factory: IPub\DoctrineCrud\Tests\Fixtures\Dummy\ArticlesManager(@articleCrud)
+
+nettrineOrmAttributes:
+    mapping: [
+        IPub\DoctrineCrud\Tests\Fixtures\Dummy: %appDir%/fixtures/dummy
+    ]

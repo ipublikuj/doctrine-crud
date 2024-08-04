@@ -30,8 +30,8 @@ use Doctrine\ORM\Mapping as ORMMapping;
 final class Crud implements ORMMapping\MappingAttribute
 {
 
-	/** @var string|string[] */
-	public $is;
+	/** @var string|array<string> */
+	public string|array $is;
 
 	public bool $required;
 
@@ -42,17 +42,12 @@ final class Crud implements ORMMapping\MappingAttribute
 		$this->required = $required ?? false;
 		$this->writable = $writable ?? false;
 	}
-	/**
-	 * @return bool
-	 */
+
 	public function isRequired(): bool
 	{
 		return $this->required;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isWritable(): bool
 	{
 		return $this->writable;

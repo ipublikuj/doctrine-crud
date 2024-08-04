@@ -1,5 +1,5 @@
 .idea
 /vendor
-/composer.lock
-tests/*/output
-tests/tmp
+/var
+composer.lock
+.DS_Store

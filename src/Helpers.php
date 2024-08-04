@@ -18,6 +18,15 @@ namespace IPub\DoctrineCrud;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionParameter;
+use function array_key_exists;
+use function array_slice;
+use function class_exists;
+use function interface_exists;
+use function is_object;
+use function is_subclass_of;
+use function method_exists;
+use function sprintf;
+use function strtolower;
 
 /**
  * Doctrine CRUD helpers
@@ -33,12 +42,11 @@ class Helpers
 	/**
 	 * This method was inspired by same method in Nette framework
 	 *
-	 * @param ReflectionMethod $method
-	 * @param mixed[] $arguments
+	 * @param array<mixed> $arguments
 	 *
-	 * @return mixed[]
+	 * @return array<mixed>
 	 *
-	 * @throws Exceptions\EntityCreationException
+	 * @throws Exceptions\EntityCreation
 	 *
 	 * @throws ReflectionException
 	 */
@@ -63,7 +71,14 @@ class Helpers
 			} else {
 				$class = self::getParameterType($parameter);
 
-				if (($class !== null && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
+				if (
+					(
+						$class !== null
+						&& $parameter->allowsNull()
+					)
+					|| $parameter->isOptional()
+					|| $parameter->isDefaultValueAvailable()
+				) {
 					// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
 					// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
 					$res[$subNum] = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null;
@@ -72,8 +87,13 @@ class Helpers
 				} else {
 					if ($class !== null && (class_exists($class) || interface_exists($class))) {
 						foreach ($arguments as $key => $argument) {
-							/** @phpstan-ignore-next-line */
-							if (is_object($argument) && (is_subclass_of($argument, $class) || get_class($argument) === $class)) {
+							if (
+								is_object($argument)
+								&& (
+									// @phpstan-ignore-next-line
+									is_subclass_of($argument, $class) || $argument::class === $class
+								)
+							) {
 								$res[$subNum] = $argument;
 								unset($arguments[$key]);
 								$optCount = 0;
@@ -83,7 +103,14 @@ class Helpers
 						}
 					}
 
-					throw new Exceptions\EntityCreationException($parameter->getName(), sprintf('Parameter %s in %s has no class type hint or default value, so its value must be specified.', $methodName, $parameter->getName()));
+					throw new Exceptions\EntityCreation(
+						$parameter->getName(),
+						sprintf(
+							'Parameter %s in %s has no class type hint or default value, so its value must be specified.',
+							$methodName,
+							$parameter->getName(),
+						),
+					);
 				}
 			}
 		}
@@ -98,12 +125,7 @@ class Helpers
 		return $optCount > 0 ? array_slice($res, 0, -$optCount) : $res;
 	}
 
-	/**
-	 * @param ReflectionParameter $param
-	 *
-	 * @return string|null
-	 */
-	public static function getParameterType(ReflectionParameter $param): ?string
+	public static function getParameterType(ReflectionParameter $param): string|null
 	{
 		if ($param->hasType()) {
 			$rt = $param->getType();

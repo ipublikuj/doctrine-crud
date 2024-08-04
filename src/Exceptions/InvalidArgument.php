@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
 /**
- * InvalidStateException.php
+ * InvalidArgumentException.php
  *
  * @copyright      More in LICENSE.md
  * @license        https://www.ipublikuj.eu
@@ -15,9 +15,9 @@
 
 namespace IPub\DoctrineCrud\Exceptions;
 
-use RuntimeException;
+use InvalidArgumentException;
 
-class InvalidStateException extends RuntimeException implements IException
+class InvalidArgument extends InvalidArgumentException implements Exception
 {
 
 }

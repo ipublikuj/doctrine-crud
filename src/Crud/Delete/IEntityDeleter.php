@@ -20,24 +20,20 @@ use IPub\DoctrineCrud\Entities;
 /**
  * Doctrine CRUD entity deleter factory
  *
+ * @template T of Entities\IEntity
+ *
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @phpstan-template TEntityClass of Entities\IEntity
  */
 interface IEntityDeleter
 {
 
 	/**
-	 * @param string $entityName
+	 * @param class-string<T> $entityName
 	 *
-	 * @return EntityDeleter
-	 *
-	 * @phpstan-param class-string<TEntityClass> $entityName
-	 *
-	 * @phpstan-return EntityDeleter<TEntityClass>
+	 * @return EntityDeleter<T>
 	 */
 	public function create(string $entityName): EntityDeleter;
 

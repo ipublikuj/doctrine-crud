@@ -1,0 +1,19 @@
+{
+  "$schema": "../vendor/infection/infection/resources/schema.json",
+  "source": {
+    "directories": [
+      "src"
+    ]
+  },
+  "logs": {
+    "html": "../var/coverage/mutations/infection.html",
+    "text": "../var/coverage/mutations/infection.log",
+    "stryker": {
+      "report": "main"
+    }
+  },
+  "tmpDir": "../var/tools/Infection",
+  "mutators": {
+    "@default": true
+  }
+}

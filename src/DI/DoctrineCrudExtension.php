@@ -16,11 +16,10 @@
 namespace IPub\DoctrineCrud\DI;
 
 use Doctrine;
-use Doctrine\Common;
 use IPub\DoctrineCrud;
 use IPub\DoctrineCrud\Crud;
 use IPub\DoctrineCrud\Mapping;
-use Nette;
+use Nette\Bootstrap;
 use Nette\DI;
 use Nette\PhpGenerator;
 
@@ -35,26 +34,19 @@ use Nette\PhpGenerator;
 class DoctrineCrudExtension extends DI\CompilerExtension
 {
 
-	/**
-	 * @param Nette\Configurator $config
-	 * @param string $extensionName
-	 *
-	 * @return void
-	 */
 	public static function register(
-		Nette\Configurator $config,
-		string $extensionName = 'doctrineCrud'
-	): void {
-		$config->onCompile[] = function (Nette\Configurator $config, DI\Compiler $compiler) use ($extensionName): void {
-			$compiler->addExtension($extensionName, new DoctrineCrudExtension());
+		Bootstrap\Configurator $config,
+		string $extensionName = 'doctrineCrud',
+	): void
+	{
+		$config->onCompile[] = static function (
+			Bootstrap\Configurator $config,
+			DI\Compiler $compiler,
+		) use ($extensionName): void {
+			$compiler->addExtension($extensionName, new self());
 		};
 	}
 
-	/**
-	 * @return void
-	 *
-	 * @throws Common\Annotations\AnnotationException
-	 */
 	public function loadConfiguration(): void
 	{
 		// Get container builder
@@ -96,7 +88,7 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 			->getResultDefinition()
 			->setType(Crud\EntityCrud::class)
 			->setArguments([
-				new PhpGenerator\PhpLiteral('$entityName'),
+				new PhpGenerator\Literal('$entityName'),
 				'@' . $this->prefix('entity.mapper'),
 				'@' . $this->prefix('entity.creator'),
 				'@' . $this->prefix('entity.updater'),
@@ -105,7 +97,7 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @throws DI\MissingServiceException
 	 */
 	public function beforeCompile(): void
 	{
@@ -114,7 +106,6 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 		// Get container builder
 		$builder = $this->getContainerBuilder();
 
-		/** @var string $entityManagerServiceName */
 		$entityManagerServiceName = $builder->getByType(Doctrine\ORM\EntityManagerInterface::class, true);
 
 		$entityManagerService = $builder->getDefinition($entityManagerServiceName);
@@ -126,7 +117,7 @@ class DoctrineCrudExtension extends DI\CompilerExtension
 					'@self',
 					'DATE_FORMAT',
 					DoctrineCrud\StringFunctions\DateFormat::class,
-				]
+				],
 			);
 		}
 	}

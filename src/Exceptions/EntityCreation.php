@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
 /**
- * EntityCreationException.php
+ * EntityCreation.php
  *
  * @copyright      More in LICENSE.md
  * @license        https://www.ipublikuj.eu
@@ -18,28 +18,19 @@ namespace IPub\DoctrineCrud\Exceptions;
 use RuntimeException;
 use Throwable;
 
-class EntityCreationException extends RuntimeException implements IException
+class EntityCreation extends RuntimeException implements Exception
 {
 
-	/** @var string */
-	private string $field;
-
-	/**
-	 * @param string $field
-	 * @param string $message
-	 * @param int $code
-	 * @param Throwable|null $previous
-	 */
-	public function __construct(string $field, string $message = '', int $code = 0, ?Throwable $previous = null)
+	public function __construct(
+		private string $field,
+		string $message = '',
+		int $code = 0,
+		Throwable|null $previous = null,
+	)
 	{
 		parent::__construct($message, $code, $previous);
-
-		$this->field = $field;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getField(): string
 	{
 		return $this->field;

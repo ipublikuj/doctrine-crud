@@ -22,23 +22,14 @@ class DateFormat extends Query\AST\Functions\FunctionNode
 
 	/**
 	 * Holds the timestamp of the DATE_FORMAT DQL statement
-	 *
-	 * @var mixed
 	 */
-	protected $dateExpression;
+	protected Query\AST\ArithmeticExpression $dateExpression;
 
 	/**
 	 * Holds the '%format' parameter of the DATE_FORMAT DQL statement
-	 *
-	 * @var string
 	 */
 	protected string $formatChar;
 
-	/**
-	 * @param Query\SqlWalker $sqlWalker
-	 *
-	 * @return string
-	 */
 	public function getSql(Query\SqlWalker $sqlWalker): string
 	{
 		return 'DATE_FORMAT(' .
@@ -49,22 +40,18 @@ class DateFormat extends Query\AST\Functions\FunctionNode
 	}
 
 	/**
-	 * @param Query\Parser $parser
-	 *
-	 * @return void
-	 *
 	 * @throws Query\QueryException
 	 */
 	public function parse(Query\Parser $parser): void
 	{
-		$parser->match(Query\Lexer::T_IDENTIFIER);
-		$parser->match(Query\Lexer::T_OPEN_PARENTHESIS);
+		$parser->match(Query\TokenType::T_IDENTIFIER);
+		$parser->match(Query\TokenType::T_OPEN_PARENTHESIS);
 
 		$this->dateExpression = $parser->ArithmeticExpression();
-		$parser->match(Query\Lexer::T_COMMA);
+		$parser->match(Query\TokenType::T_COMMA);
 
 		$this->formatChar = (string) $parser->StringPrimary();
-		$parser->match(Query\Lexer::T_CLOSE_PARENTHESIS);
+		$parser->match(Query\TokenType::T_CLOSE_PARENTHESIS);
 	}
 
 }

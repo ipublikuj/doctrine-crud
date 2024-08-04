@@ -21,34 +21,28 @@ use IPub\DoctrineCrud\Entities;
 /**
  * Doctrine CRUD interface
  *
+ * @template T of Entities\IEntity
+ *
  * @package        iPublikuj:DoctrineCrud!
  * @subpackage     Crud
  *
  * @author         Adam Kadlec <adam.kadlec@ipublikuj.eu>
- *
- * @phpstan-template TEntityClass of Entities\IEntity
  */
 interface IEntityCrud
 {
 
 	/**
-	 * @return Crud\Create\EntityCreator
-	 *
-	 * @phpstan-return  Crud\Create\EntityCreator<TEntityClass>
+	 * @return  Crud\Create\EntityCreator<T>
 	 */
 	public function getEntityCreator(): Crud\Create\EntityCreator;
 
 	/**
-	 * @return Crud\Update\EntityUpdater
-	 *
-	 * @phpstan-return  Crud\Update\EntityUpdater<TEntityClass>
+	 * @return  Crud\Update\EntityUpdater<T>
 	 */
 	public function getEntityUpdater(): Crud\Update\EntityUpdater;
 
 	/**
-	 * @return Crud\Delete\EntityDeleter
-	 *
-	 * @phpstan-return  Crud\Delete\EntityDeleter<TEntityClass>
+	 * @return  Crud\Delete\EntityDeleter<T>
 	 */
 	public function getEntityDeleter(): Crud\Delete\EntityDeleter;
 

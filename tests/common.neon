@@ -1,38 +1,34 @@
 php:
-	date.timezone: Europe/Prague
+    date.timezone: Europe/Prague
 
 extensions:
-	contributteConsole		: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
-	nettrineAnnotations		: Nettrine\Annotations\DI\AnnotationsExtension
-	nettrineCache			: Nettrine\Cache\DI\CacheExtension
-	nettrineDbal			: Nettrine\DBAL\DI\DbalExtension
-	nettrineOrm				: Nettrine\ORM\DI\OrmExtension
-	nettrineOrmAnnotations	: Nettrine\ORM\DI\OrmAnnotationsExtension
-	nettrineOrmConsole		: Nettrine\ORM\DI\OrmConsoleExtension
-	nettrineOrmCache		: Nettrine\ORM\DI\OrmCacheExtension
+    contributteConsole      : Contributte\Console\DI\ConsoleExtension(%consoleMode%)
+    nettrineCache           : Nettrine\Cache\DI\CacheExtension
+    nettrineDbal            : Nettrine\DBAL\DI\DbalExtension
+    nettrineOrm             : Nettrine\ORM\DI\OrmExtension
+    nettrineOrmAttributes   : Nettrine\ORM\DI\OrmAttributesExtension
+    nettrineOrmConsole      : Nettrine\ORM\DI\OrmConsoleExtension
+    nettrineOrmCache        : Nettrine\ORM\DI\OrmCacheExtension
 
 contributteConsole:
-	name: iPublikuj:Packages!
-	version: '1.0'
-	catchExceptions: true
-	autoExit: true
-	url: http://example.com
-	lazy: false
-	helperSet: \Symfony\Component\Console\Helper\HelperSet
-	helpers: []
+    name: iPublikuj:Packages!
+    version: '1.0'
+    catchExceptions: true
+    autoExit: true
+    url: http://example.com
+    lazy: false
+    helperSet: \Symfony\Component\Console\Helper\HelperSet
+    helpers: []
 
 nettrineDbal:
-	connection:
-		host: 127.0.0.1
-		driver: pdo_sqlite
-		memory: true
-
-nettrineAnnotations:
-	debug: %debugMode%
+    connection:
+        host: 127.0.0.1
+        driver: pdo_sqlite
+        memory: true
 
 nettrineOrm:
-	configuration:
-		proxyDir	: %tempDir%/cache/doctrine.proxies
+    configuration:
+        proxyDir : %tempDir%/cache/doctrine.proxies
 
-nettrineOrmAnnotations:
-	mapping: []
+nettrineOrmAttributes:
+    mapping: []

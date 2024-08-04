@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases\Models;
+namespace IPub\DoctrineCrud\Tests\Fixtures\Dummy;
 
 use DateTime;
 use IPub\DoctrineCrud\Crud;
@@ -12,34 +12,23 @@ class UsersManager
 
 	use Nette\SmartObject;
 
-	/** @var Crud\IEntityCrud */
-	private Crud\IEntityCrud $entityCrud;
-
-	public function __construct(
-		Crud\IEntityCrud $entityCrud
-	) {
+	public function __construct(private Crud\IEntityCrud $entityCrud)
+	{
 		// Entity CRUD for handling entities
-		$this->entityCrud = $entityCrud;
 	}
 
-	/**
-	 * @param Utils\ArrayHash $values
-	 * @param UserEntity|null $entity
-	 *
-	 * @return UserEntity
-	 */
-	public function create(Utils\ArrayHash $values, ?UserEntity $entity = null): UserEntity
+	public function create(Utils\ArrayHash $values, UserEntity|null $entity = null): UserEntity
 	{
 		// Get entity creator
 		$creator = $this->entityCrud->getEntityCreator();
 
 		// Assign before create entity events
-		$creator->beforeAction[] = function (UserEntity $entity, Utils\ArrayHash $values): void {
+		$creator->beforeAction[] = static function (UserEntity $entity, Utils\ArrayHash $values): void {
 			$entity->setCreatedAt(new DateTime());
 		};
 
 		// Assign after create entity events
-		$creator->afterAction[] = function (UserEntity $entity, Utils\ArrayHash $values): void {
+		$creator->afterAction[] = static function (UserEntity $entity, Utils\ArrayHash $values): void {
 		};
 
 		// Create new entity
@@ -48,9 +37,6 @@ class UsersManager
 
 	/**
 	 * @param UserEntity|mixed $entity
-	 * @param Utils\ArrayHash $values
-	 *
-	 * @return UserEntity
 	 */
 	public function update(UserEntity $entity, Utils\ArrayHash $values): UserEntity
 	{
@@ -58,12 +44,12 @@ class UsersManager
 		$updater = $this->entityCrud->getEntityUpdater();
 
 		// Assign before update entity events
-		$updater->beforeAction[] = function (UserEntity $entity, Utils\ArrayHash $values): void {
+		$updater->beforeAction[] = static function (UserEntity $entity, Utils\ArrayHash $values): void {
 			$entity->setUpdatedAt(new DateTime());
 		};
 
 		// Assign after create entity events
-		$updater->afterAction[] = function (UserEntity $entity, Utils\ArrayHash $values): void {
+		$updater->afterAction[] = static function (UserEntity $entity, Utils\ArrayHash $values): void {
 		};
 
 		// Update entity in database
@@ -72,8 +58,6 @@ class UsersManager
 
 	/**
 	 * @param UserEntity|mixed $entity
-	 *
-	 * @return bool
 	 */
 	public function delete(UserEntity $entity): bool
 	{
@@ -81,20 +65,17 @@ class UsersManager
 		$deleter = $this->entityCrud->getEntityDeleter();
 
 		// Assign before delete entity events
-		$deleter->beforeAction[] = function (UserEntity $entity): void {
+		$deleter->beforeAction[] = static function (UserEntity $entity): void {
 		};
 
 		// Assign after delete entity events
-		$deleter->afterAction[] = function (): void {
+		$deleter->afterAction[] = static function (): void {
 		};
 
 		// Delete entity from database
 		return $deleter->delete($entity);
 	}
 
-	/**
-	 * @return Crud\IEntityCrud
-	 */
 	public function getEntityCrud(): Crud\IEntityCrud
 	{
 		return $this->entityCrud;
