@@ -1,11 +1,12 @@
 # Doctrine CRUD
 
-[![Build Status](https://badgen.net/github/checks/ipublikuj/doctrine-crud/master?cache=300&style=flast-square)](https://github.com/ipublikuj/doctrine-crud)
-[![Code coverage](https://badgen.net/coveralls/c/github/ipublikuj/doctrine-crud?cache=300&style=flast-square)](https://coveralls.io/github/ipublikuj/doctrine-crud)
+[![Build Status](https://badgen.net/github/checks/ipublikuj/doctrine-crud/master?cache=300&style=flast-square)](https://github.com/ipublikuj/doctrine-crud/actions)
+[![Licence](https://badgen.net/github/license/ipublikuj/doctrine-crud?cache=300&style=flast-square)](https://github.com/ipublikuj/doctrine-crud/blob/master/LICENSE.md)
+[![Code coverage](https://badgen.net/coveralls/c/github/ipublikuj/doctrine-crud?cache=300&style=flast-square)](https://coveralls.io/r/ipublikuj/doctrine-crud)
+
 ![PHP](https://badgen.net/packagist/php/ipub/doctrine-crud?cache=300&style=flast-square)
-[![Licence](https://badgen.net/packagist/license/ipub/doctrine-crud?cache=300&style=flast-square)](https://github.com/ipublikuj/doctrine-crud/blob/master/LICENSE.md)
-[![Downloads total](https://badgen.net/packagist/dt/ipub/doctrine-crud?cache=300&style=flast-square)](https://packagist.org/packages/ipub/doctrine-crud)
-[![Latest stable](https://badgen.net/packagist/v/ipub/doctrine-crud/latest?cache=300&style=flast-square)](https://packagist.org/packages/ipub/doctrine-crud)
+[![Latest stable](https://badgen.net/packagist/v/ipub/doctrine-crud/latest?cache=300&style=flast-square)](https://packagist.org/packages/ipublikuj/doctrine-crud)
+[![Downloads total](https://badgen.net/packagist/dt/ipub/doctrine-crud?cache=300&style=flast-square)](https://packagist.org/packages/ipublikuj/doctrine-crud)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
 
 Implementation of CRUD system into [Doctrine3](https://github.com/doctrine/orm) with CRUD system.
