@@ -63,6 +63,7 @@ class EntityCreator extends Crud\CrudManager
 	}
 
 	/**
+	 * @throws DBAL\Exception\UniqueConstraintViolationException
 	 * @throws Exceptions\EntityCreation
 	 * @throws Exceptions\InvalidArgument
 	 * @throws Exceptions\InvalidState
@@ -121,7 +122,7 @@ class EntityCreator extends Crud\CrudManager
 		if ($this->getFlush()) {
 			try {
 				$this->entityManager->flush();
-			} catch (DBAL\Exception\UniqueConstraintViolationException | ORM\Exception\ORMException $ex) {
+			} catch (ORM\Exception\ORMException $ex) {
 				throw new Exceptions\InvalidState('Entity could not be created', $ex->getCode(), $ex);
 			}
 		}

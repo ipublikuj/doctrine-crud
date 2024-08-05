@@ -57,6 +57,7 @@ class EntityUpdater extends Crud\CrudManager
 	}
 
 	/**
+	 * @throws DBAL\Exception\UniqueConstraintViolationException
 	 * @throws Exceptions\InvalidArgument
 	 * @throws Exceptions\InvalidState
 	 */
@@ -81,7 +82,7 @@ class EntityUpdater extends Crud\CrudManager
 		if ($this->getFlush() === true) {
 			try {
 				$this->entityManager->flush();
-			} catch (DBAL\Exception\UniqueConstraintViolationException | ORM\Exception\ORMException $ex) {
+			} catch (ORM\Exception\ORMException $ex) {
 				throw new Exceptions\InvalidState('Entity could not be updated', $ex->getCode(), $ex);
 			}
 		}
