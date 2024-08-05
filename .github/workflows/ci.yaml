@@ -6,7 +6,7 @@ on:
       - ".docs/**"
   push:
     branches:
-      - "main"
+      - "master"
     tags:
       - v*
   schedule:
